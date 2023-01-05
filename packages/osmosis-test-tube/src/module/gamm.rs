@@ -5,15 +5,15 @@ use osmosis_std::types::osmosis::gamm::{
     v1beta1::{PoolAsset, PoolParams, QueryPoolRequest, QueryPoolResponse},
 };
 use prost::Message;
+use test_tube::{fn_execute, fn_query};
 
-use crate::module::Module;
-use crate::runner::error::{DecodeError, RunnerError};
-use crate::runner::result::{RunnerExecuteResult, RunnerResult};
-use crate::{
+use test_tube::module::Module;
+use test_tube::runner::error::{DecodeError, RunnerError};
+use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
+use test_tube::{
     account::{Account, SigningAccount},
     runner::Runner,
 };
-use crate::{fn_execute, fn_query};
 
 pub struct Gamm<'a, R: Runner<'a>> {
     runner: &'a R,

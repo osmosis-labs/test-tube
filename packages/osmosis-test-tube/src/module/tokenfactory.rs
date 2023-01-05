@@ -6,9 +6,9 @@ use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
     QueryDenomsFromCreatorResponse, QueryParamsRequest, QueryParamsResponse,
 };
 
-use crate::module::Module;
-use crate::runner::Runner;
-use crate::{fn_execute, fn_query};
+use test_tube::module::Module;
+use test_tube::runner::Runner;
+use test_tube::{fn_execute, fn_query};
 
 pub struct TokenFactory<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -66,7 +66,8 @@ mod tests {
         QueryDenomsFromCreatorRequest,
     };
 
-    use crate::{Account, Bank, Module, OsmosisTestApp, TokenFactory};
+    use crate::{Account, Bank, OsmosisTestApp, TokenFactory};
+    use test_tube::Module;
 
     #[test]
     fn tokenfactory_integration() {

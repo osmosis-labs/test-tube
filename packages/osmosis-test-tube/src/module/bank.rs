@@ -1,11 +1,11 @@
-use crate::fn_query;
 use cosmrs::proto::cosmos::bank::v1beta1::{
     QueryAllBalancesRequest, QueryAllBalancesResponse, QueryBalanceRequest, QueryBalanceResponse,
     QueryTotalSupplyRequest, QueryTotalSupplyResponse,
 };
+use test_tube::fn_query;
 
-use crate::module::Module;
-use crate::runner::Runner;
+use test_tube::module::Module;
+use test_tube::runner::Runner;
 
 pub struct Bank<'a, R: Runner<'a>> {
     runner: &'a R,

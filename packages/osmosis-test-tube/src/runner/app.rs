@@ -7,16 +7,16 @@ use cosmrs::tx::{Fee, SignerInfo};
 use cosmwasm_std::Coin;
 use prost::Message;
 
-use crate::account::{Account, FeeSetting, SigningAccount};
-use crate::bindings::{
+use test_tube::account::{Account, FeeSetting, SigningAccount};
+use test_tube::bindings::{
     AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, InitAccount, InitTestEnv, Query,
     Simulate,
 };
-use crate::redefine_as_go_string;
-use crate::runner::error::{DecodeError, EncodeError, RunnerError};
-use crate::runner::result::RawResult;
-use crate::runner::result::{RunnerExecuteResult, RunnerResult};
-use crate::runner::Runner;
+use test_tube::redefine_as_go_string;
+use test_tube::runner::error::{DecodeError, EncodeError, RunnerError};
+use test_tube::runner::result::RawResult;
+use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
+use test_tube::runner::Runner;
 
 const FEE_DENOM: &str = "uosmo";
 const CHAIN_ID: &str = "osmosis-1";
@@ -287,13 +287,14 @@ mod tests {
         MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
     };
 
-    use crate::account::{Account, FeeSetting};
     use crate::module::Gamm;
-    use crate::module::Module;
     use crate::module::Wasm;
     use crate::runner::app::OsmosisTestApp;
-    use crate::runner::*;
-    use crate::{Bank, ExecuteResponse};
+    use crate::Bank;
+    use test_tube::account::{Account, FeeSetting};
+    use test_tube::module::Module;
+    use test_tube::runner::*;
+    use test_tube::ExecuteResponse;
 
     #[test]
     fn test_init_accounts() {

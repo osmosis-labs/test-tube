@@ -49,7 +49,8 @@ fn main() {
     if env::var("PROFILE").unwrap() == "debug" {
         let target_dir = workspace_dir()
             .join("target")
-            .join(env::var("PROFILE").unwrap());
+            .join(env::var("PROFILE").unwrap())
+            .join("deps");
 
         // for each file with pattern `libosmosistesttube.*`, copy to target dir
         for entry in std::fs::read_dir(out_dir.clone()).unwrap() {

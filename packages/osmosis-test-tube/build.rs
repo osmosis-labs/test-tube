@@ -52,7 +52,7 @@ fn main() {
             .join(env::var("PROFILE").unwrap());
 
         // for each file with pattern `libosmosistesttube.*`, copy to target dir
-        for entry in std::fs::read_dir(prebuilt_lib_dir).unwrap() {
+        for entry in std::fs::read_dir(out_dir.clone()).unwrap() {
             let entry = entry.unwrap();
             let path = entry.path();
             if path.is_file() {

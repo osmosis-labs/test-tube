@@ -10,7 +10,7 @@ fn main() {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let prebuilt_lib_dir = manifest_dir.join("libosmosistesttube").join("artifacts");
 
-    let lib_name = "osmosistesting";
+    let lib_name = "osmosistesttube";
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
 

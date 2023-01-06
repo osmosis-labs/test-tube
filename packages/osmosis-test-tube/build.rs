@@ -1,6 +1,10 @@
 extern crate core;
 
-use std::{env, path::PathBuf, process::Command};
+use std::{
+    env,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 fn main() {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -40,6 +44,26 @@ fn main() {
 
     let out_dir_lib_path = out_dir.join(lib_filename);
     build_libosmosistesttube(out_dir_lib_path);
+
+    // copy built lib to target dir if debug build
+    if env::var("PROFILE").unwrap() == "debug" {
+        let target_dir = workspace_dir()
+            .join("target")
+            .join(env::var("PROFILE").unwrap());
+
+        // for each file with pattern `libosmosistesttube.*`, copy to target dir
+        for entry in std::fs::read_dir(prebuilt_lib_dir).unwrap() {
+            let entry = entry.unwrap();
+            let path = entry.path();
+            if path.is_file() {
+                let file_name = path.file_name().unwrap().to_str().unwrap();
+                if file_name.starts_with("libosmosistesttube") {
+                    let target_path = target_dir.join(file_name);
+                    std::fs::copy(path, target_path).unwrap();
+                }
+            }
+        }
+    }
 
     // define lib name
     println!(
@@ -95,4 +119,16 @@ fn build_libosmosistesttube(out: PathBuf) {
     if !exit_status.success() {
         panic!("failed to build go code");
     }
+}
+
+fn workspace_dir() -> PathBuf {
+    let output = std::process::Command::new(env!("CARGO"))
+        .arg("locate-project")
+        .arg("--workspace")
+        .arg("--message-format=plain")
+        .output()
+        .unwrap()
+        .stdout;
+    let cargo_path = Path::new(std::str::from_utf8(&output).unwrap().trim());
+    cargo_path.parent().unwrap().to_path_buf()
 }

@@ -32,12 +32,10 @@ MATRIX=$(
     jq -RMrnc '{ "target": [inputs | select( test("^origin/main$") or ((capture("v(?<v>[0-9]+)") | .v | tonumber) >= 14))] }'
 )
 
-# print matrix
-echo "$MATRIX"
-
 # update latest tag timestmap
-rm -f "$LATEST_OSMOSIS_TAG_TIMESTAMP_PATH" || true
+rm -f "$LATEST_OSMOSIS_TAG_TIMESTAMP_PATH"
 LATEST_OSMOSIS_TAG_TIMESTAMP="$(git tag --format="$FORMAT" | awk '{ print $2 }' | sort -nr | head -n 1)"
+
 echo "$LATEST_OSMOSIS_TAG_TIMESTAMP" > "$LATEST_OSMOSIS_TAG_TIMESTAMP_PATH"
 
 cd "$ROOT_DIR"

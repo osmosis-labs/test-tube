@@ -24,14 +24,19 @@ fi
 # build and run update-osmosis-test-tube
 cd "$SCRIPT_DIR/update-osmosis-test-tube-deps" && go build
 
+OSMOSIS_REV_NO_ORIGIN="$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
+
 # run update-osmosis-test-tube-deps which will replace the `replace directives` in osmosis-test-tube
 # with osmosis' replaces
-"$SCRIPT_DIR/update-osmosis-test-tube-deps/update-osmosis-test-tube-deps" $(echo "$OSMOSIS_REV" | sed "s/^origin\///")
+"$SCRIPT_DIR/update-osmosis-test-tube-deps/update-osmosis-test-tube-deps" "$OSMOSIS_REV_NO_ORIGIN"
+
+cd "$SCRIPT_DIR/../packages/osmosis-test-tube/osmosis"
+PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV_NO_ORIGIN")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
 # sync rev, force v13 at the moment due non-updated osmosis go.mod in v14.x branch
-go get "github.com/osmosis-labs/osmosis/v13@$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
+go get "github.com/osmosis-labs/osmosis/v13@${PARSED_REV}"
 
 # tidy up updated go.mod
 go mod tidy

@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/golang/protobuf v1.5.2
-	github.com/osmosis-labs/osmosis/v13 v13.0.0-rc0.0.20230109072728-93cc8a0c2e26
+	github.com/osmosis-labs/osmosis/v13 v13.1.3-0.20230107153547-6b715b0f45e2
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.34.24
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -88,9 +88,9 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/osmosis-labs/osmosis/osmomath v0.0.0-20230105183030-bccf5202f260 // indirect
-	github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230105184425-1e6fcd979d99 // indirect
-	github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.0-20230106184722-bdbb70f3d69b // indirect
+	github.com/osmosis-labs/osmosis/osmomath v0.0.3-rc0 // indirect
+	github.com/osmosis-labs/osmosis/osmoutils v0.0.3-rc0 // indirect
+	github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.5-rc0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect

@@ -12,7 +12,7 @@ LATEST_OSMOSIS_TAG_TIMESTAMP=$(cat "$LATEST_OSMOSIS_TAG_TIMESTAMP_PATH" || echo 
 
 
 git submodule update --init --recursive 
-cd dependencies/osmosis
+cd packages/osmosis-test-tube/osmosis
 
 # list all branches/tags with:
 # `<branch_name> <commit_hash>`
@@ -28,9 +28,12 @@ MATRIX=$(
     echo "$REVS" | \
     awk -v latest_tag_timestamp="$LATEST_OSMOSIS_TAG_TIMESTAMP" '$2 >= latest_tag_timestamp { print $1 }' | \
 
-    # jq filter target revs only v13 and above or main
-    jq -RMrnc '{ "target": [inputs | select( test("^origin/main$") or ((capture("v(?<v>[0-9]+)") | .v | tonumber) >= 13))] }'
+    # jq filter target revs only v14 and above or main
+    jq -RMrnc '{ "target": [inputs | select( test("^origin/main$") or ((capture("v(?<v>[0-9]+)") | .v | tonumber) >= 14))] }'
 )
+
+# print matrix
+echo "$MATRIX"
 
 # update latest tag timestmap
 rm -f "$LATEST_OSMOSIS_TAG_TIMESTAMP_PATH" || true

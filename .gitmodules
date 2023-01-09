@@ -1,0 +1,5 @@
+[submodule "packages/osmosis-test-tube/osmosis"]
+	path = packages/osmosis-test-tube/osmosis
+	url = https://github.com/osmosis-labs/osmosis.git
+	branch = main
+

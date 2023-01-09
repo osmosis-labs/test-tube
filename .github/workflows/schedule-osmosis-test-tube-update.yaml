@@ -1,5 +1,7 @@
 name: schedule osmosis-test-tube update
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch:
     name: manual trigger
   schedule:

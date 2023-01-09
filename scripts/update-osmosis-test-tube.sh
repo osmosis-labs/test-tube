@@ -31,7 +31,7 @@ OSMOSIS_REV_NO_ORIGIN="$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
 "$SCRIPT_DIR/update-osmosis-test-tube-deps/update-osmosis-test-tube-deps" "$OSMOSIS_REV_NO_ORIGIN"
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/osmosis"
-PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV_NO_ORIGIN")
+PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 

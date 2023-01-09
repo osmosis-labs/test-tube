@@ -18,7 +18,8 @@ fi
 ## Update and rebuild osmosis-test-tube ##
 ########################################
 
-# submodules already updated due to `cargo run -- --update-deps`
+# update all submodules
+git submodule update --init --recursive
 
 
 # build and run update-osmosis-test-tube

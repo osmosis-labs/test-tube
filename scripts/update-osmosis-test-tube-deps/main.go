@@ -16,14 +16,19 @@ func main() {
 	// Get the absolute path of this binary's directory
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 
+	// store args[1] as osmosis rev
+	osmosisRev := os.Args[1]
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	libosmosistesttubeModPath := filepath.Join(dir, "../../packages/osmosis-test-tube/libosmosistesttube/go.mod")
+	osmosisModUrl := fmt.Sprintf("https://raw.githubusercontent.com/osmosis-labs/osmosis/%s/go.mod", osmosisRev)
 
 	libosmosistestingMod := readModFromFile(libosmosistesttubeModPath)
-	osmosisMod := readModFromUrl("https://raw.githubusercontent.com/osmosis-labs/osmosis/main/go.mod")
+
+	osmosisMod := readModFromUrl(osmosisModUrl)
 
 	replaceModFileReplaceDirectives(osmosisMod, libosmosistestingMod)
 	writeMod(libosmosistestingMod, libosmosistesttubeModPath)

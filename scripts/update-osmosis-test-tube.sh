@@ -26,10 +26,9 @@ cd "$SCRIPT_DIR/update-osmosis-test-tube-deps" && go build
 
 # run update-osmosis-test-tube-deps which will replace the `replace directives` in osmosis-test-tube
 # with osmosis' replaces
-"$SCRIPT_DIR/update-osmosis-test-tube-deps/update-osmosis-test-tube-deps"
+"$SCRIPT_DIR/update-osmosis-test-tube-deps/update-osmosis-test-tube-deps" "$OSMOSIS_REV"
 
-
-cd "$SCRIPT_DIR/../packages/osmosis-testing/libosmosistesttube"
+cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube" "$OSMOSIS_REV"
 
 # sync rev
 go get "github.com/osmosis-labs/osmosis/$OSMOSIS_VERSION@$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"

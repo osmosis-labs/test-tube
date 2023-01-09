@@ -1,7 +1,7 @@
 name: schedule osmosis-test-tube update
 on:
   workflow_dispatch:
-    name: manula trigger
+    name: manual trigger
   schedule:
     - cron: "* 1 * * *"
 

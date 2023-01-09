@@ -31,6 +31,22 @@ func main() {
 	osmosisMod := readModFromUrl(osmosisModUrl)
 
 	replaceModFileReplaceDirectives(osmosisMod, libosmosistestingMod)
+
+	// replace internal packages
+	osmosisInternalRequires := make(map[string]string)
+	for _, req := range osmosisMod.Require {
+		if req.Mod.Path == "github.com/osmosis-labs/osmosis/osmomath" ||
+			req.Mod.Path == "github.com/osmosis-labs/osmosis/osmoutils" ||
+			req.Mod.Path == "github.com/osmosis-labs/osmosis/x/ibc-hooks" {
+			osmosisInternalRequires[req.Mod.Path] = req.Mod.Version
+		}
+	}
+
+	// add replace directives with osmosisInternalRequires
+	for path, version := range osmosisInternalRequires {
+		libosmosistestingMod.AddReplace(path, "", path, version)
+	}
+
 	writeMod(libosmosistestingMod, libosmosistesttubeModPath)
 }
 

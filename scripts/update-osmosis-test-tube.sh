@@ -30,8 +30,8 @@ cd "$SCRIPT_DIR/update-osmosis-test-tube-deps" && go build
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
-# sync rev
-go get "github.com/osmosis-labs/osmosis/$OSMOSIS_VERSION@$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
+# sync rev, force v13 at the moment due non-updated osmosis go.mod in v14.x branch
+go get "github.com/osmosis-labs/osmosis/v13@$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
 
 # tidy up updated go.mod
 go mod tidy

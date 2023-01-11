@@ -1,10 +1,6 @@
 extern crate core;
 
-use std::{
-    env,
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::{env, path::PathBuf, process::Command};
 
 fn main() {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));

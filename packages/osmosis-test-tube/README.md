@@ -10,6 +10,7 @@ CosmWasm x Osmosis integration testing library that, unlike `cw-multi-test`, it 
 - [Debugging](#debugging)
 - [Using Module Wrapper](#using-module-wrapper)
 - [Custom Module Wrapper](#custom-module-wrapper)
+- [Versioning](#versioning)
 
 ## Getting Started
 
@@ -331,3 +332,21 @@ where
 
 If the macro generated function is not good enough for you, you write your own function manually.
 See [module directory](https://github.com/osmosis-labs/osmosis-rust/tree/main/packages/osmosis-test-tube/src/module) for more inspiration.
+
+## Versioning
+
+The version of osmosis-test-tube is determined by the versions of its dependencies, osmosis and test-tube, as well as its own changes. The version is represented in the format A.B.C, where:
+
+- A is the major version of osmosis,
+- B is the minor version of test-tube,
+- C is the patch number of osmosis-test-tube itself.
+
+When a new version of osmosis is released and contains breaking changes, we will also release breaking changes from test-tube if any and increment the major version of osmosis-test-tube. This way, it's clear that the new version of osmosis-test-tube is not backwards-compatible with previous versions.
+
+When adding a new feature to osmosis-test-tube that is backward-compatible, the minor version number will be incremented.
+
+When fixing bugs or making other changes that are `osmosis-test-tube` specific and backward-compatible, the patch number will be incremented.
+
+Please review the upgrade guide for upgrading the package, in case of breaking changes
+
+It is important to note that we track the version of the package independent of the version of dependencies.

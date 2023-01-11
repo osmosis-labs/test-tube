@@ -49,10 +49,7 @@ fn main() {
     if cfg!(target_os = "linux") {
         // copy built lib to target dir if debug build
         if env::var("PROFILE").unwrap() == "debug" {
-            let target_dir = workspace_dir()
-                .join("target")
-                .join(env::var("PROFILE").unwrap())
-                .join("deps");
+            let target_dir = out_dir.join("..").join("..").join("..").join("deps");
 
             // for each file with pattern `libosmosistesttube.*`, copy to target dir
             for entry in std::fs::read_dir(out_dir.clone()).unwrap() {
@@ -122,16 +119,4 @@ fn build_libosmosistesttube(out: PathBuf) {
     if !exit_status.success() {
         panic!("failed to build go code");
     }
-}
-
-fn workspace_dir() -> PathBuf {
-    let output = std::process::Command::new(env!("CARGO"))
-        .arg("locate-project")
-        .arg("--workspace")
-        .arg("--message-format=plain")
-        .output()
-        .unwrap()
-        .stdout;
-    let cargo_path = Path::new(std::str::from_utf8(&output).unwrap().trim());
-    cargo_path.parent().unwrap().to_path_buf()
 }

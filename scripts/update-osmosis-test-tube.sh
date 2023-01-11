@@ -36,8 +36,7 @@ PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
-# sync rev, force v13 until v14 is released
-go get "github.com/osmosis-labs/osmosis/v13@${PARSED_REV}"
+go get "github.com/osmosis-labs/osmosis/v14@${PARSED_REV}"
 
 # tidy up updated go.mod
 go mod tidy

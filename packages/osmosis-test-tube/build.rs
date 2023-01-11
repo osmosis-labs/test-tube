@@ -41,26 +41,24 @@ fn main() {
     let out_dir_lib_path = out_dir.join(lib_filename);
     build_libosmosistesttube(out_dir_lib_path);
 
-    // if linux
-    if cfg!(target_os = "linux") {
-        // copy built lib to target dir if debug build
-        if env::var("PROFILE").unwrap() == "debug" {
-            let target_dir = out_dir.join("..").join("..").join("..").join("deps");
+    // copy built lib to target dir if debug build
+    if env::var("PROFILE").unwrap() == "debug" {
+        let target_dir = out_dir.join("..").join("..").join("..").join("deps");
 
-            // for each file with pattern `libosmosistesttube.*`, copy to target dir
-            for entry in std::fs::read_dir(out_dir.clone()).unwrap() {
-                let entry = entry.unwrap();
-                let path = entry.path();
-                if path.is_file() {
-                    let file_name = path.file_name().unwrap().to_str().unwrap();
-                    if file_name.starts_with("libosmosistesttube") {
-                        let target_path = target_dir.join(file_name);
-                        std::fs::copy(path, target_path).unwrap();
-                    }
+        // for each file with pattern `libosmosistesttube.*`, copy to target dir
+        for entry in std::fs::read_dir(out_dir.clone()).unwrap() {
+            let entry = entry.unwrap();
+            let path = entry.path();
+            if path.is_file() {
+                let file_name = path.file_name().unwrap().to_str().unwrap();
+                if file_name.starts_with("libosmosistesttube") {
+                    let target_path = target_dir.join(file_name);
+                    std::fs::copy(path, target_path).unwrap();
                 }
             }
         }
     }
+
     // define lib name
     println!(
         "cargo:rustc-link-search=native={}",

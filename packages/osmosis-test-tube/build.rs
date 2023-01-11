@@ -60,6 +60,9 @@ fn main() {
                 let file_name = path.file_name().unwrap().to_str().unwrap();
                 if file_name.starts_with("libosmosistesttube") {
                     let target_path = target_dir.join(file_name);
+
+                    dbg!(path);
+                    dbg!(target_path);
                     std::fs::copy(path, target_path).unwrap();
                 }
             }

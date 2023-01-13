@@ -611,8 +611,8 @@ github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20221118211718-545aed73e94e h1:A3by
 github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20221118211718-545aed73e94e/go.mod h1:rud0OaBIuq3+qOqtwT4SR7Q7iSzRp7w41fjninTjfnQ=
 github.com/osmosis-labs/osmosis/osmomath v0.0.0-20230105183030-bccf5202f260 h1:+EbINXzHQyDtHje2CND357A22H2zUpceTtwJClC9IAM=
 github.com/osmosis-labs/osmosis/osmomath v0.0.0-20230105183030-bccf5202f260/go.mod h1:KrzYoNtnWUH75rj1XAsSR4nymlHFU7jeVOx7/1KMe0k=
-github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230105184425-1e6fcd979d99 h1:8yYGNa5u8MmFdh+FpZQ7/4jlGABd5XSDfPcENJE9HXs=
-github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230105184425-1e6fcd979d99/go.mod h1:K4de+n3DtLdueen98dOzaRXZvqMd8JvigL8O1xW445o=
+github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230112084519-84d6450e1670 h1:kaYzxnimKTDaIXuYewc3NVt/IXqBOqTEbPX+ttQwWho=
+github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230112084519-84d6450e1670/go.mod h1:K4de+n3DtLdueen98dOzaRXZvqMd8JvigL8O1xW445o=
 github.com/osmosis-labs/osmosis/v14 v14.0.0-20230111125901-cbf3c8cb5c08 h1:t0fz3Atsb3JzXxaVmsLFUY5lzekaoTleWSVwR5oJZ9k=
 github.com/osmosis-labs/osmosis/v14 v14.0.0-20230111125901-cbf3c8cb5c08/go.mod h1:Ttl2puvEXALpgUe0PQrMF97WF8EO/J7yOuWQAyUtGbk=
 github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.0-20230110104305-322e8478dbe8 h1:iOJO+5jffUFlLVy51XaGnec22rNX5YAs71rxD+7M2Ac=

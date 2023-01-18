@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/golang/protobuf v1.5.2
-	github.com/osmosis-labs/osmosis/v14 v14.0.0-20230111125901-cbf3c8cb5c08
+	github.com/osmosis-labs/osmosis/v14 v14.0.0-20230117175430-f23a4c0535e0
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.34.24
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -46,7 +46,7 @@ require (
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1-0.20200219035652-afde56e7acac // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
-	github.com/felixge/httpsnoop v1.0.1 // indirect
+	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -144,10 +144,12 @@ replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
+replace github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
+
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.0-20230105183030-bccf5202f260
 
-replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230105184425-1e6fcd979d99
+replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230112084519-84d6450e1670
 
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.0-20230110104305-322e8478dbe8

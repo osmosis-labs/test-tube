@@ -39,14 +39,15 @@ var (
 
 //export InitTestEnv
 func InitTestEnv() uint64 {
-	// Allow testing unoptimized contract
-	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 	// Temp fix for concurrency issue
 	mu.Lock()
 	defer mu.Unlock()
 
 	env := new(testenv.TestEnv)
 	env.App = testenv.SetupOsmosisApp()
+
+	// Allow testing unoptimized contract
+	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
 	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Now().UTC()})
 

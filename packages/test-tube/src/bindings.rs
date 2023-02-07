@@ -239,3 +239,17 @@ extern "C" {
 extern "C" {
     pub fn Simulate(envId: GoUint64, base64TxBytes: GoString) -> *mut ::std::os::raw::c_char;
 }
+extern "C" {
+    pub fn SetParamSet(
+        envId: GoUint64,
+        subspaceName: GoString,
+        base64ParamSetBytes: GoString,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn GetParamSet(
+        envId: GoUint64,
+        subspaceName: GoString,
+        typeUrl: GoString,
+    ) -> *mut ::std::os::raw::c_char;
+}

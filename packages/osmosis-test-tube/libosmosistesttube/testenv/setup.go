@@ -30,11 +30,13 @@ import (
 
 	// osmosis
 	"github.com/osmosis-labs/osmosis/v14/app"
+	lockuptypes "github.com/osmosis-labs/osmosis/v14/x/lockup/types"
 )
 
 type TestEnv struct {
-	App *app.OsmosisApp
-	Ctx sdk.Context
+	App                *app.OsmosisApp
+	Ctx                sdk.Context
+	ParamTypesRegistry ParamTypeRegistry
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -192,6 +194,12 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	env.App.SlashingKeeper.SetValidatorSigningInfo(env.Ctx, consAddr, signingInfo)
 
 	return valAddr
+}
+
+func (env *TestEnv) SetupParamTypes() {
+	pReg := env.ParamTypesRegistry
+
+	pReg.RegisterParamSet(&lockuptypes.Params{})
 }
 
 func requireNoErr(err error) {

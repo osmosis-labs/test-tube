@@ -34,10 +34,9 @@ func (r *ParamTypeRegistry) GetEmptyParamsSet(typeUrl string) (ProtoParamSet, bo
 }
 
 func (r *ParamTypeRegistry) UnpackAny(any *codectypes.Any) (ProtoParamSet, error) {
-	msg := r.m[any.GetTypeUrl()]
-	msg.Reset()
+	msg, ok := r.GetEmptyParamsSet(any.GetTypeUrl())
 
-	if msg == nil {
+	if !ok {
 		return nil, fmt.Errorf("type %s is not registered", any.GetTypeUrl())
 	}
 

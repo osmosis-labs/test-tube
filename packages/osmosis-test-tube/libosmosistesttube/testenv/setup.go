@@ -111,7 +111,7 @@ func SetupOsmosisApp() *app.OsmosisApp {
 	return appInstance
 }
 
-func (env *TestEnv) BeginNewBlock(executeNextEpoch bool) {
+func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uint64) {
 	var valAddr []byte
 
 	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
@@ -126,11 +126,11 @@ func (env *TestEnv) BeginNewBlock(executeNextEpoch bool) {
 		valAddr = valAddr2.Bytes()
 	}
 
-	env.beginNewBlockWithProposer(executeNextEpoch, valAddr)
+	env.beginNewBlockWithProposer(executeNextEpoch, valAddr, timeIncreaseSeconds)
 }
 
 // beginNewBlockWithProposer begins a new block with a proposer.
-func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress) {
+func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress, timeIncreaseSeconds uint64) {
 	validator, found := env.App.StakingKeeper.GetValidator(env.Ctx, proposer)
 
 	if !found {
@@ -144,7 +144,7 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 
 	epochIdentifier := env.App.SuperfluidKeeper.GetEpochIdentifier(env.Ctx)
 	epoch := env.App.EpochsKeeper.GetEpochInfo(env.Ctx, epochIdentifier)
-	newBlockTime := env.Ctx.BlockTime().Add(5 * time.Second)
+	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
 	if executeNextEpoch {
 		newBlockTime = env.Ctx.BlockTime().Add(epoch.Duration).Add(time.Second)
 	}

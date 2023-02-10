@@ -59,7 +59,7 @@ func InitTestEnv() uint64 {
 
 	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Now().UTC()})
 
-	env.BeginNewBlock(false)
+	env.BeginNewBlock(false, 5)
 
 	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
 	env.App.EndBlock(reqEndBlock)
@@ -97,10 +97,18 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 	return C.CString(base64Priv)
 }
 
+//export IncreaseTime
+func IncreaseTime(envId uint64, seconds uint64) {
+	env := loadEnv(envId)
+	env.BeginNewBlock(false, seconds)
+	envRegister.Store(envId, env)
+	EndBlock(envId)
+}
+
 //export BeginBlock
 func BeginBlock(envId uint64) {
 	env := loadEnv(envId)
-	env.BeginNewBlock(false)
+	env.BeginNewBlock(false, 5)
 	envRegister.Store(envId, env)
 }
 

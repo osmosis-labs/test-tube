@@ -250,21 +250,32 @@ impl<'a> Runner<'a> for BaseApp {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
+        let msgs = msgs
+            .iter()
+            .map(|(msg, type_url)| {
+                let mut buf = Vec::new();
+                M::encode(msg, &mut buf).map_err(EncodeError::ProtoEncodeError)?;
+
+                Ok(cosmrs::Any {
+                    type_url: type_url.to_string(),
+                    value: buf,
+                })
+            })
+            .collect::<Result<Vec<cosmrs::Any>, RunnerError>>()?;
+
+        self.execute_multiple_raw(msgs, signer)
+    }
+
+    fn execute_multiple_raw<R>(
+        &self,
+        msgs: Vec<cosmrs::Any>,
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<R>
+    where
+        R: ::prost::Message + Default,
+    {
         unsafe {
             self.run_block(|| {
-                let msgs = msgs
-                    .iter()
-                    .map(|(msg, type_url)| {
-                        let mut buf = Vec::new();
-                        M::encode(msg, &mut buf).map_err(EncodeError::ProtoEncodeError)?;
-
-                        Ok(cosmrs::Any {
-                            type_url: type_url.to_string(),
-                            value: buf,
-                        })
-                    })
-                    .collect::<Result<Vec<cosmrs::Any>, RunnerError>>()?;
-
                 let fee = match &signer.fee_setting() {
                     FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
                     FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
@@ -276,7 +287,7 @@ impl<'a> Runner<'a> for BaseApp {
                     ),
                 };
 
-                let tx = self.create_signed_tx(msgs, signer, fee)?;
+                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
 
                 let mut buf = Vec::new();
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)

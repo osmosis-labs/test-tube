@@ -94,6 +94,17 @@ impl<'a> Runner<'a> for OsmosisTestApp {
     {
         self.inner.query(path, q)
     }
+
+    fn execute_multiple_raw<R>(
+        &self,
+        msgs: Vec<cosmrs::Any>,
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<R>
+    where
+        R: prost::Message + Default,
+    {
+        self.inner.execute_multiple_raw(msgs, signer)
+    }
 }
 
 #[cfg(test)]

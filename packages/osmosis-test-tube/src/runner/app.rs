@@ -28,9 +28,9 @@ impl OsmosisTestApp {
     pub fn new() -> Self {
         Self {
             inner: BaseApp::new(
-                OSMO_ADDRESS_PREFIX,
                 FEE_DENOM,
                 CHAIN_ID,
+                OSMO_ADDRESS_PREFIX,
                 DEFAULT_GAS_ADJUSTMENT,
             ),
         }

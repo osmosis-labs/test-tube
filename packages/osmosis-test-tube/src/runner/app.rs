@@ -9,6 +9,7 @@ use test_tube::runner::Runner;
 use test_tube::BaseApp;
 
 const FEE_DENOM: &str = "uosmo";
+const OSMO_ADDRESS_PREFIX: &str = "osmo";
 const CHAIN_ID: &str = "osmosis-1";
 const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
 
@@ -26,7 +27,12 @@ impl Default for OsmosisTestApp {
 impl OsmosisTestApp {
     pub fn new() -> Self {
         Self {
-            inner: BaseApp::new(FEE_DENOM, CHAIN_ID, DEFAULT_GAS_ADJUSTMENT),
+            inner: BaseApp::new(
+                OSMO_ADDRESS_PREFIX,
+                FEE_DENOM,
+                CHAIN_ID,
+                DEFAULT_GAS_ADJUSTMENT,
+            ),
         }
     }
 

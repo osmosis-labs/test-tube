@@ -25,16 +25,23 @@ pub struct BaseApp {
     id: u64,
     fee_denom: String,
     chain_id: String,
+    address_prefix: String,
     default_gas_adjustment: f64,
 }
 
 impl BaseApp {
-    pub fn new(fee_denom: &str, chain_id: &str, default_gas_adjustment: f64) -> Self {
+    pub fn new(
+        fee_denom: &str,
+        chain_id: &str,
+        address_prefix: &str,
+        default_gas_adjustment: f64,
+    ) -> Self {
         let id = unsafe { InitTestEnv() };
         BaseApp {
             id,
             fee_denom: fee_denom.to_string(),
             chain_id: chain_id.to_string(),
+            address_prefix: address_prefix.to_string(),
             default_gas_adjustment,
         }
     }
@@ -67,6 +74,7 @@ impl BaseApp {
         })?;
 
         Ok(SigningAccount::new(
+            self.address_prefix.clone(),
             signging_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),

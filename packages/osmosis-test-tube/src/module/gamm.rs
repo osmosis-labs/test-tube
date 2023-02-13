@@ -1,5 +1,8 @@
-use cosmwasm_std::Coin;
+use cosmwasm_std::{Coin, StdResult};
 use osmosis_std::types::osmosis::gamm;
+use osmosis_std::types::osmosis::gamm::poolmodels::stableswap::v1beta1::{
+    MsgCreateStableswapPool, MsgCreateStableswapPoolResponse,
+};
 use osmosis_std::types::osmosis::gamm::{
     poolmodels::balancer::v1beta1::{MsgCreateBalancerPool, MsgCreateBalancerPoolResponse},
     v1beta1::{PoolAsset, PoolParams, QueryPoolRequest, QueryPoolResponse},
@@ -84,7 +87,8 @@ where
             .pool_assets
             .into_iter()
             .filter_map(|asset| asset.token.map(|coin| coin.try_into()))
-            .collect::<StdResult<Vec<Coin>>>()?;
+            .collect::<StdResult<Vec<Coin>>>()
+            .map_err(|e| RunnerError::GenericError(e.to_string()))?;
         Ok(result)
     }
 }

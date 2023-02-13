@@ -33,6 +33,10 @@ where
         pub create_balancer_pool: MsgCreateBalancerPool => MsgCreateBalancerPoolResponse
     }
 
+    fn_execute! {
+        pub create_stable_swap_pool: MsgCreateStableswapPool => MsgCreateStableswapPoolResponse
+    }
+
     fn_query! {
         _query_pool ["/osmosis.gamm.v1beta1.Query/Pool"]: QueryPoolRequest => QueryPoolResponse
     }

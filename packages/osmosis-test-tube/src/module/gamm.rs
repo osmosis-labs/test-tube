@@ -76,4 +76,15 @@ where
             .map_err(DecodeError::ProtoDecodeError)
             .map_err(RunnerError::DecodeError)
     }
+
+    pub fn query_pool_reserves(&self, pool_id: u64) -> RunnerResult<Vec<Coin>> {
+        let pool = self.query_pool(pool_id)?;
+
+        let result = pool
+            .pool_assets
+            .into_iter()
+            .filter_map(|asset| asset.token.map(|coin| coin.try_into()))
+            .collect::<StdResult<Vec<Coin>>>()?;
+        Ok(result)
+    }
 }

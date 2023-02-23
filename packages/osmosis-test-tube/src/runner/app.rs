@@ -1,5 +1,7 @@
+use cosmrs::Any;
 use cosmwasm_std::Coin;
 
+use prost::Message;
 use test_tube::account::SigningAccount;
 
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
@@ -50,6 +52,20 @@ impl OsmosisTestApp {
     {
         self.inner.simulate_tx(msgs, signer)
     }
+
+    /// Set parameter set for a given subspace.
+    pub fn set_param_set(&self, subspace: &str, pset: Any) -> RunnerResult<()> {
+        self.inner.set_param_set(subspace, pset)
+    }
+
+    /// Get parameter set for a given subspace.
+    pub fn get_param_set<P: Message + Default>(
+        &self,
+        subspace: &str,
+        type_url: &str,
+    ) -> RunnerResult<P> {
+        self.inner.get_param_set(subspace, type_url)
+    }
 }
 
 impl<'a> Runner<'a> for OsmosisTestApp {
@@ -76,11 +92,14 @@ impl<'a> Runner<'a> for OsmosisTestApp {
 
 #[cfg(test)]
 mod tests {
+    use prost::Message;
     use std::option::Option::None;
 
     use cosmrs::proto::cosmos::bank::v1beta1::QueryAllBalancesRequest;
+    use cosmrs::Any;
     use cosmwasm_std::{attr, coins, Coin};
 
+    use osmosis_std::types::osmosis::lockup;
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
         MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
     };
@@ -338,5 +357,36 @@ mod tests {
 
         assert_eq!(res.gas_info.gas_wanted, gas_limit);
         assert_eq!(bob_balance, initial_balance - amount.amount.u128());
+    }
+
+    #[test]
+    fn test_param_set() {
+        let app = OsmosisTestApp::default();
+
+        let whitelisted_users = app
+            .init_accounts(&coins(1_000_000_000_000, "uosmo"), 2)
+            .unwrap();
+
+        let in_pset = lockup::Params {
+            force_unlock_allowed_addresses: whitelisted_users
+                .into_iter()
+                .map(|a| a.address())
+                .collect(),
+        };
+
+        app.set_param_set(
+            "lockup",
+            Any {
+                type_url: lockup::Params::TYPE_URL.to_string(),
+                value: in_pset.encode_to_vec(),
+            },
+        )
+        .unwrap();
+
+        let out_pset: lockup::Params = app
+            .get_param_set("lockup", lockup::Params::TYPE_URL)
+            .unwrap();
+
+        assert_eq!(in_pset, out_pset);
     }
 }

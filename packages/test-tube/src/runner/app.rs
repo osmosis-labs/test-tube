@@ -2,15 +2,15 @@ use std::ffi::CString;
 
 use cosmrs::crypto::secp256k1::SigningKey;
 use cosmrs::proto::tendermint::abci::{RequestDeliverTx, ResponseDeliverTx};
-use cosmrs::tx;
 use cosmrs::tx::{Fee, SignerInfo};
+use cosmrs::{tx, Any};
 use cosmwasm_std::Coin;
 use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, InitAccount, InitTestEnv, Query,
-    Simulate,
+    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetParamSet, InitAccount,
+    InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -192,6 +192,40 @@ impl BaseApp {
                 unsafe { EndBlock(self.id) };
                 err
             }
+        }
+    }
+
+    /// Set parameter set for a given subspace.
+    pub fn set_param_set(&self, subspace: &str, pset: Any) -> RunnerResult<()> {
+        unsafe {
+            BeginBlock(self.id);
+            let pset = Message::encode_to_vec(&pset);
+            let pset = base64::encode(&pset);
+            redefine_as_go_string!(pset);
+            redefine_as_go_string!(subspace);
+            let res = SetParamSet(self.id, subspace, pset);
+
+            EndBlock(self.id);
+
+            // returns empty bytes if success
+            RawResult::from_non_null_ptr(res).into_result()?;
+            Ok(())
+        }
+    }
+
+    /// Get parameter set for a given subspace.
+    pub fn get_param_set<P: Message + Default>(
+        &self,
+        subspace: &str,
+        type_url: &str,
+    ) -> RunnerResult<P> {
+        unsafe {
+            redefine_as_go_string!(subspace);
+            redefine_as_go_string!(type_url);
+            let pset = GetParamSet(self.id, subspace, type_url);
+            let pset = RawResult::from_non_null_ptr(pset).into_result()?;
+            let pset = P::decode(pset.as_slice()).map_err(DecodeError::ProtoDecodeError)?;
+            Ok(pset)
         }
     }
 }

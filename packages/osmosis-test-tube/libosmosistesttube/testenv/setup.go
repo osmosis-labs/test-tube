@@ -30,7 +30,18 @@ import (
 
 	// osmosis
 	"github.com/osmosis-labs/osmosis/v14/app"
+	concentratedliquiditytypes "github.com/osmosis-labs/osmosis/v14/x/concentrated-liquidity/types"
+	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/types"
+	ibcratelimittypes "github.com/osmosis-labs/osmosis/v14/x/ibc-rate-limit/types"
+	incentivetypes "github.com/osmosis-labs/osmosis/v14/x/incentives/types"
 	lockuptypes "github.com/osmosis-labs/osmosis/v14/x/lockup/types"
+	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
+	poolincentivetypes "github.com/osmosis-labs/osmosis/v14/x/pool-incentives/types"
+	poolmanagertypes "github.com/osmosis-labs/osmosis/v14/x/poolmanager/types"
+	protorevtypes "github.com/osmosis-labs/osmosis/v14/x/protorev/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v14/x/superfluid/types"
+	tokenfactorytypes "github.com/osmosis-labs/osmosis/v14/x/tokenfactory/types"
+	twaptypes "github.com/osmosis-labs/osmosis/v14/x/twap/types"
 )
 
 type TestEnv struct {
@@ -200,6 +211,17 @@ func (env *TestEnv) SetupParamTypes() {
 	pReg := env.ParamTypesRegistry
 
 	pReg.RegisterParamSet(&lockuptypes.Params{})
+	pReg.RegisterParamSet(&incentivetypes.Params{})
+	pReg.RegisterParamSet(&minttypes.Params{})
+	pReg.RegisterParamSet(&twaptypes.Params{})
+	pReg.RegisterParamSet(&gammtypes.Params{})
+	pReg.RegisterParamSet(&ibcratelimittypes.Params{})
+	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
+	pReg.RegisterParamSet(&superfluidtypes.Params{})
+	pReg.RegisterParamSet(&poolincentivetypes.Params{})
+	pReg.RegisterParamSet(&protorevtypes.Params{})
+	pReg.RegisterParamSet(&poolmanagertypes.Params{})
+	pReg.RegisterParamSet(&concentratedliquiditytypes.Params{})
 }
 
 func requireNoErr(err error) {

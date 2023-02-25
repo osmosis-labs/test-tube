@@ -9,8 +9,8 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetParamSet, InitAccount,
-    InitTestEnv, Query, SetParamSet, Simulate,
+    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetParamSet,
+    GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -51,6 +51,19 @@ impl BaseApp {
         unsafe {
             IncreaseTime(self.id, seconds.try_into().unwrap());
         }
+    }
+
+    /// Get the first validator address
+    pub fn get_first_validator_address(&self) -> RunnerResult<String> {
+        let addr = unsafe {
+            let addr = GetValidatorAddress(self.id, 0);
+            CString::from_raw(addr)
+        }
+        .to_str()
+        .map_err(DecodeError::Utf8Error)?
+        .to_string();
+
+        Ok(addr)
     }
 
     /// Initialize account with initial balance of any coins.

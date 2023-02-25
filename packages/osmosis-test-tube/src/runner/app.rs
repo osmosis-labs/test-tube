@@ -1,4 +1,6 @@
 use cosmrs::Any;
+use std::ffi::CString;
+
 use cosmwasm_std::Coin;
 
 use prost::Message;
@@ -6,7 +8,7 @@ use test_tube::account::SigningAccount;
 
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube::runner::Runner;
-use test_tube::BaseApp;
+use test_tube::{BaseApp, DecodeError};
 
 const FEE_DENOM: &str = "uosmo";
 const OSMO_ADDRESS_PREFIX: &str = "osmo";
@@ -34,6 +36,11 @@ impl OsmosisTestApp {
                 DEFAULT_GAS_ADJUSTMENT,
             ),
         }
+    }
+
+    /// Get the first validator address
+    pub fn get_first_validator_address(&self) -> RunnerResult<String> {
+        self.inner.get_first_validator_address()
     }
 
     /// Increase the time of the blockchain by the given number of seconds.

@@ -6,6 +6,7 @@ use cosmwasm_std::Coin;
 use prost::Message;
 use test_tube::account::SigningAccount;
 
+use test_tube::bindings::GetValidatorAddress;
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube::runner::Runner;
 use test_tube::{BaseApp, DecodeError};
@@ -36,6 +37,11 @@ impl OsmosisTestApp {
                 DEFAULT_GAS_ADJUSTMENT,
             ),
         }
+    }
+
+    /// Get the current block time
+    pub fn get_block_time_nanos(&self) -> i64 {
+        self.inner.get_block_time_nanos()
     }
 
     /// Get the first validator address

@@ -9,7 +9,7 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetParamSet,
+    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockTime, GetParamSet,
     GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
@@ -64,6 +64,11 @@ impl BaseApp {
         .to_string();
 
         Ok(addr)
+    }
+
+    /// Get the current block time
+    pub fn get_block_time_nanos(&self) -> i64 {
+        unsafe { GetBlockTime(self.id) }
     }
 
     /// Initialize account with initial balance of any coins.

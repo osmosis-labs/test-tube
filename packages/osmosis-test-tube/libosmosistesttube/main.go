@@ -176,6 +176,12 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 	return encodeBytesResultBytes(res.Value)
 }
 
+//export GetBlockTime
+func GetBlockTime(envId uint64) int64 {
+	env := loadEnv(envId)
+	return env.Ctx.BlockTime().UnixNano()
+}
+
 //export AccountSequence
 func AccountSequence(envId uint64, bech32Address string) uint64 {
 	env := loadEnv(envId)

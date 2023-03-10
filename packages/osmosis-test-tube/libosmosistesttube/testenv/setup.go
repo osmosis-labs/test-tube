@@ -102,22 +102,22 @@ func SetupOsmosisApp() *app.OsmosisApp {
 		time.Hour * 24 * 7,  // 7 day
 		time.Hour * 24 * 14, // 14 days
 	}
-	incentivesParams := incentivestypes.DefaultParams()
+	incentivesParams := incentivetypes.DefaultParams()
 	incentivesParams.DistrEpochIdentifier = "day"
-	incentivesGen := incentivestypes.GenesisState{
+	incentivesGen := incentivetypes.GenesisState{
 		Params:            incentivesParams,
 		LockableDurations: lockableDurations,
 	}
-	genesisState[incentivestypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
+	genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
 
 	// Set up pool incentives genesis state
-	poolIncentivesParams := poolincentivestypes.DefaultParams()
+	poolIncentivesParams := poolincentivetypes.DefaultParams()
 	poolIncentivesParams.MintedDenom = "uosmo"
-	poolIncentivesGen := poolincentivestypes.GenesisState{
+	poolIncentivesGen := poolincentivetypes.GenesisState{
 		Params:            poolIncentivesParams,
 		LockableDurations: lockableDurations,
 	}
-	genesisState[poolincentivestypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
+	genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 

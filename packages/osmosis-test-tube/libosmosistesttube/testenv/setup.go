@@ -29,19 +29,18 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// osmosis
-	"github.com/osmosis-labs/osmosis/v14/app"
-	concentratedliquiditytypes "github.com/osmosis-labs/osmosis/v14/x/concentrated-liquidity/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/types"
-	ibcratelimittypes "github.com/osmosis-labs/osmosis/v14/x/ibc-rate-limit/types"
-	incentivetypes "github.com/osmosis-labs/osmosis/v14/x/incentives/types"
-	lockuptypes "github.com/osmosis-labs/osmosis/v14/x/lockup/types"
-	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
-	poolincentivetypes "github.com/osmosis-labs/osmosis/v14/x/pool-incentives/types"
-	poolmanagertypes "github.com/osmosis-labs/osmosis/v14/x/poolmanager/types"
-	protorevtypes "github.com/osmosis-labs/osmosis/v14/x/protorev/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v14/x/superfluid/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v14/x/tokenfactory/types"
-	twaptypes "github.com/osmosis-labs/osmosis/v14/x/twap/types"
+	"github.com/osmosis-labs/osmosis/v15/app"
+	gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
+	ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
+	incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
+	lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
+	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
+	poolincentivetypes "github.com/osmosis-labs/osmosis/v15/x/pool-incentives/types"
+	poolmanagertypes "github.com/osmosis-labs/osmosis/v15/x/poolmanager/types"
+	protorevtypes "github.com/osmosis-labs/osmosis/v15/x/protorev/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
+	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
+	twaptypes "github.com/osmosis-labs/osmosis/v15/x/twap/types"
 )
 
 type TestEnv struct {
@@ -221,7 +220,6 @@ func (env *TestEnv) SetupParamTypes() {
 	pReg.RegisterParamSet(&poolincentivetypes.Params{})
 	pReg.RegisterParamSet(&protorevtypes.Params{})
 	pReg.RegisterParamSet(&poolmanagertypes.Params{})
-	pReg.RegisterParamSet(&concentratedliquiditytypes.Params{})
 }
 
 func requireNoErr(err error) {

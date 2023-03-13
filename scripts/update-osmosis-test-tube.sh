@@ -5,7 +5,7 @@ set -euxo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 OSMOSIS_REV=${1:-main}
 
-LATEST_OSMOSIS_VERSION="v14"
+LATEST_OSMOSIS_VERSION="v15"
 
 # if "$OSMOIS_REV" is /v\d+/ then extract it as var
 if [[ "$OSMOSIS_REV" =~ ^v[0-9]+ ]]; then
@@ -36,7 +36,7 @@ PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
-go get "github.com/osmosis-labs/osmosis/v14@${PARSED_REV}"
+go get "github.com/osmosis-labs/osmosis/v15@${PARSED_REV}"
 
 # tidy up updated go.mod
 go mod tidy

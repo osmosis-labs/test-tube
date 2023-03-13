@@ -18,6 +18,8 @@ use crate::runner::result::RawResult;
 use crate::runner::result::{RunnerExecuteResult, RunnerResult};
 use crate::runner::Runner;
 
+pub const OSMOSIS_MIN_GAS_PRICE: u128 = 2_500;
+
 #[derive(Debug, PartialEq)]
 pub struct BaseApp {
     id: u64,
@@ -67,7 +69,7 @@ impl BaseApp {
         Ok(SigningAccount::new(
             signging_key,
             FeeSetting::Auto {
-                gas_price: Coin::new(0, self.fee_denom.clone()),
+                gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),
                 gas_adjustment: self.default_gas_adjustment,
             },
         ))
@@ -135,7 +137,7 @@ impl BaseApp {
         let zero_fee = Fee::from_amount_and_gas(
             cosmrs::Coin {
                 denom: self.fee_denom.parse().unwrap(),
-                amount: 0u8.into(),
+                amount: OSMOSIS_MIN_GAS_PRICE,
             },
             0u64,
         );

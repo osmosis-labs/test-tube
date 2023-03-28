@@ -112,6 +112,7 @@ mod tests {
                 MsgMint {
                     sender: signer.address(),
                     amount: Some(coin.clone()),
+                    mint_to_address: signer.address(),
                 },
                 &signer,
             )
@@ -135,6 +136,7 @@ mod tests {
                 MsgBurn {
                     sender: signer.address(),
                     amount: Some(coin.clone()),
+                    burn_from_address: signer.address(),
                 },
                 &signer,
             )

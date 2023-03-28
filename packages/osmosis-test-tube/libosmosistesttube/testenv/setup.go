@@ -30,6 +30,7 @@ import (
 
 	// osmosis
 	"github.com/osmosis-labs/osmosis/v15/app"
+	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
 	gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
 	ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
 	incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
@@ -220,6 +221,7 @@ func (env *TestEnv) SetupParamTypes() {
 	pReg.RegisterParamSet(&poolincentivetypes.Params{})
 	pReg.RegisterParamSet(&protorevtypes.Params{})
 	pReg.RegisterParamSet(&poolmanagertypes.Params{})
+	pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
 }
 
 func requireNoErr(err error) {

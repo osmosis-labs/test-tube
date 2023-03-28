@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "packages/osmosis-test-tube"
+    },
+    {
+      "path": "packages/osmosis-test-tube/libosmosistesttube"
+    }
+  ],
+  "settings": {}
+}

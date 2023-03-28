@@ -9,7 +9,7 @@ pub mod utils;
 
 pub use cosmrs;
 
-pub use account::{Account, NonSigningAccount, SigningAccount};
+pub use account::{Account, FeeSetting, NonSigningAccount, SigningAccount};
 pub use module::*;
 pub use runner::app::BaseApp;
 pub use runner::error::{DecodeError, EncodeError, RunnerError};

@@ -327,8 +327,9 @@ github.com/golang/protobuf v1.4.1/go.mod h1:U8fpvMrcmy5pZrNK1lt4xCsGvpyWQ/VVv6QD
 github.com/golang/protobuf v1.4.2/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
 github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
-github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw=
 github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
+github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
+github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/golang/snappy v0.0.1/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/golang/snappy v0.0.3-0.20201103224600-674baa8c7fc3/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
@@ -618,8 +619,8 @@ github.com/osmosis-labs/osmosis/osmomath v0.0.4 h1:5cJfDi8mOuAzLfsQFoTGJvm/qca7G
 github.com/osmosis-labs/osmosis/osmomath v0.0.4/go.mod h1:zZ7nwahi4mpF8s22yFqzUB8qpQtyC8fB3jumpdzohaI=
 github.com/osmosis-labs/osmosis/osmoutils v0.0.4 h1:W/lvzFsyt30GGi0+nD3Ktxlwe5Tl6ipKWilyyLjJ9Ro=
 github.com/osmosis-labs/osmosis/osmoutils v0.0.4/go.mod h1:2MStAdC2TajbhgkAwT3SZPtMW/Bbvp0JYGPRle+5Qsc=
-github.com/osmosis-labs/osmosis/v15 v15.0.0 h1:lwAha4K+6fg/XFnqwAKd7iqZ1NfvCGiOgkyZ/PWUro4=
-github.com/osmosis-labs/osmosis/v15 v15.0.0/go.mod h1:oG4n68FcMHsy5+MkjmwDa8iQNoJekYqn7bkzsc/85jY=
+github.com/osmosis-labs/osmosis/v15 v15.0.1-0.20230326031107-def42ffdc18d h1:ZbIs4RZ5ysngkVd1sImGKfyPeTrPrl+kynyd+ku5TnU=
+github.com/osmosis-labs/osmosis/v15 v15.0.1-0.20230326031107-def42ffdc18d/go.mod h1:FsAkzL1lWr3CibJRsIRdFxoXq0Hud/lBHYVknKYdnjo=
 github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.6 h1:PjfLL5rwwm44CeLnNQssrFgmj4BdeIS5DriKYhGz7IM=
 github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.6/go.mod h1:2Aqs0L6JnMfo+P+It8q7hJsP1YB+Is5DJc4nRSiBF/U=
 github.com/osmosis-labs/wasmd v0.30.0-osmo-v15 h1:vjbzq9ta/KmQwUM6PcRmrBJuDwILgLbV4POypC1Uhn8=
@@ -882,8 +883,8 @@ golang.org/x/exp v0.0.0-20200119233911-0405dc783f0a/go.mod h1:2RIsYlXP63K8oxa1u0
 golang.org/x/exp v0.0.0-20200207192155-f17229e696bd/go.mod h1:J/WKrq2StrnmMY6+EHIKF9dgMWnmCNThgcyBT1FY9mM=
 golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6/go.mod h1:3jZMyOhIsHpP37uCMkUooju7aAi5cS1Q23tOzKc+0MU=
 golang.org/x/exp v0.0.0-20200331195152-e8c3332aa8e5/go.mod h1:4M0jN8W1tt0AVLNr8HDosyJCDCDuyL9N9+3m7wDWgKw=
-golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e h1:+WEEuIdZHnUeJJmEUjyYC2gfUMj69yZXw17EnHg/otA=
-golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e/go.mod h1:Kr81I6Kryrl9sr8s2FK3vxD90NdsKWRuOIl2O4CvYbA=
+golang.org/x/exp v0.0.0-20221212164502-fae10dda9338 h1:OvjRkcNHnf6/W5FZXSxODbxwD+X7fspczG7Jn/xQVD4=
+golang.org/x/exp v0.0.0-20221212164502-fae10dda9338/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
 golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
 golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=

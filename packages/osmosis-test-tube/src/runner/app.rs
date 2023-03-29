@@ -1,4 +1,5 @@
 use cosmrs::Any;
+
 use cosmwasm_std::Coin;
 
 use prost::Message;
@@ -9,6 +10,7 @@ use test_tube::runner::Runner;
 use test_tube::BaseApp;
 
 const FEE_DENOM: &str = "uosmo";
+const OSMO_ADDRESS_PREFIX: &str = "osmo";
 const CHAIN_ID: &str = "osmosis-1";
 const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
 
@@ -26,8 +28,28 @@ impl Default for OsmosisTestApp {
 impl OsmosisTestApp {
     pub fn new() -> Self {
         Self {
-            inner: BaseApp::new(FEE_DENOM, CHAIN_ID, DEFAULT_GAS_ADJUSTMENT),
+            inner: BaseApp::new(
+                FEE_DENOM,
+                CHAIN_ID,
+                OSMO_ADDRESS_PREFIX,
+                DEFAULT_GAS_ADJUSTMENT,
+            ),
         }
+    }
+
+    /// Get the current block time
+    pub fn get_block_time_nanos(&self) -> i64 {
+        self.inner.get_block_time_nanos()
+    }
+
+    /// Get the first validator address
+    pub fn get_first_validator_address(&self) -> RunnerResult<String> {
+        self.inner.get_first_validator_address()
+    }
+
+    /// Increase the time of the blockchain by the given number of seconds.
+    pub fn increase_time(&self, seconds: u64) {
+        self.inner.increase_time(seconds)
     }
 
     /// Initialize account with initial balance of any coins.
@@ -87,6 +109,17 @@ impl<'a> Runner<'a> for OsmosisTestApp {
         R: ::prost::Message + Default,
     {
         self.inner.query(path, q)
+    }
+
+    fn execute_multiple_raw<R>(
+        &self,
+        msgs: Vec<cosmrs::Any>,
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<R>
+    where
+        R: prost::Message + Default,
+    {
+        self.inner.execute_multiple_raw(msgs, signer)
     }
 }
 

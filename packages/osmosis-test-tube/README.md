@@ -293,8 +293,8 @@ Here is how you can redefine `Gamm` module wrapper as a library user:
 ```rust
 use osmosis_std::types::osmosis::gamm::{
     poolmodels::balancer::v1beta1::{MsgCreateBalancerPool, MsgCreateBalancerPoolResponse},
-    v1beta1::{QueryPoolRequest, QueryPoolResponse},
 };
+use osmosis_std::types::osmosis::poolmanager::{PoolRequest, PoolResponse};
 
 use osmosis_test_tube::{fn_execute, fn_query};
 use osmosis_test_tube::{Module, Runner};
@@ -325,7 +325,7 @@ where
     // macro for creating query function
     fn_query! {
         // (pub)? <fn_name> [<method_path>]: <request_type> => <response_type>
-        pub query_pool ["/osmosis.gamm.v1beta1.Query/Pool"]: QueryPoolRequest => QueryPoolResponse
+        pub query_pool ["/osmosis.poolmanager.v1beta1.Query/Pool"]: PoolRequest => PoolResponse
     }
 }
 ```

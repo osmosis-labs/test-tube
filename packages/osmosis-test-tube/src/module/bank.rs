@@ -1,8 +1,8 @@
 use cosmrs::proto::cosmos::bank::v1beta1::{
-    QueryAllBalancesRequest, QueryAllBalancesResponse, QueryBalanceRequest, QueryBalanceResponse,
-    QueryTotalSupplyRequest, QueryTotalSupplyResponse,
+    MsgSend, MsgSendResponse, QueryAllBalancesRequest, QueryAllBalancesResponse,
+    QueryBalanceRequest, QueryBalanceResponse, QueryTotalSupplyRequest, QueryTotalSupplyResponse,
 };
-use test_tube::fn_query;
+use test_tube::{fn_execute, fn_query};
 
 use test_tube::module::Module;
 use test_tube::runner::Runner;
@@ -21,6 +21,10 @@ impl<'a, R> Bank<'a, R>
 where
     R: Runner<'a>,
 {
+    fn_execute! {
+        pub send: MsgSend["/cosmos.bank.v1beta1.MsgSend"] => MsgSendResponse
+    }
+
     fn_query! {
         pub query_balance ["/cosmos.bank.v1beta1.Query/Balance"]: QueryBalanceRequest => QueryBalanceResponse
     }

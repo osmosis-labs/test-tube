@@ -59,7 +59,7 @@ func InitTestEnv() uint64 {
 
 	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Now().UTC()})
 
-	env.BeginNewBlock(false)
+	env.BeginNewBlock(false, 5)
 
 	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
 	env.App.EndBlock(reqEndBlock)
@@ -97,10 +97,18 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 	return C.CString(base64Priv)
 }
 
+//export IncreaseTime
+func IncreaseTime(envId uint64, seconds uint64) {
+	env := loadEnv(envId)
+	env.BeginNewBlock(false, seconds)
+	envRegister.Store(envId, env)
+	EndBlock(envId)
+}
+
 //export BeginBlock
 func BeginBlock(envId uint64) {
 	env := loadEnv(envId)
-	env.BeginNewBlock(false)
+	env.BeginNewBlock(false, 5)
 	envRegister.Store(envId, env)
 }
 
@@ -166,6 +174,12 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 	}
 
 	return encodeBytesResultBytes(res.Value)
+}
+
+//export GetBlockTime
+func GetBlockTime(envId uint64) int64 {
+	env := loadEnv(envId)
+	return env.Ctx.BlockTime().UnixNano()
 }
 
 //export AccountSequence
@@ -293,6 +307,12 @@ func GetParamSet(envId uint64, subspaceName, typeUrl string) *C.char {
 	}
 
 	return encodeBytesResultBytes(bz)
+}
+
+//export GetValidatorAddress
+func GetValidatorAddress(envId uint64, n int32) *C.char {
+	env := loadEnv(envId)
+	return C.CString(env.GetValidatorAddresses()[n])
 }
 
 // ========= utils =========

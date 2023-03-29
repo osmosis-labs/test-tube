@@ -75,9 +75,11 @@ func SetupOsmosisApp() *app.OsmosisApp {
 		app.GetWasmEnabledProposals(),
 		app.EmptyWasmOpts,
 	)
-	genesisState := app.NewDefaultGenesisState()
 
 	encCfg := app.MakeEncodingConfig()
+	genesisState := app.NewDefaultGenesisState()
+
+	// Set up Wasm genesis state
 	wasmGen := wasm.GenesisState{
 		Params: wasmtypes.Params{
 			// Allow store code without gov
@@ -85,8 +87,38 @@ func SetupOsmosisApp() *app.OsmosisApp {
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
 		},
 	}
-
 	genesisState[wasm.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&wasmGen)
+
+	// Set up staking genesis state
+	stakingParams := stakingtypes.DefaultParams()
+	stakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
+	stakingGen := stakingtypes.GenesisState{
+		Params: stakingParams,
+	}
+	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
+
+	// Set up incentive genesis state
+	lockableDurations := []time.Duration{
+		time.Hour * 24,      // 1 day
+		time.Hour * 24 * 7,  // 7 day
+		time.Hour * 24 * 14, // 14 days
+	}
+	incentivesParams := incentivetypes.DefaultParams()
+	incentivesParams.DistrEpochIdentifier = "day"
+	incentivesGen := incentivetypes.GenesisState{
+		Params:            incentivesParams,
+		LockableDurations: lockableDurations,
+	}
+	genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
+
+	// Set up pool incentives genesis state
+	poolIncentivesParams := poolincentivetypes.DefaultParams()
+	poolIncentivesParams.MintedDenom = "uosmo"
+	poolIncentivesGen := poolincentivetypes.GenesisState{
+		Params:            poolIncentivesParams,
+		LockableDurations: lockableDurations,
+	}
+	genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 
@@ -112,7 +144,7 @@ func SetupOsmosisApp() *app.OsmosisApp {
 	return appInstance
 }
 
-func (env *TestEnv) BeginNewBlock(executeNextEpoch bool) {
+func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uint64) {
 	var valAddr []byte
 
 	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
@@ -127,11 +159,21 @@ func (env *TestEnv) BeginNewBlock(executeNextEpoch bool) {
 		valAddr = valAddr2.Bytes()
 	}
 
-	env.beginNewBlockWithProposer(executeNextEpoch, valAddr)
+	env.beginNewBlockWithProposer(executeNextEpoch, valAddr, timeIncreaseSeconds)
+}
+
+func (env *TestEnv) GetValidatorAddresses() []string {
+	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
+	var addresses []string
+	for _, validator := range validators {
+		addresses = append(addresses, validator.OperatorAddress)
+	}
+
+	return addresses
 }
 
 // beginNewBlockWithProposer begins a new block with a proposer.
-func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress) {
+func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress, timeIncreaseSeconds uint64) {
 	validator, found := env.App.StakingKeeper.GetValidator(env.Ctx, proposer)
 
 	if !found {
@@ -145,7 +187,7 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 
 	epochIdentifier := env.App.SuperfluidKeeper.GetEpochIdentifier(env.Ctx)
 	epoch := env.App.EpochsKeeper.GetEpochInfo(env.Ctx, epochIdentifier)
-	newBlockTime := env.Ctx.BlockTime().Add(5 * time.Second)
+	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
 	if executeNextEpoch {
 		newBlockTime = env.Ctx.BlockTime().Add(epoch.Duration).Add(time.Second)
 	}

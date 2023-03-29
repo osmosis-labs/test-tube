@@ -1,5 +1,8 @@
-use cosmwasm_std::Coin;
+use cosmwasm_std::{Coin, StdResult};
 use osmosis_std::types::osmosis::gamm;
+use osmosis_std::types::osmosis::gamm::poolmodels::stableswap::v1beta1::{
+    MsgCreateStableswapPool, MsgCreateStableswapPoolResponse,
+};
 use osmosis_std::types::osmosis::gamm::{
     poolmodels::balancer::v1beta1::{MsgCreateBalancerPool, MsgCreateBalancerPoolResponse},
     v1beta1::{PoolAsset, PoolParams},
@@ -32,6 +35,10 @@ where
 {
     fn_execute! {
         pub create_balancer_pool: MsgCreateBalancerPool => MsgCreateBalancerPoolResponse
+    }
+
+    fn_execute! {
+        pub create_stable_swap_pool: MsgCreateStableswapPool => MsgCreateStableswapPoolResponse
     }
 
     fn_query! {
@@ -72,5 +79,17 @@ where
         gamm::v1beta1::Pool::decode(res.pool.unwrap().value.as_slice())
             .map_err(DecodeError::ProtoDecodeError)
             .map_err(RunnerError::DecodeError)
+    }
+
+    pub fn query_pool_reserves(&self, pool_id: u64) -> RunnerResult<Vec<Coin>> {
+        let pool = self.query_pool(pool_id)?;
+
+        let result = pool
+            .pool_assets
+            .into_iter()
+            .filter_map(|asset| asset.token.map(|coin| coin.try_into()))
+            .collect::<StdResult<Vec<Coin>>>()
+            .map_err(|e| RunnerError::GenericError(e.to_string()))?;
+        Ok(result)
     }
 }

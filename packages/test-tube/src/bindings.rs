@@ -221,6 +221,9 @@ extern "C" {
     pub fn EndBlock(envId: GoUint64);
 }
 extern "C" {
+    pub fn IncreaseTime(envId: GoUint64, seconds: GoInt64);
+}
+extern "C" {
     pub fn Execute(envId: GoUint64, base64ReqDeliverTx: GoString) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
@@ -252,4 +255,10 @@ extern "C" {
         subspaceName: GoString,
         typeUrl: GoString,
     ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn GetValidatorAddress(envId: GoUint64, n: GoInt32) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn GetBlockTime(envId: GoUint64) -> GoInt64;
 }

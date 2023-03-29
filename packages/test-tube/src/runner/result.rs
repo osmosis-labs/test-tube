@@ -1,6 +1,7 @@
 use crate::runner::error::{DecodeError, RunnerError};
 use cosmrs::proto::cosmos::base::abci::v1beta1::{GasInfo, TxMsgData};
 use cosmrs::proto::tendermint::abci::ResponseDeliverTx;
+use cosmrs::rpc::endpoint::broadcast::tx_commit::Response as TxCommitResponse;
 use cosmwasm_std::{Attribute, Event};
 use prost::Message;
 use std::ffi::CString;
@@ -64,6 +65,58 @@ where
             gas_info: GasInfo {
                 gas_wanted: res.gas_wanted as u64,
                 gas_used: res.gas_used as u64,
+            },
+        })
+    }
+}
+
+impl<R> TryFrom<TxCommitResponse> for ExecuteResponse<R>
+where
+    R: prost::Message + Default,
+{
+    type Error = RunnerError;
+
+    fn try_from(tx_commit_response: TxCommitResponse) -> Result<Self, Self::Error> {
+        let res = tx_commit_response.deliver_tx;
+        let tx_msg_data = TxMsgData::decode(res.data.clone().unwrap().value().as_slice())
+            .map_err(DecodeError::ProtoDecodeError)?;
+
+        let msg_data = &tx_msg_data
+            .data
+            // since this tx contains exactly 1 msg
+            // when getting none of them, that means error
+            .get(0)
+            .ok_or(RunnerError::ExecuteError {
+                msg: res.log.to_string(),
+            })?;
+
+        let data = R::decode(msg_data.data.as_slice()).map_err(DecodeError::ProtoDecodeError)?;
+
+        let events = res
+            .events
+            .into_iter()
+            .map(|e| -> Result<Event, DecodeError> {
+                Ok(Event::new(e.type_str).add_attributes(
+                    e.attributes
+                        .into_iter()
+                        .map(|a| -> Result<Attribute, Utf8Error> {
+                            Ok(Attribute {
+                                key: a.key.to_string(),
+                                value: a.value.to_string(),
+                            })
+                        })
+                        .collect::<Result<Vec<Attribute>, Utf8Error>>()?,
+                ))
+            })
+            .collect::<Result<Vec<Event>, DecodeError>>()?;
+
+        Ok(Self {
+            data,
+            raw_data: res.data.unwrap().value().clone(),
+            events,
+            gas_info: GasInfo {
+                gas_wanted: res.gas_wanted.value() as u64,
+                gas_used: res.gas_used.value() as u64,
             },
         })
     }

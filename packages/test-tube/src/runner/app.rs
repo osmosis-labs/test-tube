@@ -9,8 +9,8 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetParamSet, InitAccount,
-    InitTestEnv, Query, SetParamSet, Simulate,
+    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockTime, GetParamSet,
+    GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -25,18 +25,50 @@ pub struct BaseApp {
     id: u64,
     fee_denom: String,
     chain_id: String,
+    address_prefix: String,
     default_gas_adjustment: f64,
 }
 
 impl BaseApp {
-    pub fn new(fee_denom: &str, chain_id: &str, default_gas_adjustment: f64) -> Self {
+    pub fn new(
+        fee_denom: &str,
+        chain_id: &str,
+        address_prefix: &str,
+        default_gas_adjustment: f64,
+    ) -> Self {
         let id = unsafe { InitTestEnv() };
         BaseApp {
             id,
             fee_denom: fee_denom.to_string(),
             chain_id: chain_id.to_string(),
+            address_prefix: address_prefix.to_string(),
             default_gas_adjustment,
         }
+    }
+
+    /// Increase the time of the blockchain by the given number of seconds.
+    pub fn increase_time(&self, seconds: u64) {
+        unsafe {
+            IncreaseTime(self.id, seconds.try_into().unwrap());
+        }
+    }
+
+    /// Get the first validator address
+    pub fn get_first_validator_address(&self) -> RunnerResult<String> {
+        let addr = unsafe {
+            let addr = GetValidatorAddress(self.id, 0);
+            CString::from_raw(addr)
+        }
+        .to_str()
+        .map_err(DecodeError::Utf8Error)?
+        .to_string();
+
+        Ok(addr)
+    }
+
+    /// Get the current block time
+    pub fn get_block_time_nanos(&self) -> i64 {
+        unsafe { GetBlockTime(self.id) }
     }
 
     /// Initialize account with initial balance of any coins.
@@ -67,6 +99,7 @@ impl BaseApp {
         })?;
 
         Ok(SigningAccount::new(
+            self.address_prefix.clone(),
             signging_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),
@@ -242,21 +275,32 @@ impl<'a> Runner<'a> for BaseApp {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
+        let msgs = msgs
+            .iter()
+            .map(|(msg, type_url)| {
+                let mut buf = Vec::new();
+                M::encode(msg, &mut buf).map_err(EncodeError::ProtoEncodeError)?;
+
+                Ok(cosmrs::Any {
+                    type_url: type_url.to_string(),
+                    value: buf,
+                })
+            })
+            .collect::<Result<Vec<cosmrs::Any>, RunnerError>>()?;
+
+        self.execute_multiple_raw(msgs, signer)
+    }
+
+    fn execute_multiple_raw<R>(
+        &self,
+        msgs: Vec<cosmrs::Any>,
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<R>
+    where
+        R: ::prost::Message + Default,
+    {
         unsafe {
             self.run_block(|| {
-                let msgs = msgs
-                    .iter()
-                    .map(|(msg, type_url)| {
-                        let mut buf = Vec::new();
-                        M::encode(msg, &mut buf).map_err(EncodeError::ProtoEncodeError)?;
-
-                        Ok(cosmrs::Any {
-                            type_url: type_url.to_string(),
-                            value: buf,
-                        })
-                    })
-                    .collect::<Result<Vec<cosmrs::Any>, RunnerError>>()?;
-
                 let fee = match &signer.fee_setting() {
                     FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
                     FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
@@ -268,7 +312,7 @@ impl<'a> Runner<'a> for BaseApp {
                     ),
                 };
 
-                let tx = self.create_signed_tx(msgs, signer, fee)?;
+                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
 
                 let mut buf = Vec::new();
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)

@@ -5,6 +5,7 @@ pub mod bindings;
 mod conversions;
 pub mod module;
 pub mod runner;
+pub mod utils;
 
 pub use cosmrs;
 pub use osmosis_std;

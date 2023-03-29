@@ -87,6 +87,7 @@ where
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::Coin;
+    use osmosis_std::types::cosmos::base::v1beta1;
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{MsgCreateDenom, MsgMint};
     use test_tube::Account;
 
@@ -161,8 +162,8 @@ mod tests {
             .create_concentrated_pool(
                 MsgCreateConcentratedPool {
                     sender: signer.address(),
-                    denom0,
-                    denom1,
+                    denom0: denom0.clone(),
+                    denom1: denom1.clone(),
                     tick_spacing: 1,
                     precision_factor_at_price_one: "-10".to_string(),
                     swap_fee: "0".to_string(),
@@ -174,5 +175,32 @@ mod tests {
             .pool_id;
 
         assert_eq!(pool_id, 1);
+
+        let position_id = concentrated_liquidity
+            .create_position(
+                MsgCreatePosition {
+                    pool_id,
+                    sender: signer.address(),
+                    lower_tick: 0,
+                    upper_tick: 100,
+                    token_desired0: Some(v1beta1::Coin {
+                        denom: denom0,
+                        amount: "10000000000".to_string(),
+                    }),
+                    token_desired1: Some(v1beta1::Coin {
+                        denom: denom1,
+                        amount: "10000000000".to_string(),
+                    }),
+                    token_min_amount0: "1".to_string(),
+                    token_min_amount1: "1".to_string(),
+                    freeze_duration: None,
+                },
+                &signer,
+            )
+            .unwrap()
+            .data
+            .position_id;
+
+        assert_eq!(position_id, 1);
     }
 }

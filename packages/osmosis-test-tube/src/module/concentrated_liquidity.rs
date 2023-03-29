@@ -161,8 +161,8 @@ mod tests {
             .create_concentrated_pool(
                 MsgCreateConcentratedPool {
                     sender: signer.address(),
-                    denom0: denom0.clone(),
-                    denom1: denom1.clone(),
+                    denom0,
+                    denom1,
                     tick_spacing: 1,
                     precision_factor_at_price_one: "-10".to_string(),
                     swap_fee: "0".to_string(),
@@ -172,5 +172,7 @@ mod tests {
             .unwrap()
             .data
             .pool_id;
+
+        assert_eq!(pool_id, 1);
     }
 }

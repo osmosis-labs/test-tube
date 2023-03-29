@@ -8,9 +8,8 @@ mod tests {
     use osmosis_std::types::osmosis::gamm::poolmodels::balancer::v1beta1::{
         MsgCreateBalancerPool, MsgCreateBalancerPoolResponse,
     };
-    use osmosis_std::types::osmosis::gamm::v1beta1::{
-        PoolParams, QueryPoolRequest, QueryPoolResponse,
-    };
+    use osmosis_std::types::osmosis::gamm::v1beta1::PoolParams;
+    use osmosis_std::types::osmosis::poolmanager::v1beta1::{PoolRequest, PoolResponse};
     use test_tube::account::Account;
     use test_tube::runner::error::RunnerError::{ExecuteError, QueryError};
     use test_tube::runner::result::RawResult;
@@ -49,16 +48,17 @@ mod tests {
     #[test]
     fn test_query_error_failed_query() {
         let app = OsmosisTestApp::default();
-        let res = app.query::<QueryPoolRequest, QueryPoolResponse>(
-            "/osmosis.gamm.v1beta1.Query/Pool",
-            &QueryPoolRequest { pool_id: 1 },
+        let res = app.query::<PoolRequest, PoolResponse>(
+            "/osmosis.poolmanager.v1beta1.Query/Pool",
+            &PoolRequest { pool_id: 1 },
         );
 
         let err = res.unwrap_err();
         assert_eq!(
             err,
             QueryError {
-                msg: "rpc error: code = Internal desc = pool with ID 1 does not exist".to_string()
+                msg: "rpc error: code = Internal desc = failed to find route for pool id (1)"
+                    .to_string()
             }
         );
     }

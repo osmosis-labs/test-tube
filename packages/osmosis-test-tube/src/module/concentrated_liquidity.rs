@@ -1,11 +1,14 @@
+use osmosis_std::types::osmosis::concentratedliquidity::poolmodel::concentrated::v1beta1::{
+    MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse,
+};
 use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::{
     ClaimableSpreadRewardsRequest, ClaimableSpreadRewardsResponse, LiquidityNetInDirectionRequest,
     LiquidityNetInDirectionResponse, LiquidityPerTickRangeRequest, LiquidityPerTickRangeResponse,
     MsgCollectIncentives, MsgCollectIncentivesResponse, MsgCollectSpreadRewards,
-    MsgCollectSpreadRewardsResponse, MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse,
-    MsgCreatePosition, MsgCreatePositionResponse, MsgWithdrawPosition, MsgWithdrawPositionResponse,
-    ParamsRequest, ParamsResponse, PoolsRequest, PoolsResponse, PositionByIdRequest,
-    PositionByIdResponse, UserPositionsRequest, UserPositionsResponse,
+    MsgCollectSpreadRewardsResponse, MsgCreatePosition, MsgCreatePositionResponse,
+    MsgWithdrawPosition, MsgWithdrawPositionResponse, ParamsRequest, ParamsResponse, PoolsRequest,
+    PoolsResponse, PositionByIdRequest, PositionByIdResponse, UserPositionsRequest,
+    UserPositionsResponse,
 };
 use test_tube::{fn_execute, fn_query, Module};
 
@@ -155,6 +158,7 @@ mod tests {
                 }],
             },
             signer.address(),
+            false,
             &signer,
         )
         .unwrap();

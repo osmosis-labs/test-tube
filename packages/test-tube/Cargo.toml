@@ -12,6 +12,7 @@ version = "0.1.2"
 base64 = "0.13.0"
 cosmrs = {version = "0.9.0", features = ["cosmwasm", "rpc"]}
 cosmwasm-std = { version = "1.1.2", features = ["stargate"] }
+osmosis-std = "0.16.0"
 prost = "0.11.0"
 serde = "1.0.144"
 serde_json = "1.0.85"

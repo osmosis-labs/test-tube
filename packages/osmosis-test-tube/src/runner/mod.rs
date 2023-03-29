@@ -7,12 +7,12 @@ mod tests {
     use crate::{Bank, Wasm};
 
     use super::app::OsmosisTestApp;
-    use cosmrs::proto::cosmos::bank::v1beta1::{MsgSendResponse, QueryBalanceRequest};
-    use cosmrs::proto::cosmwasm::wasm::v1::{
-        MsgExecuteContractResponse, MsgInstantiateContractResponse,
-    };
     use cosmwasm_std::{to_binary, BankMsg, Coin, CosmosMsg, Empty, Event, WasmMsg};
     use cw1_whitelist::msg::{ExecuteMsg, InstantiateMsg};
+    use osmosis_std::types::cosmos::bank::v1beta1::{MsgSendResponse, QueryBalanceRequest};
+    use osmosis_std::types::cosmwasm::wasm::v1::{
+        MsgExecuteContractResponse, MsgInstantiateContractResponse,
+    };
     use osmosis_std::types::osmosis::gamm::poolmodels::balancer::v1beta1::{
         MsgCreateBalancerPool, MsgCreateBalancerPoolResponse,
     };
@@ -33,7 +33,7 @@ mod tests {
         id: u64,
     }
 
-    #[derive(::prost::Message)]
+    #[derive(::prost::Message, serde::Deserialize)]
     struct AdhocRandomQueryResponse {
         #[prost(string, tag = "1")]
         msg: String,

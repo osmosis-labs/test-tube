@@ -59,8 +59,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use cosmrs::proto::cosmos::bank::v1beta1::QueryBalanceRequest;
     use cosmwasm_std::Coin;
+    use osmosis_std::types::cosmos::bank::v1beta1::QueryBalanceRequest;
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
         MsgBurn, MsgChangeAdmin, MsgCreateDenom, MsgMint, QueryDenomAuthorityMetadataRequest,
         QueryDenomsFromCreatorRequest,

@@ -1,4 +1,5 @@
 use cosmwasm_std::CosmosMsg;
+use serde::de::DeserializeOwned;
 
 use crate::account::SigningAccount;
 use crate::runner::result::{RunnerExecuteResult, RunnerResult};
@@ -67,5 +68,5 @@ pub trait Runner<'a> {
     fn query<Q, R>(&self, path: &str, query: &Q) -> RunnerResult<R>
     where
         Q: ::prost::Message,
-        R: ::prost::Message + Default;
+        R: ::prost::Message + DeserializeOwned + Default;
 }

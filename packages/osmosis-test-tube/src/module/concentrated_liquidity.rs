@@ -3,7 +3,7 @@ use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::{
     MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse, MsgCreateIncentive,
     MsgCreateIncentiveResponse, MsgCreatePosition, MsgCreatePositionResponse, MsgWithdrawPosition,
     MsgWithdrawPositionResponse, QueryClaimableFeesRequest, QueryClaimableFeesResponse,
-    QueryLiquidityDepthsForRangeRequest, QueryLiquidityDepthsForRangeResponse, QueryParamsRequest,
+    QueryLiquidityNetInDirectionRequest, QueryLiquidityNetInDirectionResponse, QueryParamsRequest,
     QueryParamsResponse, QueryPoolsRequest, QueryPoolsResponse, QueryPositionByIdRequest,
     QueryPositionByIdResponse, QueryTotalLiquidityForRangeRequest,
     QueryTotalLiquidityForRangeResponse, QueryUserPositionsRequest, QueryUserPositionsResponse,
@@ -58,9 +58,9 @@ where
         pub query_params ["/osmosis.concentratedliquidity.v1beta1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
 
-    // query liquidity_depths_for_range
+    // query liquidity_net_in_direction
     fn_query! {
-        pub query_liquidity_depths_for_range ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityDepthsForRange"]: QueryLiquidityDepthsForRangeRequest => QueryLiquidityDepthsForRangeResponse
+        pub query_liquidity_depths_for_range ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityNetInDirection"]: QueryLiquidityNetInDirectionRequest => QueryLiquidityNetInDirectionResponse
     }
 
     // query user_positions
@@ -165,8 +165,8 @@ mod tests {
                     denom0: denom0.clone(),
                     denom1: denom1.clone(),
                     tick_spacing: 1,
-                    precision_factor_at_price_one: "-10".to_string(),
                     swap_fee: "0".to_string(),
+                    exponent_at_price_one: "-10".to_string(),
                 },
                 &signer,
             )
@@ -191,9 +191,8 @@ mod tests {
                         denom: denom1,
                         amount: "10000000000".to_string(),
                     }),
-                    token_min_amount0: "1".to_string(),
-                    token_min_amount1: "1".to_string(),
-                    freeze_duration: None,
+                    token_min_amount0: "0".to_string(),
+                    token_min_amount1: "0".to_string(),
                 },
                 &signer,
             )

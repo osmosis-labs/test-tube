@@ -76,7 +76,7 @@ impl OsmosisTestApp {
     }
 
     /// Set parameter set for a given subspace.
-    pub fn set_param_set(&self, subspace: &str, pset: Any) -> RunnerResult<()> {
+    pub fn set_param_set(&self, subspace: &str, pset: impl Into<Any>) -> RunnerResult<()> {
         self.inner.set_param_set(subspace, pset)
     }
 
@@ -125,6 +125,7 @@ impl<'a> Runner<'a> for OsmosisTestApp {
 
 #[cfg(test)]
 mod tests {
+    use osmosis_std::types::cosmos::bank::v1beta1::QueryAllBalancesResponse;
     use prost::Message;
     use std::option::Option::None;
 
@@ -132,7 +133,10 @@ mod tests {
     use cosmrs::Any;
     use cosmwasm_std::{attr, coins, Coin};
 
-    use osmosis_std::types::osmosis::lockup;
+    use osmosis_std::types::osmosis::gamm::v1beta1::QueryTotalSharesRequest;
+    use osmosis_std::types::osmosis::lockup::{
+        self, MsgForceUnlock, MsgForceUnlockResponse, MsgLockTokens, MsgLockTokensResponse,
+    };
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
         MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
     };
@@ -143,8 +147,8 @@ mod tests {
     use crate::Bank;
     use test_tube::account::{Account, FeeSetting};
     use test_tube::module::Module;
-    use test_tube::runner::*;
     use test_tube::ExecuteResponse;
+    use test_tube::{runner::*, RunnerError};
 
     #[test]
     fn test_init_accounts() {
@@ -409,7 +413,7 @@ mod tests {
 
         app.set_param_set(
             "lockup",
-            Any {
+            osmosis_std::shim::Any {
                 type_url: lockup::Params::TYPE_URL.to_string(),
                 value: in_pset.encode_to_vec(),
             },
@@ -421,5 +425,98 @@ mod tests {
             .unwrap();
 
         assert_eq!(in_pset, out_pset);
+    }
+
+    #[test]
+    fn test_set_param_set() {
+        let app = OsmosisTestApp::default();
+
+        let balances = vec![
+            Coin::new(1_000_000_000_000, "uosmo"),
+            Coin::new(1_000_000_000_000, "uion"),
+        ];
+        let whitelisted_user = app.init_account(&balances).unwrap();
+
+        // create pool
+        let gamm = Gamm::new(&app);
+        let pool_id = gamm
+            .create_basic_pool(
+                &[Coin::new(1_000_000, "uosmo"), Coin::new(1_000_000, "uion")],
+                &whitelisted_user,
+            )
+            .unwrap()
+            .data
+            .pool_id;
+
+        // query shares
+        let shares = app
+            .query::<QueryTotalSharesRequest, QueryAllBalancesResponse>(
+                "/osmosis.gamm.v1beta1.Query/TotalShares",
+                &QueryTotalSharesRequest { pool_id },
+            )
+            .unwrap()
+            .balances;
+
+        // lock all shares
+        app.execute::<_, MsgLockTokensResponse>(
+            MsgLockTokens {
+                owner: whitelisted_user.address(),
+                duration: Some(osmosis_std::shim::Duration {
+                    seconds: 1000000000,
+                    nanos: 0,
+                }),
+                coins: shares,
+            },
+            MsgLockTokens::TYPE_URL,
+            &whitelisted_user,
+        )
+        .unwrap();
+
+        // try to unlock
+        let err = app
+            .execute::<_, MsgForceUnlockResponse>(
+                MsgForceUnlock {
+                    owner: whitelisted_user.address(),
+                    id: pool_id,
+                    coins: vec![], // all
+                },
+                MsgForceUnlock::TYPE_URL,
+                &whitelisted_user,
+            )
+            .unwrap_err();
+
+        // should fail
+        assert_eq!(err,  RunnerError::ExecuteError {
+            msg: format!("failed to execute message; message index: 0: Sender ({}) not allowed to force unlock: unauthorized", whitelisted_user.address()),
+        });
+
+        // add whitelisted user to param set
+        app.set_param_set(
+            "lockup",
+            Any {
+                type_url: lockup::Params::TYPE_URL.to_string(),
+                value: lockup::Params {
+                    force_unlock_allowed_addresses: vec![whitelisted_user.address()],
+                }
+                .encode_to_vec(),
+            },
+        )
+        .unwrap();
+
+        // unlock again after adding whitelisted user
+        let res = app
+            .execute::<_, MsgForceUnlockResponse>(
+                MsgForceUnlock {
+                    owner: whitelisted_user.address(),
+                    id: pool_id,
+                    coins: vec![], // all
+                },
+                MsgForceUnlock::TYPE_URL,
+                &whitelisted_user,
+            )
+            .unwrap();
+
+        // should succeed
+        assert!(res.data.success);
     }
 }

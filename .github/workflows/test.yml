@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+  # manual trigger
+  workflow_dispatch:
+    name: test
+
 env:
   CARGO_TERM_COLOR: always
 

@@ -55,7 +55,7 @@ where
                 sender: signer.address(),
                 pool_params: Some(PoolParams {
                     swap_fee: "10000000000000000".to_string(),
-                    exit_fee: "10000000000000000".to_string(),
+                    exit_fee: "0".to_string(),
                     smooth_weight_change_params: None,
                 }),
                 pool_assets: initial_liquidity

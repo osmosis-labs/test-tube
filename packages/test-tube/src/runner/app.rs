@@ -231,10 +231,10 @@ impl BaseApp {
     }
 
     /// Set parameter set for a given subspace.
-    pub fn set_param_set(&self, subspace: &str, pset: Any) -> RunnerResult<()> {
+    pub fn set_param_set(&self, subspace: &str, pset: impl Into<Any>) -> RunnerResult<()> {
         unsafe {
             BeginBlock(self.id);
-            let pset = Message::encode_to_vec(&pset);
+            let pset = Message::encode_to_vec(&pset.into());
             let pset = base64::encode(&pset);
             redefine_as_go_string!(pset);
             redefine_as_go_string!(subspace);

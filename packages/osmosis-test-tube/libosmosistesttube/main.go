@@ -57,7 +57,7 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Now().UTC()})
+	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
 
 	env.BeginNewBlock(false, 5)
 
@@ -180,6 +180,12 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 func GetBlockTime(envId uint64) int64 {
 	env := loadEnv(envId)
 	return env.Ctx.BlockTime().UnixNano()
+}
+
+//export GetBlockHeight
+func GetBlockHeight(envId uint64) int64 {
+	env := loadEnv(envId)
+	return env.Ctx.BlockHeight()
 }
 
 //export AccountSequence

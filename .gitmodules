@@ -1,5 +1,9 @@
+
 [submodule "packages/osmosis-test-tube/osmosis"]
 	path = packages/osmosis-test-tube/osmosis
 	url = https://github.com/osmosis-labs/osmosis.git
 	branch = main
-
+[submodule "packages/injective-test-tube/injective"]
+	path = packages/injective-test-tube/injective
+	url = https://github.com/InjectiveLabs/injective-core.git
+	branch = dev

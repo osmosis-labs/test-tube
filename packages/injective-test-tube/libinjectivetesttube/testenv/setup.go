@@ -73,7 +73,8 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		map[int64]bool{},
 		app.DefaultNodeHome,
 		5,
-		DebugAppOptions{},
+		app.MakeEncodingConfig(),
+		simapp.EmptyAppOptions{},
 	)
 
 	encCfg := app.MakeEncodingConfig()
@@ -185,14 +186,14 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 
 	valAddr := valConsAddr.Bytes()
 
-	epochIdentifier := env.App.SuperfluidKeeper.GetEpochIdentifier(env.Ctx)
-	epoch := env.App.EpochsKeeper.GetEpochInfo(env.Ctx, epochIdentifier)
+	// epochIdentifier := env.App.SuperfluidKeeper.GetEpochIdentifier(env.Ctx)
+	// epoch := env.App.EpochsKeeper.GetEpochInfo(env.Ctx, epochIdentifier)
 	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
-	if executeNextEpoch {
-		newBlockTime = env.Ctx.BlockTime().Add(epoch.Duration).Add(time.Second)
-	}
+	// if executeNextEpoch {
+	// 	newBlockTime = env.Ctx.BlockTime().Add(epoch.Duration).Add(time.Second)
+	// }
 
-	header := tmtypes.Header{ChainID: "osmosis-1", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
+	header := tmtypes.Header{ChainID: "injective-777", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
 	newCtx := env.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(env.Ctx.BlockHeight() + 1)
 	env.Ctx = newCtx
 	lastCommitInfo := abci.LastCommitInfo{
@@ -216,7 +217,7 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	err := simapp.FundAccount(env.App.BankKeeper, env.Ctx, sdk.AccAddress(valPub.Address()), selfBond)
 	requireNoErr(err)
 
-	stakingHandler := staking.NewHandler(*env.App.StakingKeeper)
+	stakingHandler := staking.NewHandler(env.App.StakingKeeper)
 	stakingCoin := sdk.NewCoin(bondDenom, selfBond[0].Amount)
 	ZeroCommission := stakingtypes.NewCommissionRates(sdk.ZeroDec(), sdk.ZeroDec(), sdk.ZeroDec())
 	msg, err := stakingtypes.NewMsgCreateValidator(valAddr, valPub, stakingCoin, stakingtypes.Description{}, ZeroCommission, sdk.OneInt())

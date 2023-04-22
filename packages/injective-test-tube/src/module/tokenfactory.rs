@@ -66,12 +66,12 @@ mod tests {
         QueryDenomsFromCreatorRequest,
     };
 
-    use crate::{Account, Bank, OsmosisTestApp, TokenFactory};
+    use crate::{Account, Bank, InjectiveTestApp, TokenFactory};
     use test_tube::Module;
 
     #[test]
     fn tokenfactory_integration() {
-        let app = OsmosisTestApp::new();
+        let app = InjectiveTestApp::new();
         let signer = app
             .init_account(&[Coin::new(2_000_000_000, "uosmo")])
             .unwrap();

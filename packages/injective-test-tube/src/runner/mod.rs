@@ -6,7 +6,7 @@ mod tests {
 
     use crate::{Bank, Wasm};
 
-    use super::app::OsmosisTestApp;
+    use super::app::InjectiveTestApp;
     use cosmrs::proto::cosmos::bank::v1beta1::{MsgSendResponse, QueryBalanceRequest};
     use cosmrs::proto::cosmwasm::wasm::v1::{
         MsgExecuteContractResponse, MsgInstantiateContractResponse,
@@ -41,9 +41,9 @@ mod tests {
 
     #[test]
     fn test_query_error_no_route() {
-        let app = OsmosisTestApp::default();
+        let app = InjectiveTestApp::default();
         let res = app.query::<AdhocRandomQueryRequest, AdhocRandomQueryResponse>(
-            "/osmosis.random.v1beta1.Query/AdhocRandom",
+            "/injective.random.v1beta1.Query/AdhocRandom",
             &AdhocRandomQueryRequest { id: 1 },
         );
 
@@ -51,55 +51,9 @@ mod tests {
         assert_eq!(
             err,
             QueryError {
-                msg: "No route found for `/osmosis.random.v1beta1.Query/AdhocRandom`".to_string()
+                msg: "No route found for `/injective.random.v1beta1.Query/AdhocRandom`".to_string()
             }
         );
-    }
-
-    #[test]
-    fn test_query_error_failed_query() {
-        let app = OsmosisTestApp::default();
-        let res = app.query::<PoolRequest, PoolResponse>(
-            "/osmosis.poolmanager.v1beta1.Query/Pool",
-            &PoolRequest { pool_id: 1 },
-        );
-
-        let err = res.unwrap_err();
-        assert_eq!(
-            err,
-            QueryError {
-                msg: "rpc error: code = Internal desc = failed to find route for pool id (1)"
-                    .to_string()
-            }
-        );
-    }
-
-    #[test]
-    fn test_execute_error() {
-        let app = OsmosisTestApp::default();
-        let signer = app.init_account(&[]).unwrap();
-        let res: RunnerExecuteResult<MsgCreateBalancerPoolResponse> = app.execute(
-            MsgCreateBalancerPool {
-                sender: signer.address(),
-                pool_params: Some(PoolParams {
-                    swap_fee: "10000000000000000".to_string(),
-                    exit_fee: "10000000000000000".to_string(),
-                    smooth_weight_change_params: None,
-                }),
-                pool_assets: vec![],
-                future_pool_governor: "".to_string(),
-            },
-            MsgCreateBalancerPool::TYPE_URL,
-            &signer,
-        );
-
-        let err = res.unwrap_err();
-        assert_eq!(
-            err,
-            ExecuteError {
-                msg: String::from("pool should have at least 2 assets, as they must be swapping between at least two assets")
-            }
-        )
     }
 
     #[test]
@@ -121,16 +75,14 @@ mod tests {
 
     #[test]
     fn test_execute_cosmos_msgs() {
-        let app = OsmosisTestApp::new();
-        let signer = app
-            .init_account(&[Coin::new(10000000000, "uosmo")])
-            .unwrap();
+        let app = InjectiveTestApp::new();
+        let signer = app.init_account(&[Coin::new(10000000000, "inj")]).unwrap();
 
         let bank = Bank::new(&app);
 
         // BankMsg::Send
         let to = app.init_account(&[]).unwrap();
-        let coin = Coin::new(100, "uosmo");
+        let coin = Coin::new(100, "inj");
         let send_msg = CosmosMsg::Bank(BankMsg::Send {
             to_address: to.address(),
             amount: vec![coin],
@@ -140,12 +92,12 @@ mod tests {
         let balance = bank
             .query_balance(&QueryBalanceRequest {
                 address: to.address(),
-                denom: "uosmo".to_string(),
+                denom: "inj".to_string(),
             })
             .unwrap()
             .balance;
         assert_eq!(balance.clone().unwrap().amount, "100".to_string());
-        assert_eq!(balance.unwrap().denom, "uosmo".to_string());
+        assert_eq!(balance.unwrap().denom, "inj".to_string());
 
         // WasmMsg, first upload a contract
         let wasm = Wasm::new(&app);

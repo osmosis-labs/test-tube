@@ -30,8 +30,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// cosmwasm-testing
-	"github.com/osmosis-labs/test-tube/osmosis-test-tube/result"
-	"github.com/osmosis-labs/test-tube/osmosis-test-tube/testenv"
+	"github.com/maxrobot/test-tube/injective-test-tube/result"
+	"github.com/maxrobot/test-tube/injective-test-tube/testenv"
 	// osmosis
 	// lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
 )
@@ -57,7 +57,7 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
+	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "injective-777", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
 
 	env.BeginNewBlock(false, 5)
 

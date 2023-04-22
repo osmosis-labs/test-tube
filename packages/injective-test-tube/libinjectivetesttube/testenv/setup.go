@@ -28,26 +28,28 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
+	// injective
+	"github.com/InjectiveLabs/injective-core/injective-chain/app"
 	// osmosis
-	"github.com/osmosis-labs/osmosis/v15/app"
-	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
-	ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
-	incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
-	lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
-	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
-	poolincentivetypes "github.com/osmosis-labs/osmosis/v15/x/pool-incentives/types"
-	poolmanagertypes "github.com/osmosis-labs/osmosis/v15/x/poolmanager/types"
-	protorevtypes "github.com/osmosis-labs/osmosis/v15/x/protorev/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-	twaptypes "github.com/osmosis-labs/osmosis/v15/x/twap/types"
+	// "github.com/osmosis-labs/osmosis/v15/app"
+	// concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
+	// gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
+	// ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
+	// incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
+	// lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
+	// minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
+	// poolincentivetypes "github.com/osmosis-labs/osmosis/v15/x/pool-incentives/types"
+	// poolmanagertypes "github.com/osmosis-labs/osmosis/v15/x/poolmanager/types"
+	// protorevtypes "github.com/osmosis-labs/osmosis/v15/x/protorev/types"
+	// superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
+	// tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
+	// twaptypes "github.com/osmosis-labs/osmosis/v15/x/twap/types"
 )
 
 type TestEnv struct {
-	App                *app.OsmosisApp
-	Ctx                sdk.Context
-	ParamTypesRegistry ParamTypeRegistry
+	App *app.InjectiveApp
+	Ctx sdk.Context
+	// ParamTypesRegistry ParamTypeRegistry
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -61,9 +63,9 @@ func (ao DebugAppOptions) Get(o string) interface{} {
 	return nil
 }
 
-func SetupOsmosisApp() *app.OsmosisApp {
+func SetupInjectiveApp() *app.InjectiveApp {
 	db := dbm.NewMemDB()
-	appInstance := app.NewOsmosisApp(
+	appInstance := app.NewInjectiveApp(
 		log.NewNopLogger(),
 		db,
 		nil,
@@ -72,8 +74,6 @@ func SetupOsmosisApp() *app.OsmosisApp {
 		app.DefaultNodeHome,
 		5,
 		DebugAppOptions{},
-		app.GetWasmEnabledProposals(),
-		app.EmptyWasmOpts,
 	)
 
 	encCfg := app.MakeEncodingConfig()
@@ -97,28 +97,28 @@ func SetupOsmosisApp() *app.OsmosisApp {
 	}
 	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
 
-	// Set up incentive genesis state
-	lockableDurations := []time.Duration{
-		time.Hour * 24,      // 1 day
-		time.Hour * 24 * 7,  // 7 day
-		time.Hour * 24 * 14, // 14 days
-	}
-	incentivesParams := incentivetypes.DefaultParams()
-	incentivesParams.DistrEpochIdentifier = "day"
-	incentivesGen := incentivetypes.GenesisState{
-		Params:            incentivesParams,
-		LockableDurations: lockableDurations,
-	}
-	genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
+	// // Set up incentive genesis state
+	// lockableDurations := []time.Duration{
+	// 	time.Hour * 24,      // 1 day
+	// 	time.Hour * 24 * 7,  // 7 day
+	// 	time.Hour * 24 * 14, // 14 days
+	// }
+	// incentivesParams := incentivetypes.DefaultParams()
+	// incentivesParams.DistrEpochIdentifier = "day"
+	// incentivesGen := incentivetypes.GenesisState{
+	// 	Params:            incentivesParams,
+	// 	LockableDurations: lockableDurations,
+	// }
+	// genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
 
-	// Set up pool incentives genesis state
-	poolIncentivesParams := poolincentivetypes.DefaultParams()
-	poolIncentivesParams.MintedDenom = "uosmo"
-	poolIncentivesGen := poolincentivetypes.GenesisState{
-		Params:            poolIncentivesParams,
-		LockableDurations: lockableDurations,
-	}
-	genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
+	// // Set up pool incentives genesis state
+	// poolIncentivesParams := poolincentivetypes.DefaultParams()
+	// poolIncentivesParams.MintedDenom = "uosmo"
+	// poolIncentivesGen := poolincentivetypes.GenesisState{
+	// 	Params:            poolIncentivesParams,
+	// 	LockableDurations: lockableDurations,
+	// }
+	// genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 
@@ -249,22 +249,22 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	return valAddr
 }
 
-func (env *TestEnv) SetupParamTypes() {
-	pReg := env.ParamTypesRegistry
+// func (env *TestEnv) SetupParamTypes() {
+// 	pReg := env.ParamTypesRegistry
 
-	pReg.RegisterParamSet(&lockuptypes.Params{})
-	pReg.RegisterParamSet(&incentivetypes.Params{})
-	pReg.RegisterParamSet(&minttypes.Params{})
-	pReg.RegisterParamSet(&twaptypes.Params{})
-	pReg.RegisterParamSet(&gammtypes.Params{})
-	pReg.RegisterParamSet(&ibcratelimittypes.Params{})
-	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
-	pReg.RegisterParamSet(&superfluidtypes.Params{})
-	pReg.RegisterParamSet(&poolincentivetypes.Params{})
-	pReg.RegisterParamSet(&protorevtypes.Params{})
-	pReg.RegisterParamSet(&poolmanagertypes.Params{})
-	pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
-}
+// 	// pReg.RegisterParamSet(&lockuptypes.Params{})
+// 	// pReg.RegisterParamSet(&incentivetypes.Params{})
+// 	// pReg.RegisterParamSet(&minttypes.Params{})
+// 	// pReg.RegisterParamSet(&twaptypes.Params{})
+// 	// pReg.RegisterParamSet(&gammtypes.Params{})
+// 	// pReg.RegisterParamSet(&ibcratelimittypes.Params{})
+// 	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
+// 	// pReg.RegisterParamSet(&superfluidtypes.Params{})
+// 	// pReg.RegisterParamSet(&poolincentivetypes.Params{})
+// 	// pReg.RegisterParamSet(&protorevtypes.Params{})
+// 	// pReg.RegisterParamSet(&poolmanagertypes.Params{})
+// 	// pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
+// }
 
 func requireNoErr(err error) {
 	if err != nil {

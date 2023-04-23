@@ -20,7 +20,6 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	// cosmos sdk
-
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -30,10 +29,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// cosmwasm-testing
-	"github.com/osmosis-labs/test-tube/osmosis-test-tube/result"
-	"github.com/osmosis-labs/test-tube/osmosis-test-tube/testenv"
-	// osmosis
-	// lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
+	"github.com/maxrobot/test-tube/injective-test-tube/result"
+	"github.com/maxrobot/test-tube/injective-test-tube/testenv"
 )
 
 var (
@@ -49,7 +46,7 @@ func InitTestEnv() uint64 {
 	defer mu.Unlock()
 
 	env := new(testenv.TestEnv)
-	env.App = testenv.SetupOsmosisApp()
+	env.App = testenv.SetupInjectiveApp()
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
 
 	env.SetupParamTypes()
@@ -57,7 +54,7 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
+	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "injective-777", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
 
 	env.BeginNewBlock(false, 5)
 
@@ -70,7 +67,7 @@ func InitTestEnv() uint64 {
 
 	envRegister.Store(id, *env)
 
-	return id
+	return 1
 }
 
 //export InitAccount
@@ -198,7 +195,7 @@ func AccountSequence(envId uint64, bech32Address string) uint64 {
 		panic(err)
 	}
 
-	seq, err := env.App.AppKeepers.AccountKeeper.GetSequence(env.Ctx, addr)
+	seq, err := env.App.AccountKeeper.GetSequence(env.Ctx, addr)
 
 	if err != nil {
 		panic(err)
@@ -217,7 +214,7 @@ func AccountNumber(envId uint64, bech32Address string) uint64 {
 		panic(err)
 	}
 
-	acc := env.App.AppKeepers.AccountKeeper.GetAccount(env.Ctx, addr)
+	acc := env.App.AccountKeeper.GetAccount(env.Ctx, addr)
 	return acc.GetAccountNumber()
 }
 

@@ -9,8 +9,9 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockTime, GetParamSet,
-    GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
+    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockHeight, GetBlockTime,
+    GetParamSet, GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet,
+    Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -71,6 +72,10 @@ impl BaseApp {
         unsafe { GetBlockTime(self.id) }
     }
 
+    /// Get the current block height
+    pub fn get_block_height(&self) -> i64 {
+        unsafe { GetBlockHeight(self.id) }
+    }
     /// Initialize account with initial balance of any coins.
     /// This function mints new coins and send to newly created account
     pub fn init_account(&self, coins: &[Coin]) -> RunnerResult<SigningAccount> {

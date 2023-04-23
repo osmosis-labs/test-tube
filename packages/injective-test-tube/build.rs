@@ -4,6 +4,7 @@ use std::{env, path::PathBuf, process::Command};
 
 fn main() {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    // let manifest_dir = PathBuf::from("./Cargo.toml");
     let prebuilt_lib_dir = manifest_dir.join("libinjectivetesttube").join("artifacts");
 
     let lib_name = "injectivetesttube";
@@ -98,6 +99,8 @@ fn build_libinjectivetesttube(out: PathBuf) {
         return;
     }
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    // let manifest_dir = PathBuf::from("./Cargo.toml");
+
     let exit_status = Command::new("go")
         .current_dir(manifest_dir.join("libinjectivetesttube"))
         .arg("build")

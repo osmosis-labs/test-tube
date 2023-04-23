@@ -30,6 +30,7 @@ import (
 
 	// injective
 	"github.com/InjectiveLabs/injective-core/injective-chain/app"
+	tokenfactorytypes "github.com/InjectiveLabs/injective-core/injective-chain/modules/tokenfactory/types"
 	// osmosis
 	// "github.com/osmosis-labs/osmosis/v15/app"
 	// concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
@@ -47,9 +48,9 @@ import (
 )
 
 type TestEnv struct {
-	App *app.InjectiveApp
-	Ctx sdk.Context
-	// ParamTypesRegistry ParamTypeRegistry
+	App                *app.InjectiveApp
+	Ctx                sdk.Context
+	ParamTypesRegistry ParamTypeRegistry
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -219,11 +220,16 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 
 	stakingHandler := staking.NewHandler(env.App.StakingKeeper)
 	stakingCoin := sdk.NewCoin(bondDenom, selfBond[0].Amount)
-	ZeroCommission := stakingtypes.NewCommissionRates(sdk.ZeroDec(), sdk.ZeroDec(), sdk.ZeroDec())
+	ZeroCommission := stakingtypes.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec())
 	msg, err := stakingtypes.NewMsgCreateValidator(valAddr, valPub, stakingCoin, stakingtypes.Description{}, ZeroCommission, sdk.OneInt())
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
 	requireNoErr(err)
+	fmt.Println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 	res, err := stakingHandler(env.Ctx, msg)
 	requireNoErr(err)
+	fmt.Println("======================================")
+
 	requireNoNil("staking handler", res)
 
 	env.App.BankKeeper.SendCoinsFromModuleToModule(env.Ctx, stakingtypes.NotBondedPoolName, stakingtypes.BondedPoolName, sdk.NewCoins(stakingCoin))
@@ -250,22 +256,22 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	return valAddr
 }
 
-// func (env *TestEnv) SetupParamTypes() {
-// 	pReg := env.ParamTypesRegistry
+func (env *TestEnv) SetupParamTypes() {
+	pReg := env.ParamTypesRegistry
 
-// 	// pReg.RegisterParamSet(&lockuptypes.Params{})
-// 	// pReg.RegisterParamSet(&incentivetypes.Params{})
-// 	// pReg.RegisterParamSet(&minttypes.Params{})
-// 	// pReg.RegisterParamSet(&twaptypes.Params{})
-// 	// pReg.RegisterParamSet(&gammtypes.Params{})
-// 	// pReg.RegisterParamSet(&ibcratelimittypes.Params{})
-// 	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
-// 	// pReg.RegisterParamSet(&superfluidtypes.Params{})
-// 	// pReg.RegisterParamSet(&poolincentivetypes.Params{})
-// 	// pReg.RegisterParamSet(&protorevtypes.Params{})
-// 	// pReg.RegisterParamSet(&poolmanagertypes.Params{})
-// 	// pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
-// }
+	// pReg.RegisterParamSet(&lockuptypes.Params{})
+	// pReg.RegisterParamSet(&incentivetypes.Params{})
+	// pReg.RegisterParamSet(&minttypes.Params{})
+	// pReg.RegisterParamSet(&twaptypes.Params{})
+	// pReg.RegisterParamSet(&gammtypes.Params{})
+	// pReg.RegisterParamSet(&ibcratelimittypes.Params{})
+	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
+	// pReg.RegisterParamSet(&superfluidtypes.Params{})
+	// pReg.RegisterParamSet(&poolincentivetypes.Params{})
+	// pReg.RegisterParamSet(&protorevtypes.Params{})
+	// pReg.RegisterParamSet(&poolmanagertypes.Params{})
+	// pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
+}
 
 func requireNoErr(err error) {
 	if err != nil {

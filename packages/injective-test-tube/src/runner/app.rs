@@ -135,7 +135,7 @@ impl<'a> Runner<'a> for InjectiveTestApp {
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::coins;
+    use cosmwasm_std::{attr, coins};
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
         MsgCreateDenom, MsgCreateDenomResponse,
     };
@@ -191,69 +191,69 @@ mod tests {
         assert_eq!(app.get_block_height(), 2i64);
     }
 
-    // #[test]
-    // fn test_execute() {
-    //     let app = InjectiveTestApp::default();
+    #[test]
+    fn test_execute() {
+        let app = InjectiveTestApp::default();
 
-    //     let acc = app.init_account(&coins(100_000_000_000, "inj")).unwrap();
-    //     let addr = acc.address();
+        let acc = app.init_account(&coins(100_000_000_000, "inj")).unwrap();
+        let addr = acc.address();
 
-    //     let msg = MsgCreateDenom {
-    //         sender: acc.address(),
-    //         subdenom: "newdenom".to_string(),
-    //     };
+        let msg = MsgCreateDenom {
+            sender: acc.address(),
+            subdenom: "newdenom".to_string(),
+        };
 
-    //     println!("===========================");
+        println!("===========================");
 
-    //     let res: ExecuteResponse<MsgCreateDenomResponse> =
-    //         app.execute(msg, MsgCreateDenom::TYPE_URL, &acc).unwrap();
+        let res: ExecuteResponse<MsgCreateDenomResponse> =
+            app.execute(msg, MsgCreateDenom::TYPE_URL, &acc).unwrap();
 
-    //     // let create_denom_attrs = &res
-    //     //     .events
-    //     //     .iter()
-    //     //     .find(|e| e.ty == "create_denom")
-    //     //     .unwrap()
-    //     //     .attributes;
+        let create_denom_attrs = &res
+            .events
+            .iter()
+            .find(|e| e.ty == "create_denom")
+            .unwrap()
+            .attributes;
 
-    //     // assert_eq!(
-    //     //     create_denom_attrs,
-    //     //     &vec![
-    //     //         attr("creator", &addr),
-    //     //         attr(
-    //     //             "new_token_denom",
-    //     //             format!("factory/{}/{}", &addr, "newdenom")
-    //     //         )
-    //     //     ]
-    //     // );
+        assert_eq!(
+            create_denom_attrs,
+            &vec![
+                attr("creator", &addr),
+                attr(
+                    "new_token_denom",
+                    format!("factory/{}/{}", &addr, "newdenom")
+                )
+            ]
+        );
 
-    //     // // execute on more time to excercise account sequence
-    //     // let msg = MsgCreateDenom {
-    //     //     sender: acc.address(),
-    //     //     subdenom: "newerdenom".to_string(),
-    //     // };
+        // execute on more time to excercise account sequence
+        let msg = MsgCreateDenom {
+            sender: acc.address(),
+            subdenom: "newerdenom".to_string(),
+        };
 
-    //     // let res: ExecuteResponse<MsgCreateDenomResponse> =
-    //     //     app.execute(msg, MsgCreateDenom::TYPE_URL, &acc).unwrap();
+        let res: ExecuteResponse<MsgCreateDenomResponse> =
+            app.execute(msg, MsgCreateDenom::TYPE_URL, &acc).unwrap();
 
-    //     // let create_denom_attrs = &res
-    //     //     .events
-    //     //     .iter()
-    //     //     .find(|e| e.ty == "create_denom")
-    //     //     .unwrap()
-    //     //     .attributes;
+        let create_denom_attrs = &res
+            .events
+            .iter()
+            .find(|e| e.ty == "create_denom")
+            .unwrap()
+            .attributes;
 
-    //     // // TODO: make assertion based on string representation
-    //     // assert_eq!(
-    //     //     create_denom_attrs,
-    //     //     &vec![
-    //     //         attr("creator", &addr),
-    //     //         attr(
-    //     //             "new_token_denom",
-    //     //             format!("factory/{}/{}", &addr, "newerdenom")
-    //     //         )
-    //     //     ]
-    //     // );
-    // }
+        // TODO: make assertion based on string representation
+        assert_eq!(
+            create_denom_attrs,
+            &vec![
+                attr("creator", &addr),
+                attr(
+                    "new_token_denom",
+                    format!("factory/{}/{}", &addr, "newerdenom")
+                )
+            ]
+        );
+    }
 
     // #[test]
     // fn test_query() {

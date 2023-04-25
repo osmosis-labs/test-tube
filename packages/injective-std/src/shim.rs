@@ -286,11 +286,7 @@ macro_rules! expand_as_any {
 // And deserialization works by trying to iteratively match the structure.
 expand_as_any!(
     // pools have distincted structure
-    crate::types::injective::gamm::v1beta1::Pool,
-    crate::types::injective::gamm::poolmodels::stableswap::v1beta1::Pool,
-    // balancer pool param has more fields
-    crate::types::injective::gamm::v1beta1::PoolParams,
-    crate::types::injective::gamm::poolmodels::stableswap::v1beta1::PoolParams,
+    crate::types::injective::tokenfactory::v1beta1::MsgMint,
 );
 
 macro_rules! impl_prost_types_exact_conversion {

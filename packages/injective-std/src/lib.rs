@@ -4,7 +4,7 @@
 #![warn(trivial_casts, trivial_numeric_casts, unused_import_braces)]
 
 /// The version (commit hash) of the Cosmos SDK used when generating this library.
-pub const OSMOSISD_VERSION: &str = include_str!("types/OSMOSIS_COMMIT");
+pub const INJECTIVE_VERSION: &str = include_str!("types/INJECTIVE_COMMIT");
 
 mod serde;
 pub mod shim;

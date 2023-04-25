@@ -31,20 +31,6 @@ import (
 	// injective
 	"github.com/InjectiveLabs/injective-core/injective-chain/app"
 	tokenfactorytypes "github.com/InjectiveLabs/injective-core/injective-chain/modules/tokenfactory/types"
-	// osmosis
-	// "github.com/osmosis-labs/osmosis/v15/app"
-	// concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
-	// gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
-	// ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
-	// incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
-	// lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
-	// minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
-	// poolincentivetypes "github.com/osmosis-labs/osmosis/v15/x/pool-incentives/types"
-	// poolmanagertypes "github.com/osmosis-labs/osmosis/v15/x/poolmanager/types"
-	// protorevtypes "github.com/osmosis-labs/osmosis/v15/x/protorev/types"
-	// superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
-	// tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-	// twaptypes "github.com/osmosis-labs/osmosis/v15/x/twap/types"
 )
 
 type TestEnv struct {
@@ -99,29 +85,6 @@ func SetupInjectiveApp() *app.InjectiveApp {
 	}
 	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
 
-	// // Set up incentive genesis state
-	// lockableDurations := []time.Duration{
-	// 	time.Hour * 24,      // 1 day
-	// 	time.Hour * 24 * 7,  // 7 day
-	// 	time.Hour * 24 * 14, // 14 days
-	// }
-	// incentivesParams := incentivetypes.DefaultParams()
-	// incentivesParams.DistrEpochIdentifier = "day"
-	// incentivesGen := incentivetypes.GenesisState{
-	// 	Params:            incentivesParams,
-	// 	LockableDurations: lockableDurations,
-	// }
-	// genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
-
-	// // Set up pool incentives genesis state
-	// poolIncentivesParams := poolincentivetypes.DefaultParams()
-	// poolIncentivesParams.MintedDenom = "uosmo"
-	// poolIncentivesGen := poolincentivetypes.GenesisState{
-	// 	Params:            poolIncentivesParams,
-	// 	LockableDurations: lockableDurations,
-	// }
-	// genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
-
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 
 	requireNoErr(err)
@@ -132,8 +95,8 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		MaxGas:   -1,
 	}
 
-	// replace sdk.DefaultDenom with "uosmo", a bit of a hack, needs improvement
-	stateBytes = []byte(strings.Replace(string(stateBytes), "\"stake\"", "\"uosmo\"", -1))
+	// replace sdk.DefaultDenom with "inj", a bit of a hack, needs improvement
+	stateBytes = []byte(strings.Replace(string(stateBytes), "\"stake\"", "\"inj\"", -1))
 
 	appInstance.InitChain(
 		abci.RequestInitChain{
@@ -187,12 +150,7 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 
 	valAddr := valConsAddr.Bytes()
 
-	// epochIdentifier := env.App.SuperfluidKeeper.GetEpochIdentifier(env.Ctx)
-	// epoch := env.App.EpochsKeeper.GetEpochInfo(env.Ctx, epochIdentifier)
 	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
-	// if executeNextEpoch {
-	// 	newBlockTime = env.Ctx.BlockTime().Add(epoch.Duration).Add(time.Second)
-	// }
 
 	header := tmtypes.Header{ChainID: "injective-777", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
 	newCtx := env.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(env.Ctx.BlockHeight() + 1)
@@ -220,7 +178,7 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 
 	stakingHandler := staking.NewHandler(env.App.StakingKeeper)
 	stakingCoin := sdk.NewCoin(bondDenom, selfBond[0].Amount)
-	Commission := stakingtypes.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec())
+	Commission := stakingtypes.NewCommissionRates(sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2))
 	msg, err := stakingtypes.NewMsgCreateValidator(valAddr, valPub, stakingCoin, stakingtypes.Description{}, Commission, sdk.OneInt())
 	requireNoErr(err)
 
@@ -256,18 +214,7 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 func (env *TestEnv) SetupParamTypes() {
 	pReg := env.ParamTypesRegistry
 
-	// pReg.RegisterParamSet(&lockuptypes.Params{})
-	// pReg.RegisterParamSet(&incentivetypes.Params{})
-	// pReg.RegisterParamSet(&minttypes.Params{})
-	// pReg.RegisterParamSet(&twaptypes.Params{})
-	// pReg.RegisterParamSet(&gammtypes.Params{})
-	// pReg.RegisterParamSet(&ibcratelimittypes.Params{})
 	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
-	// pReg.RegisterParamSet(&superfluidtypes.Params{})
-	// pReg.RegisterParamSet(&poolincentivetypes.Params{})
-	// pReg.RegisterParamSet(&protorevtypes.Params{})
-	// pReg.RegisterParamSet(&poolmanagertypes.Params{})
-	// pReg.RegisterParamSet(&concentrateliquiditytypes.Params{})
 }
 
 func requireNoErr(err error) {

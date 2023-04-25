@@ -6,7 +6,6 @@ macro_rules! fn_execute {
             msg: $req,
             signer: &$crate::SigningAccount,
         ) -> $crate::RunnerExecuteResult<$res> {
-            println!("1");
             self.runner.execute(msg, $type_url, signer)
         }
     };
@@ -16,8 +15,6 @@ macro_rules! fn_execute {
             msg: $req,
             signer: &$crate::SigningAccount,
         ) -> $crate::RunnerExecuteResult<$res> {
-            println!("2");
-
             self.runner.execute(msg, <$req>::TYPE_URL, signer)
         }
     };
@@ -27,8 +24,6 @@ macro_rules! fn_execute {
             msg: $req,
             signer: &$crate::SigningAccount,
         ) -> $crate::RunnerExecuteResult<$res> {
-            println!("3");
-
             self.runner.execute(msg, $type_url, signer)
         }
     };
@@ -38,8 +33,6 @@ macro_rules! fn_execute {
             msg: $req,
             signer: &$crate::SigningAccount,
         ) -> $crate::RunnerExecuteResult<$res> {
-            println!("4");
-
             self.runner.execute(msg, <$req>::TYPE_URL, signer)
         }
     };

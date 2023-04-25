@@ -137,7 +137,7 @@ impl<'a> Runner<'a> for InjectiveTestApp {
 mod tests {
     use cosmrs::proto::cosmos::bank::v1beta1::QueryAllBalancesRequest;
     use cosmwasm_std::{coins, Coin};
-    use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
+    use injective_std::types::injective::tokenfactory::v1beta1::{
         MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
     };
 

@@ -1,6 +1,7 @@
-use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
-    MsgChangeAdmin, MsgChangeAdminResponse, MsgCreateDenom, MsgCreateDenomResponse,
-    MsgSetDenomMetadata, MsgSetDenomMetadataResponse, QueryDenomAuthorityMetadataRequest,
+use injective_std::types::injective::tokenfactory::v1beta1::{
+    MsgBurn, MsgBurnResponse, MsgChangeAdmin, MsgChangeAdminResponse, MsgCreateDenom,
+    MsgCreateDenomResponse, MsgMint, MsgMintResponse, MsgSetDenomMetadata,
+    MsgSetDenomMetadataResponse, QueryDenomAuthorityMetadataRequest,
     QueryDenomAuthorityMetadataResponse, QueryDenomsFromCreatorRequest,
     QueryDenomsFromCreatorResponse, QueryParamsRequest, QueryParamsResponse,
 };
@@ -29,13 +30,13 @@ where
 
     // NOTE: mint and burn are not supported until we create rust types for injective with the relevant proto as they
     // diverge from the Osmosis types, and the msg.rs in injective-cosmwasm does not suffice
-    // fn_execute! {
-    //     pub mint: MsgMint ["/injective.tokenfactory.v1beta1.MsgMint"]  => MsgMintResponse
-    // }
+    fn_execute! {
+        pub mint: MsgMint ["/injective.tokenfactory.v1beta1.MsgMint"]  => MsgMintResponse
+    }
 
-    // fn_execute! {
-    //     pub burn: MsgBurn ["/injective.tokenfactory.v1beta1.MsgBurn"] => MsgBurnResponse
-    // }
+    fn_execute! {
+        pub burn: MsgBurn ["/injective.tokenfactory.v1beta1.MsgBurn"] => MsgBurnResponse
+    }
 
     fn_execute! {
         pub change_admin: MsgChangeAdmin ["/injective.tokenfactory.v1beta1.MsgChangeAdmin"]  => MsgChangeAdminResponse
@@ -60,13 +61,13 @@ where
 
 #[cfg(test)]
 mod tests {
+    use cosmrs::proto::cosmos::bank::v1beta1::QueryBalanceRequest;
     use cosmwasm_std::Coin;
-    use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
-        MsgChangeAdmin, MsgCreateDenom, QueryDenomAuthorityMetadataRequest,
-        QueryDenomsFromCreatorRequest,
+    use injective_std::types::injective::tokenfactory::v1beta1::{
+        MsgBurn, MsgCreateDenom, MsgMint, QueryDenomsFromCreatorRequest,
     };
 
-    use crate::{Account, InjectiveTestApp, TokenFactory};
+    use crate::{Account, Bank, InjectiveTestApp, TokenFactory};
     use test_tube::Module;
 
     #[test]
@@ -76,6 +77,7 @@ mod tests {
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, "inj")])
             .unwrap();
         let tokenfactory = TokenFactory::new(&app);
+        let bank = Bank::new(&app);
 
         // create denom
         let subdenom = "udenom";
@@ -104,43 +106,52 @@ mod tests {
         assert_eq!(denoms, [denom.clone()]);
 
         // TODO mint new denom
+        // mint
+        let coin: injective_std::types::cosmos::base::v1beta1::Coin =
+            Coin::new(1000000000, denom.clone()).into();
+        tokenfactory
+            .mint(
+                MsgMint {
+                    sender: signer.address(),
+                    amount: Some(coin.clone()),
+                },
+                &signer,
+            )
+            .unwrap();
 
-        // let balance = bank
-        //     .query_balance(&QueryBalanceRequest {
-        //         address: signer.address(),
-        //         denom: denom.clone(),
-        //     })
-        //     .unwrap()
-        //     .balance
-        //     .unwrap();
+        let balance = bank
+            .query_balance(&QueryBalanceRequest {
+                address: signer.address(),
+                denom: denom.clone(),
+            })
+            .unwrap()
+            .balance
+            .unwrap();
 
-        // assert_eq!(coin.amount, balance.amount);
-        // assert_eq!(coin.denom, balance.denom);
+        assert_eq!(coin.amount, balance.amount);
+        assert_eq!(coin.denom, balance.denom);
 
-        // TODO burn
-        // tokenfactory
-        //     .burn(
-        //         MsgBurn {
-        //             sender: signer.address(),
-        //             amount: Some(coin.clone()),
-        //             burn_from_address: signer.address(),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap();
+        // burn
+        tokenfactory
+            .burn(
+                MsgBurn {
+                    sender: signer.address(),
+                    amount: Some(coin.clone()),
+                },
+                &signer,
+            )
+            .unwrap();
 
-        // let balance = bank
-        //     .query_balance(&QueryBalanceRequest {
-        //         address: signer.address(),
-        //         denom: denom.clone(),
-        //     })
-        //     .unwrap()
-        //     .balance
-        //     .unwrap();
+        let balance = bank
+            .query_balance(&QueryBalanceRequest {
+                address: signer.address(),
+                denom: denom.clone(),
+            })
+            .unwrap()
+            .balance
+            .unwrap();
 
-        // assert_eq!("0", balance.amount);
-        // assert_eq!(coin.denom, balance.denom);
-
-        // TODO: change admin
+        assert_eq!("0", balance.amount);
+        assert_eq!(coin.denom, balance.denom);
     }
 }

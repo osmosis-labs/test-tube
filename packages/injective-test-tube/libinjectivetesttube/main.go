@@ -39,6 +39,11 @@ var (
 	mu          sync.Mutex
 )
 
+// Timestamp found in cosmwasm::std::testing::mock_env used so that tests can
+// always use the same timestamp
+const MOCK_ENV_SECONDS = 1_571_797_419
+const MOCK_ENV_NANOS = 879_305_533
+
 //export InitTestEnv
 func InitTestEnv() uint64 {
 	// Temp fix for concurrency issue
@@ -54,7 +59,7 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "injective-777", Time: time.Unix(1_571_797_419, 879_305_533).UTC()})
+	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "injective-777", Time: time.Unix(MOCK_ENV_SECONDS, MOCK_ENV_NANOS).UTC()})
 
 	env.BeginNewBlock(false, 5)
 
@@ -67,7 +72,7 @@ func InitTestEnv() uint64 {
 
 	envRegister.Store(id, *env)
 
-	return 1
+	return id
 }
 
 //export InitAccount

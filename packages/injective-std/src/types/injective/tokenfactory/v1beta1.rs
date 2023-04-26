@@ -13,9 +13,9 @@ use osmosis_std_derive::CosmwasmExt;
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.DenomAuthorityMetadata")]
 pub struct DenomAuthorityMetadata {
-    /// Can be empty for no admin, or a valid osmosis address
+    /// Can be empty for no admin, or a valid address
     #[prost(string, tag = "1")]
     pub admin: ::prost::alloc::string::String,
 }
@@ -31,7 +31,7 @@ pub struct DenomAuthorityMetadata {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.Params")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.Params")]
 pub struct Params {
     #[prost(message, repeated, tag = "1")]
     pub denom_creation_fee:
@@ -49,7 +49,7 @@ pub struct Params {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.GenesisState")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.GenesisState")]
 pub struct GenesisState {
     /// params defines the paramaters of the module.
     #[prost(message, optional, tag = "1")]
@@ -71,7 +71,7 @@ pub struct GenesisState {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.GenesisDenom")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.GenesisDenom")]
 pub struct GenesisDenom {
     #[prost(string, tag = "1")]
     pub denom: ::prost::alloc::string::String,
@@ -90,9 +90,9 @@ pub struct GenesisDenom {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryParamsRequest")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryParamsRequest")]
 #[proto_query(
-    path = "/osmosis.tokenfactory.v1beta1.Query/Params",
+    path = "/injective.tokenfactory.v1beta1.Query/Params",
     response_type = QueryParamsResponse
 )]
 pub struct QueryParamsRequest {}
@@ -108,7 +108,7 @@ pub struct QueryParamsRequest {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryParamsResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryParamsResponse")]
 pub struct QueryParamsResponse {
     /// params defines the parameters of the module.
     #[prost(message, optional, tag = "1")]
@@ -127,9 +127,9 @@ pub struct QueryParamsResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest")]
 #[proto_query(
-    path = "/osmosis.tokenfactory.v1beta1.Query/DenomAuthorityMetadata",
+    path = "/injective.tokenfactory.v1beta1.Query/DenomAuthorityMetadata",
     response_type = QueryDenomAuthorityMetadataResponse
 )]
 pub struct QueryDenomAuthorityMetadataRequest {
@@ -149,7 +149,7 @@ pub struct QueryDenomAuthorityMetadataRequest {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse")]
 pub struct QueryDenomAuthorityMetadataResponse {
     #[prost(message, optional, tag = "1")]
     pub authority_metadata: ::core::option::Option<DenomAuthorityMetadata>,
@@ -167,9 +167,9 @@ pub struct QueryDenomAuthorityMetadataResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest")]
 #[proto_query(
-    path = "/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator",
+    path = "/injective.tokenfactory.v1beta1.Query/DenomsFromCreator",
     response_type = QueryDenomsFromCreatorResponse
 )]
 pub struct QueryDenomsFromCreatorRequest {
@@ -189,7 +189,7 @@ pub struct QueryDenomsFromCreatorRequest {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse")]
 pub struct QueryDenomsFromCreatorResponse {
     #[prost(string, repeated, tag = "1")]
     pub denoms: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -214,7 +214,7 @@ pub struct QueryDenomsFromCreatorResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgCreateDenom")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgCreateDenom")]
 pub struct MsgCreateDenom {
     #[prost(string, tag = "1")]
     pub sender: ::prost::alloc::string::String,
@@ -235,7 +235,7 @@ pub struct MsgCreateDenom {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgCreateDenomResponse")]
 pub struct MsgCreateDenomResponse {
     #[prost(string, tag = "1")]
     pub new_token_denom: ::prost::alloc::string::String,
@@ -253,7 +253,7 @@ pub struct MsgCreateDenomResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgMint")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgMint")]
 pub struct MsgMint {
     #[prost(string, tag = "1")]
     pub sender: ::prost::alloc::string::String,
@@ -271,7 +271,7 @@ pub struct MsgMint {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgMintResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgMintResponse")]
 pub struct MsgMintResponse {}
 /// MsgBurn is the sdk.Msg type for allowing an admin account to burn
 /// a token.  For now, we only support burning from the sender account.
@@ -286,7 +286,7 @@ pub struct MsgMintResponse {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgBurn")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgBurn")]
 pub struct MsgBurn {
     #[prost(string, tag = "1")]
     pub sender: ::prost::alloc::string::String,
@@ -304,7 +304,7 @@ pub struct MsgBurn {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgBurnResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgBurnResponse")]
 pub struct MsgBurnResponse {}
 /// MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
 /// adminship of a denom to a new account
@@ -319,7 +319,7 @@ pub struct MsgBurnResponse {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgChangeAdmin")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgChangeAdmin")]
 pub struct MsgChangeAdmin {
     #[prost(string, tag = "1")]
     pub sender: ::prost::alloc::string::String,
@@ -341,7 +341,7 @@ pub struct MsgChangeAdmin {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgChangeAdminResponse")]
 pub struct MsgChangeAdminResponse {}
 /// MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
 /// the denom's bank metadata
@@ -356,7 +356,7 @@ pub struct MsgChangeAdminResponse {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgSetDenomMetadata")]
 pub struct MsgSetDenomMetadata {
     #[prost(string, tag = "1")]
     pub sender: ::prost::alloc::string::String,
@@ -376,7 +376,7 @@ pub struct MsgSetDenomMetadata {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse")]
+#[proto_message(type_url = "/injective.tokenfactory.v1beta1.MsgSetDenomMetadataResponse")]
 pub struct MsgSetDenomMetadataResponse {}
 pub struct TokenfactoryQuerier<'a, Q: cosmwasm_std::CustomQuery> {
     querier: &'a cosmwasm_std::QuerierWrapper<'a, Q>,

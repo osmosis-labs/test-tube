@@ -1,8 +1,11 @@
-use injective_std::types::injective::exchange::v1beta1::{
-    MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, QuerySpotMarketsRequest,
-    QuerySpotMarketsResponse,
+use injective_protobuf::proto::{
+    query::{QuerySpotMarketsRequest, QuerySpotMarketsResponse},
+    tx::{MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse},
 };
-
+// use injective_std::types::injective::exchange::v1beta1::{
+//     MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, QuerySpotMarketsRequest,
+//     QuerySpotMarketsResponse,
+// };
 use test_tube::module::Module;
 use test_tube::runner::Runner;
 use test_tube::{fn_execute, fn_query};
@@ -26,15 +29,16 @@ where
     }
 
     fn_query! {
-        pub query_spot_markets ["/injective.tokenfactory.v1beta1.Query/DenomsFromCreator"]: QuerySpotMarketsRequest => QuerySpotMarketsResponse
+        pub query_spot_markets ["/injective.exchange.v1beta1.Query/SpotMarkets"]: QuerySpotMarketsRequest => QuerySpotMarketsResponse
     }
 }
 
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::Coin;
-    use injective_std::types::injective::exchange::v1beta1::{
-        MsgInstantSpotMarketLaunch, QuerySpotMarketsRequest,
+    use injective_protobuf::proto::{
+        query::{QuerySpotMarketsRequest, QuerySpotMarketsResponse},
+        tx::{MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse},
     };
 
     use crate::{Account, Exchange, InjectiveTestApp};
@@ -60,19 +64,40 @@ mod tests {
                     quote_denom: "usdt".to_owned(),
                     min_price_tick_size: "10000".to_owned(),
                     min_quantity_tick_size: "100000".to_owned(),
+                    ..Default::default()
                 },
                 &signer,
             )
             .unwrap()
             .data;
 
+        exchange
+            .instant_spot_market_launch(
+                MsgInstantSpotMarketLaunch {
+                    sender: signer.address(),
+                    ticker: "INJ/USDT".to_owned(),
+                    base_denom: "inj".to_owned(),
+                    quote_denom: "usdt".to_owned(),
+                    min_price_tick_size: "10000".to_owned(),
+                    min_quantity_tick_size: "100000".to_owned(),
+                    ..Default::default()
+                },
+                &signer,
+            )
+            .unwrap();
+
+        app.increase_time(1u64);
+
         let spot_markets = exchange
             .query_spot_markets(&QuerySpotMarketsRequest {
-                status: "".to_string(),
+                status: "Active".to_owned(),
+                ..Default::default()
             })
             .unwrap();
 
         println!("{:?}", spot_markets);
         assert_eq!(1, 2);
+        // let expected_response = QuerySpotMarketsResponse { markets: vec![] };
+        // assert_eq!(spot_markets, expected_response);
     }
 }

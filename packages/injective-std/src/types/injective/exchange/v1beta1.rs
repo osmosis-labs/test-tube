@@ -1,9 +1,6 @@
 use osmosis_std_derive::CosmwasmExt;
 
-/// Pool asset is an internal struct that combines the amount of the
-/// token in the pool, and its balancer weight.
-/// This is an awkward packaging of data,
-/// and should be revisited in a future state migration.
+/// SpotMarket
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
     Clone,
@@ -31,13 +28,19 @@ pub struct SpotMarket {
     pub relater_fee_share_rate: ::prost::alloc::string::String,
     #[prost(string, tag = "7")]
     pub market_id: ::prost::alloc::string::String,
-    #[prost(string, tag = "8")]
-    pub market_status: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "8")]
+    #[serde(alias = "MarketStatus")]
+    #[serde(
+        serialize_with = "crate::serde::as_str::serialize",
+        deserialize_with = "crate::serde::as_str::deserialize"
+    )]
+    pub market_status: u64,
     #[prost(string, tag = "9")]
     pub min_price_tick_size: ::prost::alloc::string::String,
     #[prost(string, tag = "10")]
     pub min_quantity_tick_size: ::prost::alloc::string::String,
 }
+
 /// MsgInstantSpotMarketLaunch
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
@@ -124,10 +127,10 @@ pub struct QuerySpotMarketsResponse {
     pub markets: ::prost::alloc::vec::Vec<SpotMarket>,
 }
 
-pub struct TokenfactoryQuerier<'a, Q: cosmwasm_std::CustomQuery> {
+pub struct ExchangeQuerier<'a, Q: cosmwasm_std::CustomQuery> {
     querier: &'a cosmwasm_std::QuerierWrapper<'a, Q>,
 }
-impl<'a, Q: cosmwasm_std::CustomQuery> TokenfactoryQuerier<'a, Q> {
+impl<'a, Q: cosmwasm_std::CustomQuery> ExchangeQuerier<'a, Q> {
     pub fn new(querier: &'a cosmwasm_std::QuerierWrapper<'a, Q>) -> Self {
         Self { querier }
     }

@@ -7,3 +7,6 @@
 	path = packages/injective-test-tube/injective-core
 	url = https://github.com/InjectiveLabs/injective-core.git
 	branch = v1.10.0
+[submodule "dependencies/injective-core"]
+	path = dependencies/injective-core
+	url = https://github.com/InjectiveLabs/injective-core.git

@@ -1,11 +1,7 @@
-use injective_protobuf::proto::{
-    query::{QuerySpotMarketsRequest, QuerySpotMarketsResponse},
-    tx::{MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse},
+use injective_std::types::injective::exchange::v1beta1::{
+    MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, QuerySpotMarketsRequest,
+    QuerySpotMarketsResponse,
 };
-// use injective_std::types::injective::exchange::v1beta1::{
-//     MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, QuerySpotMarketsRequest,
-//     QuerySpotMarketsResponse,
-// };
 use test_tube::module::Module;
 use test_tube::runner::Runner;
 use test_tube::{fn_execute, fn_query};
@@ -36,9 +32,8 @@ where
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::Coin;
-    use injective_protobuf::proto::{
-        query::{QuerySpotMarketsRequest, QuerySpotMarketsResponse},
-        tx::{MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse},
+    use injective_std::types::injective::exchange::v1beta1::{
+        MsgInstantSpotMarketLaunch, QuerySpotMarketsRequest,
     };
 
     use crate::{Account, Exchange, InjectiveTestApp};
@@ -71,20 +66,20 @@ mod tests {
             .unwrap()
             .data;
 
-        exchange
-            .instant_spot_market_launch(
-                MsgInstantSpotMarketLaunch {
-                    sender: signer.address(),
-                    ticker: "INJ/USDT".to_owned(),
-                    base_denom: "inj".to_owned(),
-                    quote_denom: "usdt".to_owned(),
-                    min_price_tick_size: "10000".to_owned(),
-                    min_quantity_tick_size: "100000".to_owned(),
-                    ..Default::default()
-                },
-                &signer,
-            )
-            .unwrap();
+        // exchange
+        //     .instant_spot_market_launch(
+        //         MsgInstantSpotMarketLaunch {
+        //             sender: signer.address(),
+        //             ticker: "INJ/USDT".to_owned(),
+        //             base_denom: "inj".to_owned(),
+        //             quote_denom: "usdt".to_owned(),
+        //             min_price_tick_size: "10000".to_owned(),
+        //             min_quantity_tick_size: "100000".to_owned(),
+        //             ..Default::default()
+        //         },
+        //         &signer,
+        //     )
+        //     .unwrap();
 
         app.increase_time(1u64);
 

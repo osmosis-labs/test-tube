@@ -284,10 +284,7 @@ macro_rules! expand_as_any {
 // must order by type that has more information for Any deserialization to
 // work correctly. Since after serialization, it currently loses @type tag.
 // And deserialization works by trying to iteratively match the structure.
-expand_as_any!(
-    // pools have distincted structure
-    crate::types::injective::tokenfactory::v1beta1::MsgMint,
-);
+expand_as_any!(crate::types::injective::tokenfactory::v1beta1::MsgMint,);
 
 macro_rules! impl_prost_types_exact_conversion {
     ($t:ident | $($arg:ident),*) => {

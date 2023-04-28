@@ -59,34 +59,31 @@ mod tests {
                     quote_denom: "usdt".to_owned(),
                     min_price_tick_size: "10000".to_owned(),
                     min_quantity_tick_size: "100000".to_owned(),
-                    ..Default::default()
                 },
                 &signer,
             )
             .unwrap()
             .data;
 
-        // exchange
-        //     .instant_spot_market_launch(
-        //         MsgInstantSpotMarketLaunch {
-        //             sender: signer.address(),
-        //             ticker: "INJ/USDT".to_owned(),
-        //             base_denom: "inj".to_owned(),
-        //             quote_denom: "usdt".to_owned(),
-        //             min_price_tick_size: "10000".to_owned(),
-        //             min_quantity_tick_size: "100000".to_owned(),
-        //             ..Default::default()
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap();
+        exchange
+            .instant_spot_market_launch(
+                MsgInstantSpotMarketLaunch {
+                    sender: signer.address(),
+                    ticker: "INJ/USDT".to_owned(),
+                    base_denom: "inj".to_owned(),
+                    quote_denom: "usdt".to_owned(),
+                    min_price_tick_size: "10000".to_owned(),
+                    min_quantity_tick_size: "100000".to_owned(),
+                },
+                &signer,
+            )
+            .unwrap();
 
         app.increase_time(1u64);
 
         let spot_markets = exchange
             .query_spot_markets(&QuerySpotMarketsRequest {
                 status: "Active".to_owned(),
-                ..Default::default()
             })
             .unwrap();
 

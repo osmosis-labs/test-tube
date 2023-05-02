@@ -37,9 +37,19 @@ impl OsmosisTestApp {
         }
     }
 
-    /// Get the current block time
+    /// Get the current block time in nanoseconds
     pub fn get_block_time_nanos(&self) -> i64 {
         self.inner.get_block_time_nanos()
+    }
+
+    /// Get the current block time in seconds
+    pub fn get_block_time_seconds(&self) -> i64 {
+        self.inner.get_block_time_nanos() / 1_000_000_000i64
+    }
+
+    /// Get the current block height
+    pub fn get_block_height(&self) -> i64 {
+        self.inner.get_block_height()
     }
 
     /// Get the first validator address
@@ -161,6 +171,36 @@ mod tests {
         assert!(accounts.get(1).is_some());
         assert!(accounts.get(2).is_some());
         assert!(accounts.get(3).is_none());
+    }
+
+    #[test]
+    fn test_get_and_set_block_timestamp() {
+        let app = OsmosisTestApp::default();
+
+        let block_time_nanos = app.get_block_time_nanos();
+        let block_time_seconds = app.get_block_time_seconds();
+
+        assert_eq!(block_time_nanos, 1_571_797_424_879_305_533i64);
+        assert_eq!(block_time_seconds, 1_571_797_424i64);
+
+        app.increase_time(10u64);
+
+        assert_eq!(
+            app.get_block_time_nanos(),
+            block_time_nanos + 10_000_000_000
+        );
+        assert_eq!(app.get_block_time_seconds(), block_time_seconds + 10);
+    }
+
+    #[test]
+    fn test_get_block_height() {
+        let app = OsmosisTestApp::default();
+
+        assert_eq!(app.get_block_height(), 1i64);
+
+        app.increase_time(10u64);
+
+        assert_eq!(app.get_block_height(), 2i64);
     }
 
     #[test]

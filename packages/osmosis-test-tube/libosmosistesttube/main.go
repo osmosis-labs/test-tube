@@ -182,6 +182,12 @@ func GetBlockTime(envId uint64) int64 {
 	return env.Ctx.BlockTime().UnixNano()
 }
 
+//export GetBlockHeight
+func GetBlockHeight(envId uint64) int64 {
+	env := loadEnv(envId)
+	return env.Ctx.BlockHeight()
+}
+
 //export AccountSequence
 func AccountSequence(envId uint64, bech32Address string) uint64 {
 	env := loadEnv(envId)

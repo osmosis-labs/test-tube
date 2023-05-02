@@ -1,4 +1,4 @@
-use injective_std_derive::CosmwasmExt;
+use osmosis_std_derive::CosmwasmExt;
 /// PageRequest is to be embedded in gRPC request messages for efficient
 /// pagination. Ex:
 ///

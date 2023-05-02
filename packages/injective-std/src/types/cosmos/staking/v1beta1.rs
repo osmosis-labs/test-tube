@@ -1,4 +1,4 @@
-use injective_std_derive::CosmwasmExt;
+use osmosis_std_derive::CosmwasmExt;
 /// NOTE: The following type is not implemented due to current limitations of code generator
 /// which currently has issue with tendermint_proto.
 /// This will be fixed in the upcoming release.

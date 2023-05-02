@@ -1,4 +1,4 @@
-use injective_std_derive::CosmwasmExt;
+use osmosis_std_derive::CosmwasmExt;
 /// SendAuthorization allows the grantee to spend up to spend_limit coins from
 /// the granter's account.
 ///

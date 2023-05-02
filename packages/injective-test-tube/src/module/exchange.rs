@@ -33,7 +33,8 @@ where
 mod tests {
     use cosmwasm_std::Coin;
     use injective_std::types::injective::exchange::v1beta1::{
-        MsgInstantSpotMarketLaunch, QuerySpotMarketsRequest,
+        MarketStatus, MsgInstantSpotMarketLaunch, QuerySpotMarketsRequest,
+        QuerySpotMarketsResponse, SpotMarket,
     };
 
     use crate::{Account, Exchange, InjectiveTestApp};
@@ -77,7 +78,7 @@ mod tests {
                 },
                 &signer,
             )
-            .unwrap();
+            .unwrap_err();
 
         app.increase_time(1u64);
 
@@ -87,9 +88,21 @@ mod tests {
             })
             .unwrap();
 
-        println!("{:?}", spot_markets);
-        assert_eq!(1, 2);
-        // let expected_response = QuerySpotMarketsResponse { markets: vec![] };
-        // assert_eq!(spot_markets, expected_response);
+        let expected_response = QuerySpotMarketsResponse {
+            markets: vec![SpotMarket {
+                ticker: "INJ/USDT".to_string(),
+                base_denom: "inj".to_string(),
+                quote_denom: "usdt".to_string(),
+                maker_fee_rate: "-100000000000000".to_string(),
+                taker_fee_rate: "1000000000000000".to_string(),
+                relayer_fee_share_rate: "400000000000000000".to_string(),
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+                status: MarketStatus::Active.into(),
+                min_price_tick_size: "10000".to_string(),
+                min_quantity_tick_size: "100000".to_string(),
+            }],
+        };
+        assert_eq!(spot_markets, expected_response);
     }
 }

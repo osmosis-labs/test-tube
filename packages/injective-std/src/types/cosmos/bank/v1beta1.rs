@@ -1,11 +1,19 @@
-use osmosis_std_derive::CosmwasmExt;
+use injective_std_derive::CosmwasmExt;
 /// SendAuthorization allows the grantee to spend up to spend_limit coins from
 /// the granter's account.
 ///
 /// Since: cosmos-sdk 0.43
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.SendAuthorization")]
 pub struct SendAuthorization {
     #[prost(message, repeated, tag = "1")]
@@ -13,8 +21,16 @@ pub struct SendAuthorization {
 }
 /// Params defines the parameters for the bank module.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Params")]
 pub struct Params {
     #[prost(message, repeated, tag = "1")]
@@ -25,8 +41,16 @@ pub struct Params {
 /// SendEnabled maps coin denom to a send_enabled status (whether a denom is
 /// sendable).
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.SendEnabled")]
 pub struct SendEnabled {
     #[prost(string, tag = "1")]
@@ -36,8 +60,16 @@ pub struct SendEnabled {
 }
 /// Input models transaction input.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Input")]
 pub struct Input {
     #[prost(string, tag = "1")]
@@ -47,8 +79,16 @@ pub struct Input {
 }
 /// Output models transaction outputs.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Output")]
 pub struct Output {
     #[prost(string, tag = "1")]
@@ -60,8 +100,16 @@ pub struct Output {
 /// amounts in the network.
 /// This message is deprecated now that supply is indexed by denom.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Supply")]
 #[deprecated]
 pub struct Supply {
@@ -71,8 +119,16 @@ pub struct Supply {
 /// DenomUnit represents a struct that describes a given
 /// denomination unit of the basic token.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.DenomUnit")]
 pub struct DenomUnit {
     /// denom represents the string name of the given denom unit (e.g uatom).
@@ -96,8 +152,16 @@ pub struct DenomUnit {
 /// Metadata represents a struct that describes
 /// a basic token.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Metadata")]
 pub struct Metadata {
     #[prost(string, tag = "1")]
@@ -126,8 +190,16 @@ pub struct Metadata {
 }
 /// GenesisState defines the bank module's genesis state.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.GenesisState")]
 pub struct GenesisState {
     /// params defines all the paramaters of the module.
@@ -150,8 +222,16 @@ pub struct GenesisState {
 /// Balance defines an account address and balance pair used in the bank module's
 /// genesis state.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.Balance")]
 pub struct Balance {
     /// address is the address of the balance holder.
@@ -164,8 +244,16 @@ pub struct Balance {
 /// GenesisSupplyOffset encodes the supply offsets, just for genesis.
 /// The offsets are serialized directly by denom in state.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.GenesisSupplyOffset")]
 pub struct GenesisSupplyOffset {
     /// Denom
@@ -177,8 +265,16 @@ pub struct GenesisSupplyOffset {
 }
 /// QueryBalanceRequest is the request type for the Query/Balance RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryBalanceRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/Balance",
@@ -194,8 +290,16 @@ pub struct QueryBalanceRequest {
 }
 /// QueryBalanceResponse is the response type for the Query/Balance RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryBalanceResponse")]
 pub struct QueryBalanceResponse {
     /// balance is the balance of the coin.
@@ -204,8 +308,16 @@ pub struct QueryBalanceResponse {
 }
 /// QueryBalanceRequest is the request type for the Query/AllBalances RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryAllBalancesRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/AllBalances",
@@ -217,15 +329,21 @@ pub struct QueryAllBalancesRequest {
     pub address: ::prost::alloc::string::String,
     /// pagination defines an optional pagination for the request.
     #[prost(message, optional, tag = "2")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageRequest,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
 }
 /// QueryAllBalancesResponse is the response type for the Query/AllBalances RPC
 /// method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryAllBalancesResponse")]
 pub struct QueryAllBalancesResponse {
     /// balances is the balances of all the coins.
@@ -233,15 +351,21 @@ pub struct QueryAllBalancesResponse {
     pub balances: ::prost::alloc::vec::Vec<super::super::base::v1beta1::Coin>,
     /// pagination defines the pagination in the response.
     #[prost(message, optional, tag = "2")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageResponse,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageResponse>,
 }
 /// QueryTotalSupplyRequest is the request type for the Query/TotalSupply RPC
 /// method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryTotalSupplyRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/TotalSupply",
@@ -252,15 +376,21 @@ pub struct QueryTotalSupplyRequest {
     ///
     /// Since: cosmos-sdk 0.43
     #[prost(message, optional, tag = "1")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageRequest,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
 }
 /// QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC
 /// method
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryTotalSupplyResponse")]
 pub struct QueryTotalSupplyResponse {
     /// supply is the supply of the coins
@@ -270,14 +400,20 @@ pub struct QueryTotalSupplyResponse {
     ///
     /// Since: cosmos-sdk 0.43
     #[prost(message, optional, tag = "2")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageResponse,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageResponse>,
 }
 /// QuerySupplyOfRequest is the request type for the Query/SupplyOf RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QuerySupplyOfRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/SupplyOf",
@@ -290,8 +426,16 @@ pub struct QuerySupplyOfRequest {
 }
 /// QuerySupplyOfResponse is the response type for the Query/SupplyOf RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QuerySupplyOfResponse")]
 pub struct QuerySupplyOfResponse {
     /// amount is the supply of the coin.
@@ -301,8 +445,16 @@ pub struct QuerySupplyOfResponse {
 /// QueryTotalSupplyWithoutOffsetRequest is the request type for the Query/TotalSupplyWithoutOffset RPC
 /// method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryTotalSupplyWithoutOffsetRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/TotalSupplyWithoutOffset",
@@ -313,15 +465,21 @@ pub struct QueryTotalSupplyWithoutOffsetRequest {
     ///
     /// Since: cosmos-sdk 0.43
     #[prost(message, optional, tag = "1")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageRequest,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
 }
 /// QueryTotalSupplyWithoutOffsetResponse is the response type for the Query/TotalSupplyWithoutOffset RPC
 /// method
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryTotalSupplyWithoutOffsetResponse")]
 pub struct QueryTotalSupplyWithoutOffsetResponse {
     /// supply is the supply of the coins
@@ -331,14 +489,20 @@ pub struct QueryTotalSupplyWithoutOffsetResponse {
     ///
     /// Since: cosmos-sdk 0.43
     #[prost(message, optional, tag = "2")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageResponse,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageResponse>,
 }
 /// QuerySupplyOfWithoutOffsetRequest is the request type for the Query/SupplyOfWithoutOffset RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QuerySupplyOfWithoutOffsetRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/SupplyOfWithoutOffset",
@@ -351,8 +515,16 @@ pub struct QuerySupplyOfWithoutOffsetRequest {
 }
 /// QuerySupplyOfWithoutOffsetResponse is the response type for the Query/SupplyOfWithoutOffset RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QuerySupplyOfWithoutOffsetResponse")]
 pub struct QuerySupplyOfWithoutOffsetResponse {
     /// amount is the supply of the coin.
@@ -361,8 +533,16 @@ pub struct QuerySupplyOfWithoutOffsetResponse {
 }
 /// QueryParamsRequest defines the request type for querying x/bank parameters.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryParamsRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/Params",
@@ -371,8 +551,16 @@ pub struct QuerySupplyOfWithoutOffsetResponse {
 pub struct QueryParamsRequest {}
 /// QueryParamsResponse defines the response type for querying x/bank parameters.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryParamsResponse")]
 pub struct QueryParamsResponse {
     #[prost(message, optional, tag = "1")]
@@ -380,8 +568,16 @@ pub struct QueryParamsResponse {
 }
 /// QueryDenomsMetadataRequest is the request type for the Query/DenomsMetadata RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryDenomsMetadataRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/DenomsMetadata",
@@ -390,15 +586,21 @@ pub struct QueryParamsResponse {
 pub struct QueryDenomsMetadataRequest {
     /// pagination defines an optional pagination for the request.
     #[prost(message, optional, tag = "1")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageRequest,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
 }
 /// QueryDenomsMetadataResponse is the response type for the Query/DenomsMetadata RPC
 /// method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryDenomsMetadataResponse")]
 pub struct QueryDenomsMetadataResponse {
     /// metadata provides the client information for all the registered tokens.
@@ -406,14 +608,20 @@ pub struct QueryDenomsMetadataResponse {
     pub metadatas: ::prost::alloc::vec::Vec<Metadata>,
     /// pagination defines the pagination in the response.
     #[prost(message, optional, tag = "2")]
-    pub pagination: ::core::option::Option<
-        super::super::base::query::v1beta1::PageResponse,
-    >,
+    pub pagination: ::core::option::Option<super::super::base::query::v1beta1::PageResponse>,
 }
 /// QueryDenomMetadataRequest is the request type for the Query/DenomMetadata RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryDenomMetadataRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/DenomMetadata",
@@ -427,8 +635,16 @@ pub struct QueryDenomMetadataRequest {
 /// QueryDenomMetadataResponse is the response type for the Query/DenomMetadata RPC
 /// method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryDenomMetadataResponse")]
 pub struct QueryDenomMetadataResponse {
     /// metadata describes and provides all the client information for the requested token.
@@ -437,8 +653,16 @@ pub struct QueryDenomMetadataResponse {
 }
 /// QueryBaseDenomRequest defines the request type for the BaseDenom gRPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryBaseDenomRequest")]
 #[proto_query(
     path = "/cosmos.bank.v1beta1.Query/BaseDenom",
@@ -450,8 +674,16 @@ pub struct QueryBaseDenomRequest {
 }
 /// QueryBaseDenomResponse defines the response type for the BaseDenom gRPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.QueryBaseDenomResponse")]
 pub struct QueryBaseDenomResponse {
     #[prost(string, tag = "1")]
@@ -459,8 +691,16 @@ pub struct QueryBaseDenomResponse {
 }
 /// MsgSend represents a message to send coins from one account to another.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.MsgSend")]
 pub struct MsgSend {
     #[prost(string, tag = "1")]
@@ -472,14 +712,30 @@ pub struct MsgSend {
 }
 /// MsgSendResponse defines the Msg/Send response type.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.MsgSendResponse")]
 pub struct MsgSendResponse {}
 /// MsgMultiSend represents an arbitrary multi-in, multi-out send message.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.MsgMultiSend")]
 pub struct MsgMultiSend {
     #[prost(message, repeated, tag = "1")]
@@ -489,8 +745,16 @@ pub struct MsgMultiSend {
 }
 /// MsgMultiSendResponse defines the Msg/MultiSend response type.
 #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
-#[derive(::serde::Serialize, ::serde::Deserialize, ::schemars::JsonSchema, CosmwasmExt)]
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    ::prost::Message,
+    ::serde::Serialize,
+    ::serde::Deserialize,
+    ::schemars::JsonSchema,
+    CosmwasmExt,
+)]
 #[proto_message(type_url = "/cosmos.bank.v1beta1.MsgMultiSendResponse")]
 pub struct MsgMultiSendResponse {}
 pub struct BankQuerier<'a, Q: cosmwasm_std::CustomQuery> {
@@ -505,35 +769,24 @@ impl<'a, Q: cosmwasm_std::CustomQuery> BankQuerier<'a, Q> {
         address: ::prost::alloc::string::String,
         denom: ::prost::alloc::string::String,
     ) -> Result<QueryBalanceResponse, cosmwasm_std::StdError> {
-        QueryBalanceRequest {
-            address,
-            denom,
-        }
-            .query(self.querier)
+        QueryBalanceRequest { address, denom }.query(self.querier)
     }
     pub fn all_balances(
         &self,
         address: ::prost::alloc::string::String,
-        pagination: ::core::option::Option<
-            super::super::base::query::v1beta1::PageRequest,
-        >,
+        pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
     ) -> Result<QueryAllBalancesResponse, cosmwasm_std::StdError> {
         QueryAllBalancesRequest {
             address,
             pagination,
         }
-            .query(self.querier)
+        .query(self.querier)
     }
     pub fn total_supply(
         &self,
-        pagination: ::core::option::Option<
-            super::super::base::query::v1beta1::PageRequest,
-        >,
+        pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
     ) -> Result<QueryTotalSupplyResponse, cosmwasm_std::StdError> {
-        QueryTotalSupplyRequest {
-            pagination,
-        }
-            .query(self.querier)
+        QueryTotalSupplyRequest { pagination }.query(self.querier)
     }
     pub fn supply_of(
         &self,
@@ -543,23 +796,15 @@ impl<'a, Q: cosmwasm_std::CustomQuery> BankQuerier<'a, Q> {
     }
     pub fn total_supply_without_offset(
         &self,
-        pagination: ::core::option::Option<
-            super::super::base::query::v1beta1::PageRequest,
-        >,
+        pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
     ) -> Result<QueryTotalSupplyWithoutOffsetResponse, cosmwasm_std::StdError> {
-        QueryTotalSupplyWithoutOffsetRequest {
-            pagination,
-        }
-            .query(self.querier)
+        QueryTotalSupplyWithoutOffsetRequest { pagination }.query(self.querier)
     }
     pub fn supply_of_without_offset(
         &self,
         denom: ::prost::alloc::string::String,
     ) -> Result<QuerySupplyOfWithoutOffsetResponse, cosmwasm_std::StdError> {
-        QuerySupplyOfWithoutOffsetRequest {
-            denom,
-        }
-            .query(self.querier)
+        QuerySupplyOfWithoutOffsetRequest { denom }.query(self.querier)
     }
     pub fn params(&self) -> Result<QueryParamsResponse, cosmwasm_std::StdError> {
         QueryParamsRequest {}.query(self.querier)
@@ -572,14 +817,9 @@ impl<'a, Q: cosmwasm_std::CustomQuery> BankQuerier<'a, Q> {
     }
     pub fn denoms_metadata(
         &self,
-        pagination: ::core::option::Option<
-            super::super::base::query::v1beta1::PageRequest,
-        >,
+        pagination: ::core::option::Option<super::super::base::query::v1beta1::PageRequest>,
     ) -> Result<QueryDenomsMetadataResponse, cosmwasm_std::StdError> {
-        QueryDenomsMetadataRequest {
-            pagination,
-        }
-            .query(self.querier)
+        QueryDenomsMetadataRequest { pagination }.query(self.querier)
     }
     pub fn base_denom(
         &self,

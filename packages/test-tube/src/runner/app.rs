@@ -115,10 +115,7 @@ impl BaseApp {
     /// Convinience function to create multiple accounts with the same
     /// Initial coins balance
     pub fn init_accounts(&self, coins: &[Coin], count: u64) -> RunnerResult<Vec<SigningAccount>> {
-        (0..count)
-            .into_iter()
-            .map(|_| self.init_account(coins))
-            .collect()
+        (0..count).map(|_| self.init_account(coins)).collect()
     }
 
     fn create_signed_tx<I>(
@@ -181,7 +178,7 @@ impl BaseApp {
         );
 
         let tx = self.create_signed_tx(msgs, signer, zero_fee)?;
-        let base64_tx_bytes = base64::encode(&tx);
+        let base64_tx_bytes = base64::encode(tx);
         redefine_as_go_string!(base64_tx_bytes);
 
         unsafe {
@@ -240,7 +237,7 @@ impl BaseApp {
         unsafe {
             BeginBlock(self.id);
             let pset = Message::encode_to_vec(&pset.into());
-            let pset = base64::encode(&pset);
+            let pset = base64::encode(pset);
             redefine_as_go_string!(pset);
             redefine_as_go_string!(subspace);
             let res = SetParamSet(self.id, subspace, pset);

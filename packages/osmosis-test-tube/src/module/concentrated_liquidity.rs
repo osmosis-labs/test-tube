@@ -1,4 +1,3 @@
-#![cfg(features = "v16")]
 use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::{
     MsgCollectFees, MsgCollectFeesResponse, MsgCollectIncentives, MsgCollectIncentivesResponse,
     MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse, MsgCreateIncentive,
@@ -141,7 +140,6 @@ mod tests {
                 MsgMint {
                     sender: signer.address(),
                     amount: Some(Coin::new(100_000_000_000, &denom0).into()),
-                    #[cfg(feature = "v16")]
                     mint_to_address: signer.address(),
                 },
                 &signer,
@@ -153,7 +151,6 @@ mod tests {
                 MsgMint {
                     sender: signer.address(),
                     amount: Some(Coin::new(100_000_000_000, &denom1).into()),
-                    #[cfg(feature = "v16")]
                     mint_to_address: signer.address(),
                 },
                 &signer,

@@ -115,8 +115,8 @@ where
             raw_data: res.data.unwrap().value().clone(),
             events,
             gas_info: GasInfo {
-                gas_wanted: res.gas_wanted.value() as u64,
-                gas_used: res.gas_used.value() as u64,
+                gas_wanted: res.gas_wanted.value(),
+                gas_used: res.gas_used.value(),
             },
         })
     }

@@ -17,6 +17,7 @@ mod tests {
         MsgCreateBalancerPool, MsgCreateBalancerPoolResponse,
     };
     use osmosis_std::types::osmosis::gamm::v1beta1::PoolParams;
+    #[cfg(feature = "v16")]
     use osmosis_std::types::osmosis::poolmanager::v1beta1::{PoolRequest, PoolResponse};
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{
         MsgCreateDenom, MsgCreateDenomResponse,
@@ -56,6 +57,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "v16")]
     #[test]
     fn test_query_error_failed_query() {
         let app = OsmosisTestApp::default();

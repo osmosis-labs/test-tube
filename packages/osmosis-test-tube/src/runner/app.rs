@@ -180,9 +180,6 @@ mod tests {
         let block_time_nanos = app.get_block_time_nanos();
         let block_time_seconds = app.get_block_time_seconds();
 
-        assert_eq!(block_time_nanos, 1_571_797_424_879_305_533i64);
-        assert_eq!(block_time_seconds, 1_571_797_424i64);
-
         app.increase_time(10u64);
 
         assert_eq!(

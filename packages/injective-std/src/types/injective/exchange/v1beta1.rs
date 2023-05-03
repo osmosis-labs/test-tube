@@ -5180,47 +5180,47 @@ pub struct QueryExchangeParamsResponse {
     #[prost(message, optional, tag = "1")]
     pub params: ::core::option::Option<Params>,
 }
-/// QuerySubaccountDepositsRequest is the request type for the Query/SubaccountDeposits RPC method.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(
-    Clone,
-    PartialEq,
-    Eq,
-    ::prost::Message,
-    ::serde::Serialize,
-    ::serde::Deserialize,
-    ::schemars::JsonSchema,
-    CosmwasmExt,
-)]
-#[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsRequest")]
-#[proto_query(
-    path = "/injective.exchange.v1beta1.Query/SubaccountDeposits",
-    response_type = QuerySubaccountDepositsResponse
-)]
-pub struct QuerySubaccountDepositsRequest {
-    #[prost(string, tag = "1")]
-    #[serde(alias = "subaccountID")]
-    pub subaccount_id: ::prost::alloc::string::String,
-    #[prost(message, optional, tag = "2")]
-    pub subaccount: ::core::option::Option<Subaccount>,
-}
-/// QuerySubaccountDepositsResponse is the response type for the Query/SubaccountDeposits RPC method.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(
-    Clone,
-    PartialEq,
-    Eq,
-    ::prost::Message,
-    ::serde::Serialize,
-    ::serde::Deserialize,
-    ::schemars::JsonSchema,
-    CosmwasmExt,
-)]
-#[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsResponse")]
-pub struct QuerySubaccountDepositsResponse {
-    #[prost(map = "string, message", tag = "1")]
-    pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
-}
+// /// QuerySubaccountDepositsRequest is the request type for the Query/SubaccountDeposits RPC method.
+// #[allow(clippy::derive_partial_eq_without_eq)]
+// #[derive(
+//     Clone,
+//     PartialEq,
+//     Eq,
+//     ::prost::Message,
+//     ::serde::Serialize,
+//     ::serde::Deserialize,
+//     ::schemars::JsonSchema,
+//     CosmwasmExt,
+// )]
+// #[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsRequest")]
+// #[proto_query(
+//     path = "/injective.exchange.v1beta1.Query/SubaccountDeposits",
+//     response_type = QuerySubaccountDepositsResponse
+// )]
+// pub struct QuerySubaccountDepositsRequest {
+//     #[prost(string, tag = "1")]
+//     #[serde(alias = "subaccountID")]
+//     pub subaccount_id: ::prost::alloc::string::String,
+//     #[prost(message, optional, tag = "2")]
+//     pub subaccount: ::core::option::Option<Subaccount>,
+// }
+// /// QuerySubaccountDepositsResponse is the response type for the Query/SubaccountDeposits RPC method.
+// #[allow(clippy::derive_partial_eq_without_eq)]
+// #[derive(
+//     Clone,
+//     PartialEq,
+//     Eq,
+//     ::prost::Message,
+//     ::serde::Serialize,
+//     ::serde::Deserialize,
+//     ::schemars::JsonSchema,
+//     CosmwasmExt,
+// )]
+// #[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsResponse")]
+// pub struct QuerySubaccountDepositsResponse {
+//     #[prost(map = "string, message", tag = "1")]
+//     pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
+// }
 /// QueryExchangeBalancesRequest is the request type for the Query/ExchangeBalances RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
@@ -7591,17 +7591,17 @@ impl<'a, Q: cosmwasm_std::CustomQuery> ExchangeQuerier<'a, Q> {
     ) -> Result<QueryExchangeParamsResponse, cosmwasm_std::StdError> {
         QueryExchangeParamsRequest {}.query(self.querier)
     }
-    pub fn subaccount_deposits(
-        &self,
-        subaccount_id: ::prost::alloc::string::String,
-        subaccount: ::core::option::Option<Subaccount>,
-    ) -> Result<QuerySubaccountDepositsResponse, cosmwasm_std::StdError> {
-        QuerySubaccountDepositsRequest {
-            subaccount_id,
-            subaccount,
-        }
-        .query(self.querier)
-    }
+    // pub fn subaccount_deposits(
+    //     &self,
+    //     subaccount_id: ::prost::alloc::string::String,
+    //     subaccount: ::core::option::Option<Subaccount>,
+    // ) -> Result<QuerySubaccountDepositsResponse, cosmwasm_std::StdError> {
+    //     QuerySubaccountDepositsRequest {
+    //         subaccount_id,
+    //         subaccount,
+    //     }
+    //     .query(self.querier)
+    // }
     pub fn subaccount_deposit(
         &self,
         subaccount_id: ::prost::alloc::string::String,

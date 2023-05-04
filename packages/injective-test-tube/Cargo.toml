@@ -1,0 +1,34 @@
+[package]
+description = "CosmWasm integration testing for Injective"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+name = "injective-test-tube"
+repository = "https://github.com/maxrobot/test-tube"
+version = "1.1.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+exclude = [
+  "injective",
+  "test_artifacts",
+]
+
+[dependencies]
+base64 = "0.13.0"
+cosmrs = {version = "0.9.0", features = ["cosmwasm"]}
+cosmwasm-std = "1.1.2"
+injective-cosmwasm = { version = "0.1.95" }
+# osmosis-std = {git = "https://github.com/osmosis-labs/osmosis-rust.git", branch = "main"}
+# injective-std = { version = "0.1.0", path = "../injective-std"  }
+injective-std = { version = "1.1.0", path = "../injective-std"  }
+prost = "0.11.0"
+serde = "1.0.144"
+serde_json = "1.0.85"
+test-tube = { version = "1.1.0", path = "../test-tube" }
+thiserror = "1.0.34"
+
+[build-dependencies]
+bindgen = "0.60.1"
+
+[dev-dependencies]
+cw1-whitelist = "0.15.0"
+rayon = "1.5.3"

@@ -8,6 +8,9 @@
     },
     {
       "path": "packages/osmosis-test-tube/libosmosistesttube"
+    },
+    {
+      "path": "packages/injective-test-tube/libinjectivestesttube"
     }
   ],
   "settings": {}

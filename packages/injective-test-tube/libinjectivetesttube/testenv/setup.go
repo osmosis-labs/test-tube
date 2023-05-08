@@ -94,19 +94,6 @@ func SetupInjectiveApp() *app.InjectiveApp {
 	}
 	genesisState[exchangetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&exchangeGen)
 
-	// // Set up oracle genesis state
-	// oracleParams := oracletypes.DefaultParams()
-	// oracleParams.PriceFeedPriceStates = []oracletypes.PriceFeedPriceState{oracletypes.PriceFeedState{
-	// 	Base:  "inj",
-	// 	Quote: "usdt",
-	// 	PriceState: oracletypes.PriceState{ // 1 INJ = 1 USDT}
-	// 	Relayers: ["inj1qz0jknksk53zq3g9"]
-	// }}
-	// oracleGen := oracletypes.GenesisState{
-	// 	Params: oracleParams,
-	// }
-	// genesisState[oracletypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&oracleGen)
-
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 
 	requireNoErr(err)

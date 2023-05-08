@@ -30,6 +30,7 @@ import (
 
 	// injective
 	"github.com/InjectiveLabs/injective-core/injective-chain/app"
+	exchangetypes "github.com/InjectiveLabs/injective-core/injective-chain/modules/exchange/types"
 	tokenfactorytypes "github.com/InjectiveLabs/injective-core/injective-chain/modules/tokenfactory/types"
 )
 
@@ -84,6 +85,27 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		Params: stakingParams,
 	}
 	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
+
+	// Set up exchange genesis state
+	exchangeParams := exchangetypes.DefaultParams()
+	exchangeParams.IsInstantDerivativeMarketLaunchEnabled = true
+	exchangeGen := exchangetypes.GenesisState{
+		Params: exchangeParams,
+	}
+	genesisState[exchangetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&exchangeGen)
+
+	// // Set up oracle genesis state
+	// oracleParams := oracletypes.DefaultParams()
+	// oracleParams.PriceFeedPriceStates = []oracletypes.PriceFeedPriceState{oracletypes.PriceFeedState{
+	// 	Base:  "inj",
+	// 	Quote: "usdt",
+	// 	PriceState: oracletypes.PriceState{ // 1 INJ = 1 USDT}
+	// 	Relayers: ["inj1qz0jknksk53zq3g9"]
+	// }}
+	// oracleGen := oracletypes.GenesisState{
+	// 	Params: oracleParams,
+	// }
+	// genesisState[oracletypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&oracleGen)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 

@@ -1,6 +1,9 @@
 use injective_std::types::injective::exchange::v1beta1::{
-    MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, QuerySpotMarketsRequest,
-    QuerySpotMarketsResponse,
+    MsgInstantPerpetualMarketLaunch, MsgInstantPerpetualMarketLaunchResponse,
+    MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, MsgPrivilegedExecuteContract,
+    MsgPrivilegedExecuteContractResponse, QueryDerivativeMarketsRequest,
+    QueryDerivativeMarketsResponse, QuerySpotMarketsRequest, QuerySpotMarketsResponse,
+    QuerySubaccountDepositsRequest, QuerySubaccountDepositsResponse,
 };
 use test_tube::module::Module;
 use test_tube::runner::Runner;
@@ -24,8 +27,24 @@ where
         pub instant_spot_market_launch: MsgInstantSpotMarketLaunch => MsgInstantSpotMarketLaunchResponse
     }
 
+    fn_execute! {
+        pub instant_perpetual_market_launch: MsgInstantPerpetualMarketLaunch => MsgInstantPerpetualMarketLaunchResponse
+    }
+
+    fn_execute! {
+        pub privileged_execute_contract: MsgPrivilegedExecuteContract => MsgPrivilegedExecuteContractResponse
+    }
+
     fn_query! {
         pub query_spot_markets ["/injective.exchange.v1beta1.Query/SpotMarkets"]: QuerySpotMarketsRequest => QuerySpotMarketsResponse
+    }
+
+    fn_query! {
+        pub query_derivative_markets ["/injective.exchange.v1beta1.Query/DerivativeMarkets"]: QueryDerivativeMarketsRequest => QueryDerivativeMarketsResponse
+    }
+
+    fn_query! {
+        pub query_subaccount_deposits ["/injective.exchange.v1beta1.Query/SubaccountDeposits"]: QuerySubaccountDepositsRequest => QuerySubaccountDepositsResponse
     }
 }
 

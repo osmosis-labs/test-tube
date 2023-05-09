@@ -140,10 +140,12 @@ impl<'a> Runner<'a> for InjectiveTestApp {
 
 #[cfg(test)]
 mod tests {
-    use cosmrs::proto::cosmos::bank::v1beta1::QueryAllBalancesRequest;
     use cosmwasm_std::{coins, Coin};
-    use injective_std::types::injective::tokenfactory::v1beta1::{
-        MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
+    use injective_std::types::{
+        cosmos::bank::v1beta1::QueryAllBalancesRequest,
+        injective::tokenfactory::v1beta1::{
+            MsgCreateDenom, MsgCreateDenomResponse, QueryParamsRequest, QueryParamsResponse,
+        },
     };
 
     use crate::module::Wasm;

@@ -1,4 +1,4 @@
-use cosmrs::proto::cosmos::bank::v1beta1::{
+use injective_std::types::cosmos::bank::v1beta1::{
     MsgSend, MsgSendResponse, QueryAllBalancesRequest, QueryAllBalancesResponse,
     QueryBalanceRequest, QueryBalanceResponse, QueryTotalSupplyRequest, QueryTotalSupplyResponse,
 };

@@ -61,8 +61,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use cosmrs::proto::cosmos::bank::v1beta1::QueryBalanceRequest;
     use cosmwasm_std::Coin;
+    use injective_std::types::cosmos::bank::v1beta1::QueryBalanceRequest;
     use injective_std::types::injective::tokenfactory::v1beta1::{
         MsgBurn, MsgCreateDenom, MsgMint, QueryDenomsFromCreatorRequest,
     };

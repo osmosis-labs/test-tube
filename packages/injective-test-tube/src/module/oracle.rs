@@ -36,12 +36,12 @@ where
 #[cfg(test)]
 mod tests {
     use cosmrs::crypto::secp256k1::SigningKey;
-    use cosmrs::proto::cosmos::{bank::v1beta1::MsgSend, base::v1beta1::Coin as BankCoin};
     use cosmwasm_std::Coin;
     use injective_std::{
         shim::Any,
         types::{
             cosmos::{
+                bank::v1beta1::MsgSend,
                 base::v1beta1::Coin as TubeCoin,
                 gov::v1beta1::{MsgSubmitProposal, MsgVote},
             },
@@ -103,7 +103,7 @@ mod tests {
             MsgSend {
                 from_address: signer.address().to_string(),
                 to_address: validator.address().to_string(),
-                amount: vec![BankCoin {
+                amount: vec![TubeCoin {
                     amount: "1000000000000000000000".to_string(),
                     denom: "inj".to_string(),
                 }],

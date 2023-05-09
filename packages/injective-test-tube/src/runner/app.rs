@@ -57,6 +57,11 @@ impl InjectiveTestApp {
         self.inner.get_first_validator_address()
     }
 
+    /// Get the first validator private key
+    pub fn get_first_validator_private_key(&self) -> RunnerResult<String> {
+        self.inner.get_first_validator_private_key()
+    }
+
     /// Increase the time of the blockchain by the given number of seconds.
     pub fn increase_time(&self, seconds: u64) {
         self.inner.increase_time(seconds)

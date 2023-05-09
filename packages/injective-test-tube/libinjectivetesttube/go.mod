@@ -7,6 +7,7 @@ require (
 	github.com/InjectiveLabs/injective-core v1.10.0
 	github.com/cosmos/cosmos-sdk v0.45.11
 	github.com/gogo/protobuf v1.3.3
+	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.34.23
 	github.com/tendermint/tm-db v0.6.7
 )
@@ -119,7 +120,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7 // indirect
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -175,13 +175,9 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
-// replace github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.31.0-osmo-v16
-
 replace github.com/CosmWasm/wasmd => github.com/InjectiveLabs/wasmd v0.30.0-inj-1
 
 replace github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-
-// replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20230326212251-7a2cf2993434
 
 replace github.com/cosmos/cosmos-sdk => github.com/InjectiveLabs/cosmos-sdk v0.45.11-inj-10
 

@@ -1,6 +1,6 @@
-use injective_std::types::cosmos::gov::v1beta1::MsgSubmitProposalResponse;
 use injective_std::types::injective::oracle::v1beta1::{
-    GrantPriceFeederPrivilegeProposal, QueryModuleStateRequest, QueryModuleStateResponse,
+    MsgRelayPriceFeedPrice, MsgRelayPriceFeedPriceResponse, QueryModuleStateRequest,
+    QueryModuleStateResponse, QueryOraclePriceRequest, QueryOraclePriceResponse,
 };
 use test_tube::module::Module;
 use test_tube::runner::Runner;
@@ -21,43 +21,56 @@ where
     R: Runner<'a>,
 {
     fn_execute! {
-        pub grant_price_feeder_proposal: GrantPriceFeederPrivilegeProposal => GrantPriceFeederPrivilegeProposal
+        pub relay_price_feed: MsgRelayPriceFeedPrice => MsgRelayPriceFeedPriceResponse
     }
 
     fn_query! {
         pub query_module_state ["/injective.oracle.v1beta1.Query/OracleModuleState"]: QueryModuleStateRequest => QueryModuleStateResponse
     }
+
+    fn_query! {
+        pub query_oracle_price ["/injective.oracle.v1beta1.Query/OraclePrice"]: QueryOraclePriceRequest => QueryOraclePriceResponse
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use cosmrs::crypto::secp256k1::SigningKey;
+    use cosmrs::proto::cosmos::{bank::v1beta1::MsgSend, base::v1beta1::Coin as BankCoin};
     use cosmwasm_std::Coin;
     use injective_std::{
         shim::Any,
         types::{
             cosmos::{
                 base::v1beta1::Coin as TubeCoin,
-                gov::v1beta1::{MsgSubmitProposal, MsgVote, QueryProposalRequest},
+                gov::v1beta1::{MsgSubmitProposal, MsgVote},
             },
             injective::oracle,
-            injective::oracle::v1beta1::GrantPriceFeederPrivilegeProposal,
+            injective::oracle::v1beta1::{
+                GrantPriceFeederPrivilegeProposal, MsgRelayPriceFeedPrice,
+            },
         },
     };
     use prost::Message;
     use std::str::FromStr;
+    use test_tube::{account::FeeSetting, SigningAccount};
 
-    use crate::{Account, Gov, InjectiveTestApp, Module, Oracle};
+    use crate::{Account, Bank, Gov, InjectiveTestApp, Module, Oracle};
 
     #[test]
     fn oracle_integration() {
         let app = InjectiveTestApp::new();
+
+        let gov = Gov::new(&app);
+        let bank = Bank::new(&app);
+        let oracle = Oracle::new(&app);
+
         let signer = app
             .init_account(&[
-                Coin::new(10_000_000_000_000_000_000_000u128, "inj"),
+                Coin::new(100_000_000_000_000_000_000_000u128, "inj"),
                 Coin::new(100_000_000_000_000_000_000u128, "usdt"),
             ])
             .unwrap();
-        let gov = Gov::new(&app);
 
         let mut buf = vec![];
         oracle::v1beta1::GrantPriceFeederPrivilegeProposal::encode(
@@ -69,6 +82,33 @@ mod tests {
                 relayers: vec![signer.address().to_string()],
             },
             &mut buf,
+        )
+        .unwrap();
+
+        let validator_key = app.get_first_validator_private_key().unwrap();
+        let secp256k1_priv = base64::decode(validator_key).unwrap();
+        let signing_key = SigningKey::from_bytes(&secp256k1_priv).unwrap();
+
+        let validator = SigningAccount::new(
+            "inj".to_string(),
+            signing_key,
+            FeeSetting::Auto {
+                gas_price: Coin::new(2_500u128, "inj"),
+                gas_adjustment: 1.2f64,
+            },
+        );
+
+        // fund the validator account
+        bank.send(
+            MsgSend {
+                from_address: signer.address().to_string(),
+                to_address: validator.address().to_string(),
+                amount: vec![BankCoin {
+                    amount: "1000000000000000000000".to_string(),
+                    denom: "inj".to_string(),
+                }],
+            },
+            &signer,
         )
         .unwrap();
 
@@ -84,10 +124,10 @@ mod tests {
                         amount: "100000000000000000000".to_string(),
                         denom: "inj".to_string(),
                     }],
-                    proposer: signer.address().to_string(),
+                    proposer: validator.address().to_string(),
                     is_expedited: false,
                 },
-                &signer,
+                &validator,
             )
             .unwrap();
 
@@ -100,36 +140,43 @@ mod tests {
             .value
             .clone();
 
-        let proposal = gov
-            .query_proposal(&QueryProposalRequest {
+        gov.vote(
+            MsgVote {
                 proposal_id: u64::from_str(&proposal_id).unwrap(),
-            })
-            .unwrap();
+                voter: validator.address().to_string(),
+                option: 1i32,
+            },
+            &validator,
+        )
+        .unwrap();
 
-        // println!("{:?}", proposal);
+        // NOTE: increase the block time in order to move past the voting period
+        app.increase_time(10u64);
 
-        let vote = gov
-            .vote(
-                MsgVote {
-                    proposal_id: u64::from_str(&proposal_id).unwrap(),
-                    voter: signer.address().to_string(),
-                    option: 1i32,
+        let expected_price = "1234567890".to_string();
+        oracle
+            .relay_price_feed(
+                MsgRelayPriceFeedPrice {
+                    sender: signer.address().to_string(),
+                    base: vec!["inj".to_string()],
+                    quote: vec!["usdt".to_string()],
+                    price: vec![expected_price.clone()],
                 },
                 &signer,
             )
             .unwrap();
 
-        println!("{:?}", vote);
-        println!("{:?}", app.get_first_validator_address());
-
-        let proposal = gov
-            .query_proposal(&QueryProposalRequest {
-                proposal_id: u64::from_str(&proposal_id).unwrap(),
+        let price = oracle
+            .query_oracle_price(&oracle::v1beta1::QueryOraclePriceRequest {
+                oracle_type: 2i32,
+                base: "inj".to_string(),
+                quote: "usdt".to_string(),
             })
-            .unwrap();
+            .unwrap()
+            .price_pair_state
+            .unwrap()
+            .pair_price;
 
-        // println!("{:?}", proposal.proposal.unwrap());
-
-        assert_eq!(1, 2);
+        assert_eq!(price, expected_price);
     }
 }

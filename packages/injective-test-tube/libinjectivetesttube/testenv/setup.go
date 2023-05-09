@@ -20,6 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -38,6 +39,7 @@ type TestEnv struct {
 	App                *app.InjectiveApp
 	Ctx                sdk.Context
 	ParamTypesRegistry ParamTypeRegistry
+	Validator          []byte
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -78,12 +80,28 @@ func SetupInjectiveApp() *app.InjectiveApp {
 	}
 	genesisState[wasm.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&wasmGen)
 
+	// Set up governance genesis state
+	govParams := govtypes.DefaultParams()
+	govParams.VotingParams.VotingPeriod = time.Second * 10 // 1 second
+	govGen := govtypes.GenesisState{
+		StartingProposalId: govtypes.DefaultStartingProposalID,
+		Deposits:           govtypes.Deposits{},
+		Votes:              govtypes.Votes{},
+		Proposals:          govtypes.Proposals{},
+		DepositParams:      govParams.DepositParams,
+		VotingParams:       govParams.VotingParams,
+		TallyParams:        govParams.TallyParams,
+	}
+
+	genesisState[govtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&govGen)
+
 	// Set up staking genesis state
 	stakingParams := stakingtypes.DefaultParams()
 	stakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 	stakingGen := stakingtypes.GenesisState{
 		Params: stakingParams,
 	}
+
 	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
 
 	// Set up exchange genesis state
@@ -146,6 +164,10 @@ func (env *TestEnv) GetValidatorAddresses() []string {
 	return addresses
 }
 
+func (env *TestEnv) GetValidatorPrivateKey() []byte {
+	return env.Validator
+}
+
 // beginNewBlockWithProposer begins a new block with a proposer.
 func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress, timeIncreaseSeconds uint64) {
 	validator, found := env.App.StakingKeeper.GetValidator(env.Ctx, proposer)
@@ -177,7 +199,11 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 }
 
 func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
-	valPub := secp256k1.GenPrivKey().PubKey()
+	valPk := secp256k1.GenPrivKey()
+
+	env.Validator = valPk.Key
+
+	valPub := valPk.PubKey()
 	valAddr := sdk.ValAddress(valPub.Address())
 	bondDenom := env.App.StakingKeeper.GetParams(env.Ctx).BondDenom
 	selfBond := sdk.NewCoins(sdk.Coin{Amount: sdk.NewInt(100), Denom: bondDenom})

@@ -85,18 +85,9 @@ mod tests {
         )
         .unwrap();
 
-        let validator_key = app.get_first_validator_private_key().unwrap();
-        let secp256k1_priv = base64::decode(validator_key).unwrap();
-        let signing_key = SigningKey::from_bytes(&secp256k1_priv).unwrap();
-
-        let validator = SigningAccount::new(
-            "inj".to_string(),
-            signing_key,
-            FeeSetting::Auto {
-                gas_price: Coin::new(2_500u128, "inj"),
-                gas_adjustment: 1.2f64,
-            },
-        );
+        let validator = app
+            .get_first_validator_signing_account("inj".to_string(), 1.2f64)
+            .unwrap();
 
         // fund the validator account
         bank.send(

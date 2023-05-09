@@ -62,6 +62,16 @@ impl InjectiveTestApp {
         self.inner.get_first_validator_private_key()
     }
 
+    /// Get the first validator signing account
+    pub fn get_first_validator_signing_account(
+        &self,
+        denom: String,
+        gas_adjustment: f64,
+    ) -> RunnerResult<SigningAccount> {
+        self.inner
+            .get_first_validator_signing_account(denom, gas_adjustment)
+    }
+
     /// Increase the time of the blockchain by the given number of seconds.
     pub fn increase_time(&self, seconds: u64) {
         self.inner.increase_time(seconds)

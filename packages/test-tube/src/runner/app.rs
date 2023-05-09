@@ -80,6 +80,36 @@ impl BaseApp {
         Ok(pkey)
     }
 
+    /// Get the first validator signing account
+    pub fn get_first_validator_signing_account(
+        &self,
+        denom: String,
+        gas_adjustment: f64,
+    ) -> RunnerResult<SigningAccount> {
+        let pkey = unsafe {
+            let pkey = GetValidatorPrivateKey(self.id);
+            CString::from_raw(pkey)
+        }
+        .to_str()
+        .map_err(DecodeError::Utf8Error)?
+        .to_string();
+
+        let secp256k1_priv = base64::decode(pkey).unwrap();
+
+        let signing_key = SigningKey::from_bytes(&secp256k1_priv).unwrap();
+
+        let validator = SigningAccount::new(
+            "inj".to_string(),
+            signing_key,
+            FeeSetting::Auto {
+                gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, denom),
+                gas_adjustment,
+            },
+        );
+
+        Ok(validator)
+    }
+
     /// Get the current block time
     pub fn get_block_time_nanos(&self) -> i64 {
         unsafe { GetBlockTime(self.id) }

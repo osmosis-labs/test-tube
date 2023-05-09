@@ -38,7 +38,7 @@ mod tests {
     use crate::{Account, InjectiveTestApp, Insurance, Module};
     use cosmwasm_std::Coin;
     use injective_std::{
-        shim::{Any, Duration},
+        shim::Duration,
         types::{
             cosmos::base::v1beta1::Coin as TubeCoin,
             injective::insurance::v1beta1::{
@@ -88,7 +88,6 @@ mod tests {
             .fund
             .unwrap();
 
-        println!("{:?}", res);
         assert_eq!(
             res,
             InsuranceFund {

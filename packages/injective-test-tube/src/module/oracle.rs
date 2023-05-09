@@ -35,7 +35,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use cosmrs::crypto::secp256k1::SigningKey;
     use cosmwasm_std::Coin;
     use injective_std::{
         shim::Any,
@@ -53,7 +52,6 @@ mod tests {
     };
     use prost::Message;
     use std::str::FromStr;
-    use test_tube::{account::FeeSetting, SigningAccount};
 
     use crate::{Account, Bank, Gov, InjectiveTestApp, Module, Oracle};
 

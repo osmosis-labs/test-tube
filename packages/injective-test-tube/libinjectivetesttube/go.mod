@@ -175,6 +175,8 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
+replace github.com/InjectiveLabs/injective-core => /Users/sandmann/go/src/github.com/InjectiveLabs/injective-core
+
 replace github.com/CosmWasm/wasmd => github.com/InjectiveLabs/wasmd v0.30.0-inj-1
 
 replace github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0

@@ -295,8 +295,6 @@ github.com/HdrHistogram/hdrhistogram-go v1.1.0/go.mod h1:yDgFjdqOqDEKOvasDdhWNXY
 github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXYg9BVp4O+o5f6V/ehm6Oo=
 github.com/InjectiveLabs/cosmos-sdk v0.45.11-inj-10 h1:X/E+BsW/09DW8AgrXSbGHgPUZ+3+UpBpRrgDQYqMyi4=
 github.com/InjectiveLabs/cosmos-sdk v0.45.11-inj-10/go.mod h1:ALzkKkJpfhnWjvlwBu0FiI0zYJoTkuXpMHZP6BtRtv4=
-github.com/InjectiveLabs/injective-core v1.10.0 h1:AJmZaH3x3oZAVhj2rnUI5ZutzyDJ4YaT9cVU+pXRy1k=
-github.com/InjectiveLabs/injective-core v1.10.0/go.mod h1:H3ffodfZj+cw25vFPyBBJRa8avwGn6orYYeh2WQAUkk=
 github.com/InjectiveLabs/jsonc v1.0.0 h1:Vdaw0sXYGGYWEQABKPAtZiOMeE5mJleZJXj1Yfz0b/4=
 github.com/InjectiveLabs/metrics v0.0.4 h1:C4Rn1iBkyPCpLjApeIpbIwsvVNrXYAW2+RwTDdjL+z0=
 github.com/InjectiveLabs/metrics v0.0.4/go.mod h1:Co8WWvH1QOAIDN6BUavpRoGZMigzxA8ToEi8HZzvvDw=

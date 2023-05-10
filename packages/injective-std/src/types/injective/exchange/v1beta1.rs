@@ -5219,7 +5219,8 @@ pub struct QuerySubaccountDepositsRequest {
 #[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsResponse")]
 pub struct QuerySubaccountDepositsResponse {
     #[prost(map = "string, message", tag = "1")]
-    pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
+    pub deposits: ::std::collections::HashMap<String, Deposit>,
+    // pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
 }
 /// QueryExchangeBalancesRequest is the request type for the Query/ExchangeBalances RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -6214,7 +6215,6 @@ pub struct FullDerivativeMarket {
 }
 /// Nested message and enum types in `FullDerivativeMarket`.
 pub mod full_derivative_market {
-    // use osmosis_std_derive::CosmwasmExt;
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(
         Clone,

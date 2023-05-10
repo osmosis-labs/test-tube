@@ -142,7 +142,8 @@ mod tests {
         // NOTE: increase the block time in order to move past the voting period
         app.increase_time(10u64);
 
-        let expected_price = "1234567890".to_string();
+        let expected_price = "120000".to_string();
+
         oracle
             .relay_price_feed(
                 MsgRelayPriceFeedPrice {

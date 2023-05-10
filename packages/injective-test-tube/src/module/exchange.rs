@@ -1,5 +1,6 @@
 use injective_std::types::injective::exchange::v1beta1::{
-    MsgCreateSpotLimitOrder, MsgCreateSpotLimitOrderResponse, MsgInstantPerpetualMarketLaunch,
+    MsgCreateDerivativeLimitOrder, MsgCreateDerivativeLimitOrderResponse, MsgCreateSpotLimitOrder,
+    MsgCreateSpotLimitOrderResponse, MsgInstantPerpetualMarketLaunch,
     MsgInstantPerpetualMarketLaunchResponse, MsgInstantSpotMarketLaunch,
     MsgInstantSpotMarketLaunchResponse, MsgPrivilegedExecuteContract,
     MsgPrivilegedExecuteContractResponse, QueryDerivativeMarketsRequest,
@@ -32,6 +33,10 @@ where
 
     fn_execute! {
         pub create_spot_limit_order: MsgCreateSpotLimitOrder => MsgCreateSpotLimitOrderResponse
+    }
+
+    fn_execute! {
+        pub create_deriviative_limit_order: MsgCreateDerivativeLimitOrder => MsgCreateDerivativeLimitOrderResponse
     }
 
     fn_execute! {

@@ -350,8 +350,6 @@ impl<'a> Runner<'a> for BaseApp {
     {
         unsafe {
             self.run_block(|| {
-                println!("{:?}", msgs);
-
                 let fee = match &signer.fee_setting() {
                     FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
                     FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
@@ -363,10 +361,7 @@ impl<'a> Runner<'a> for BaseApp {
                     ),
                 };
 
-                println!("{:?}", msgs);
-
                 let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
-                println!("here");
                 let mut buf = Vec::new();
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)
                     .map_err(EncodeError::ProtoEncodeError)?;

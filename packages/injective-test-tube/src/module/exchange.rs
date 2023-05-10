@@ -1,8 +1,11 @@
 use injective_std::types::injective::exchange::v1beta1::{
-    MsgInstantPerpetualMarketLaunch, MsgInstantPerpetualMarketLaunchResponse,
-    MsgInstantSpotMarketLaunch, MsgInstantSpotMarketLaunchResponse, MsgPrivilegedExecuteContract,
+    MsgCreateSpotLimitOrder, MsgCreateSpotLimitOrderResponse, MsgInstantPerpetualMarketLaunch,
+    MsgInstantPerpetualMarketLaunchResponse, MsgInstantSpotMarketLaunch,
+    MsgInstantSpotMarketLaunchResponse, MsgPrivilegedExecuteContract,
     MsgPrivilegedExecuteContractResponse, QueryDerivativeMarketsRequest,
-    QueryDerivativeMarketsResponse, QuerySpotMarketsRequest, QuerySpotMarketsResponse,
+    QueryDerivativeMarketsResponse, QueryDerivativeMidPriceAndTobRequest,
+    QueryDerivativeMidPriceAndTobResponse, QuerySpotMarketsRequest, QuerySpotMarketsResponse,
+    QuerySpotMidPriceAndTobRequest, QuerySpotMidPriceAndTobResponse,
     QuerySubaccountDepositsRequest, QuerySubaccountDepositsResponse,
 };
 use test_tube::module::Module;
@@ -28,6 +31,10 @@ where
     }
 
     fn_execute! {
+        pub create_spot_limit_order: MsgCreateSpotLimitOrder => MsgCreateSpotLimitOrderResponse
+    }
+
+    fn_execute! {
         pub instant_perpetual_market_launch: MsgInstantPerpetualMarketLaunch => MsgInstantPerpetualMarketLaunchResponse
     }
 
@@ -37,6 +44,14 @@ where
 
     fn_query! {
         pub query_spot_markets ["/injective.exchange.v1beta1.Query/SpotMarkets"]: QuerySpotMarketsRequest => QuerySpotMarketsResponse
+    }
+
+    fn_query! {
+        pub query_spot_mid_price_and_tob ["/injective.exchange.v1beta1.Query/SpotMidPriceAndTOB"]: QuerySpotMidPriceAndTobRequest => QuerySpotMidPriceAndTobResponse
+    }
+
+    fn_query! {
+        pub query_derivative_mid_price_and_tob ["/injective.exchange.v1beta1.Query/DerivativeMidPriceAndTOB"]: QueryDerivativeMidPriceAndTobRequest => QueryDerivativeMidPriceAndTobResponse
     }
 
     fn_query! {
@@ -50,10 +65,12 @@ where
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::Coin;
+    use cosmwasm_std::{Addr, Coin};
+    use injective_cosmwasm::get_default_subaccount_id_for_checked_address;
     use injective_std::types::injective::exchange::v1beta1::{
-        MarketStatus, MsgInstantSpotMarketLaunch, QuerySpotMarketsRequest,
-        QuerySpotMarketsResponse, SpotMarket,
+        MarketStatus, MsgCreateSpotLimitOrder, MsgInstantSpotMarketLaunch, OrderInfo,
+        QuerySpotMarketsRequest, QuerySpotMarketsResponse, QuerySpotMidPriceAndTobRequest,
+        QuerySpotMidPriceAndTobResponse, SpotMarket, SpotOrder,
     };
 
     use crate::{Account, Exchange, InjectiveTestApp};
@@ -63,6 +80,12 @@ mod tests {
     fn exchange_integration() {
         let app = InjectiveTestApp::new();
         let signer = app
+            .init_account(&[
+                Coin::new(10_000_000_000_000_000_000_000u128, "inj"),
+                Coin::new(100_000_000_000_000_000_000u128, "usdt"),
+            ])
+            .unwrap();
+        let trader = app
             .init_account(&[
                 Coin::new(10_000_000_000_000_000_000_000u128, "inj"),
                 Coin::new(100_000_000_000_000_000_000u128, "usdt"),
@@ -123,5 +146,85 @@ mod tests {
             }],
         };
         assert_eq!(spot_markets, expected_response);
+
+        let spot_mid_price_and_tob = exchange
+            .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+            })
+            .unwrap();
+
+        let expected_response = QuerySpotMidPriceAndTobResponse {
+            mid_price: "".to_string(),
+            best_buy_price: "".to_string(),
+            best_sell_price: "".to_string(),
+        };
+        assert_eq!(spot_mid_price_and_tob, expected_response);
+
+        exchange
+            .create_spot_limit_order(
+                MsgCreateSpotLimitOrder {
+                    sender: signer.address(),
+                    order: Some(SpotOrder {
+                        market_id:
+                            "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                                .to_string(),
+                        order_info: Some(OrderInfo {
+                            subaccount_id: get_default_subaccount_id_for_checked_address(
+                                &Addr::unchecked(signer.address()),
+                            )
+                            .as_str()
+                            .to_string(),
+                            fee_recipient: signer.address(),
+                            price: "1000000000000000000".to_string(),
+                            quantity: "10000000000000000000".to_string(),
+                        }),
+                        order_type: 1i32,
+                        trigger_price: "".to_string(),
+                    }),
+                },
+                &signer,
+            )
+            .unwrap();
+
+        exchange
+            .create_spot_limit_order(
+                MsgCreateSpotLimitOrder {
+                    sender: trader.address(),
+                    order: Some(SpotOrder {
+                        market_id:
+                            "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                                .to_string(),
+                        order_info: Some(OrderInfo {
+                            subaccount_id: get_default_subaccount_id_for_checked_address(
+                                &Addr::unchecked(trader.address()),
+                            )
+                            .as_str()
+                            .to_string(),
+                            fee_recipient: trader.address(),
+                            price: "2000000000000000000".to_string(),
+                            quantity: "10000000000000000000".to_string(),
+                        }),
+                        order_type: 2i32,
+                        trigger_price: "".to_string(),
+                    }),
+                },
+                &trader,
+            )
+            .unwrap();
+
+        let spot_mid_price_and_tob = exchange
+            .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+            })
+            .unwrap();
+
+        let expected_response = QuerySpotMidPriceAndTobResponse {
+            mid_price: "1500000000000000000".to_string(),
+            best_buy_price: "1000000000000000000".to_string(),
+            best_sell_price: "2000000000000000000".to_string(),
+        };
+        assert_eq!(spot_mid_price_and_tob, expected_response);
     }
 }

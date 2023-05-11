@@ -9,21 +9,21 @@ import (
 	// helpers
 
 	// tendermint
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	// cosmos-sdk
-
+	app "cosmossdk.io/simapp"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/ibc-go/testing/simapp"
 
 	// wasmd
 	"github.com/CosmWasm/wasmd/x/wasm"
@@ -64,7 +64,7 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		app.DefaultNodeHome,
 		5,
 		app.MakeEncodingConfig(),
-		simapp.EmptyAppOptions{},
+		app.EmptyWasmOpts,
 	)
 
 	encCfg := app.MakeEncodingConfig()

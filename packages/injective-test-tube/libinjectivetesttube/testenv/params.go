@@ -5,7 +5,7 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	proto "github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 )
 
 type ProtoParamSet interface {

@@ -13,18 +13,16 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 
-	// cosmos-sdk
-	app "cosmossdk.io/simapp"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/ibc-go/testing/simapp"
-
 	// wasmd
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -64,7 +62,7 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		app.DefaultNodeHome,
 		5,
 		app.MakeEncodingConfig(),
-		app.EmptyWasmOpts,
+		app.TestAppOptions{},
 	)
 
 	encCfg := app.MakeEncodingConfig()
@@ -81,16 +79,15 @@ func SetupInjectiveApp() *app.InjectiveApp {
 	genesisState[wasm.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&wasmGen)
 
 	// Set up governance genesis state
-	govParams := govtypes.DefaultParams()
-	govParams.VotingParams.VotingPeriod = time.Second * 10 // 1 second
-	govGen := govtypes.GenesisState{
-		StartingProposalId: govtypes.DefaultStartingProposalID,
-		Deposits:           govtypes.Deposits{},
-		Votes:              govtypes.Votes{},
-		Proposals:          govtypes.Proposals{},
-		DepositParams:      govParams.DepositParams,
-		VotingParams:       govParams.VotingParams,
-		TallyParams:        govParams.TallyParams,
+	govParams := govv1types.DefaultParams()
+	votingPeriod := time.Second * 10 // 10 second
+	govParams.VotingPeriod = &votingPeriod
+	govGen := govv1types.GenesisState{
+		StartingProposalId: govv1types.DefaultStartingProposalID,
+		Deposits:           govv1types.Deposits{},
+		Votes:              govv1types.Votes{},
+		Proposals:          govv1types.Proposals{},
+		Params:             &govParams,
 	}
 
 	genesisState[govtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&govGen)
@@ -116,11 +113,7 @@ func SetupInjectiveApp() *app.InjectiveApp {
 
 	requireNoErr(err)
 
-	concensusParams := simapp.DefaultConsensusParams
-	concensusParams.Block = &abci.BlockParams{
-		MaxBytes: 22020096,
-		MaxGas:   -1,
-	}
+	consensusParams := app.DefaultConsensusParams
 
 	// replace sdk.DefaultDenom with "inj", a bit of a hack, needs improvement
 	stateBytes = []byte(strings.Replace(string(stateBytes), "\"stake\"", "\"inj\"", -1))
@@ -128,7 +121,7 @@ func SetupInjectiveApp() *app.InjectiveApp {
 	appInstance.InitChain(
 		abci.RequestInitChain{
 			Validators:      []abci.ValidatorUpdate{},
-			ConsensusParams: concensusParams,
+			ConsensusParams: consensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
@@ -186,7 +179,7 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 	header := tmtypes.Header{ChainID: "injective-777", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
 	newCtx := env.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(env.Ctx.BlockHeight() + 1)
 	env.Ctx = newCtx
-	lastCommitInfo := abci.LastCommitInfo{
+	lastCommitInfo := abci.CommitInfo{
 		Votes: []abci.VoteInfo{{
 			Validator:       abci.Validator{Address: valAddr, Power: 1000},
 			SignedLastBlock: true,
@@ -208,16 +201,16 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	bondDenom := env.App.StakingKeeper.GetParams(env.Ctx).BondDenom
 	selfBond := sdk.NewCoins(sdk.Coin{Amount: sdk.NewInt(100), Denom: bondDenom})
 
-	err := simapp.FundAccount(env.App.BankKeeper, env.Ctx, sdk.AccAddress(valPub.Address()), selfBond)
+	err := testutil.FundAccount(env.App.BankKeeper, env.Ctx, sdk.AccAddress(valPub.Address()), selfBond)
 	requireNoErr(err)
 
-	stakingHandler := staking.NewHandler(env.App.StakingKeeper)
+	stakingHandler := stakingkeeper.NewMsgServerImpl(env.App.StakingKeeper)
 	stakingCoin := sdk.NewCoin(bondDenom, selfBond[0].Amount)
 	Commission := stakingtypes.NewCommissionRates(sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2))
 	msg, err := stakingtypes.NewMsgCreateValidator(valAddr, valPub, stakingCoin, stakingtypes.Description{}, Commission, sdk.OneInt())
 	requireNoErr(err)
 
-	res, err := stakingHandler(env.Ctx, msg)
+	res, err := stakingHandler.CreateValidator(env.Ctx, msg)
 	requireNoErr(err)
 
 	requireNoNil("staking handler", res)

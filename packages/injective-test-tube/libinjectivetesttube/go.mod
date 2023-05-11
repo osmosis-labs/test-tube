@@ -9,10 +9,12 @@ require (
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cometbft/cometbft-db v0.7.0
 	github.com/cosmos/cosmos-sdk v0.47.2
-	github.com/cosmos/ibc-go/v7 v7.0.0
-	github.com/gogo/protobuf v1.3.3
+	github.com/cosmos/ibc-go/v7 v7.0.0 // indirect
+	github.com/gogo/protobuf v1.3.3 // indirect
 	github.com/pkg/errors v0.9.1
 )
+
+require github.com/cosmos/gogoproto v1.4.9
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -48,16 +50,13 @@ require (
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
-	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/coinbase/rosetta-sdk-go/types v1.0.0 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
-	github.com/cosmos/gogoproto v1.4.9 // indirect
 	github.com/cosmos/iavl v0.20.0 // indirect
-	github.com/cosmos/ibc-go/v7 v7.0.0 // indirect
 	github.com/cosmos/ics23/go v0.9.1-0.20221207100636-b1abd8678aab // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.1 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
@@ -194,18 +193,14 @@ replace (
 	cosmossdk.io/math => github.com/InjectiveLabs/cosmos-sdk/math v0.47.0-inj-3
 
 	github.com/CosmWasm/wasmd => github.com/InjectiveLabs/wasmd v0.40.0-rc.1-inj
-	github.com/InjectiveLabs/injective-core => /Users/sandmann/go/src/github.com/InjectiveLabs/injective-core
+	github.com/InjectiveLabs/injective-core => /Users/achon/go/src/github.com/InjectiveLabs/injective-core
 
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 
 	github.com/cosmos/cosmos-sdk => github.com/InjectiveLabs/cosmos-sdk v0.47.2-inj-1
 	github.com/cosmos/ibc-go/v7 => github.com/InjectiveLabs/ibc-go/v7 v7.0.0-inj
 
-	github.com/cosmos/iavl v0.19.5 => github.com/cosmos/iavl v0.19.4
-
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
 
 	google.golang.org/grpc => google.golang.org/grpc v1.54.0
 )

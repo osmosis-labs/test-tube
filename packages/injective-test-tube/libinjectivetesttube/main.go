@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
+	"github.com/cosmos/gogoproto/proto"
 	// helpers
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
 
 	// tendermint
@@ -20,7 +20,6 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	// cosmos sdk
-	app "cosmossdk.io/simapp"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -82,7 +81,7 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 	priv := secp256k1.GenPrivKey()
 	accAddr := sdk.AccAddress(priv.PubKey().Address())
 
-	err := app.FundAccount(env.App.BankKeeper, env.Ctx, accAddr, coins)
+	err := testutil.FundAccount(env.App.BankKeeper, env.Ctx, accAddr, coins)
 	if err != nil {
 		panic(errors.Wrapf(err, "Failed to fund account"))
 	}

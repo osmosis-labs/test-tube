@@ -37,3 +37,53 @@ where
         pub query_total_supply ["/cosmos.bank.v1beta1.Query/TotalSupply"]: QueryTotalSupplyRequest => QueryTotalSupplyResponse
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use cosmwasm_std::Coin;
+    use injective_std::types::cosmos::bank::v1beta1::{MsgSend, QueryBalanceRequest};
+    use injective_std::types::cosmos::base::v1beta1::Coin as BaseCoin;
+
+    use crate::{Account, Bank, InjectiveTestApp};
+    use test_tube::Module;
+
+    #[test]
+    fn bank_integration() {
+        let app = InjectiveTestApp::new();
+        let signer = app
+            .init_account(&[Coin::new(100_000_000_000_000_000_000u128, "inj")])
+            .unwrap();
+        let receiver = app.init_account(&[Coin::new(1u128, "inj")]).unwrap();
+        let bank = Bank::new(&app);
+
+        let height = app.get_block_height();
+        println!("height: {}", height);
+
+        let response = bank
+            .query_balance(&QueryBalanceRequest {
+                address: receiver.address(),
+                denom: "inj".to_string(),
+            })
+            .unwrap();
+        assert_eq!(
+            response.balance.unwrap(),
+            BaseCoin {
+                amount: 1u128.to_string(),
+                denom: "inj".to_string(),
+            }
+        );
+
+        bank.send(
+            MsgSend {
+                from_address: signer.address(),
+                to_address: receiver.address(),
+                amount: vec![BaseCoin {
+                    amount: 9u128.to_string(),
+                    denom: "inj".to_string(),
+                }],
+            },
+            &signer,
+        )
+        .unwrap();
+    }
+}

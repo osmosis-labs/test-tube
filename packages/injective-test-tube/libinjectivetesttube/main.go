@@ -10,26 +10,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	"github.com/cosmos/gogoproto/proto"
-	// helpers
-	"github.com/pkg/errors"
-
-	// tendermint
 	abci "github.com/cometbft/cometbft/abci/types"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-
-	// cosmos sdk
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	// wasmd
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
-	// cosmwasm-testing
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/maxrobot/test-tube/injective-test-tube/result"
 	"github.com/maxrobot/test-tube/injective-test-tube/testenv"
+	"github.com/pkg/errors"
+
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 )
 
 var (
@@ -55,8 +48,18 @@ func InitTestEnv() uint64 {
 
 	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "injective-777", Time: time.Now().UTC()})
 
-	env.BeginNewBlock(false, 5)
+	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
+	valAddrFancy, _ := validators[0].GetConsAddr()
+	env.App.SlashingKeeper.SetValidatorSigningInfo(env.Ctx, valAddrFancy, slashingtypes.NewValidatorSigningInfo(
+		valAddrFancy,
+		0,
+		0,
+		time.Unix(0, 0),
+		false,
+		0,
+	))
 
+	env.BeginNewBlock(false, 5)
 	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
 	env.App.EndBlock(reqEndBlock)
 	env.App.Commit()
@@ -66,6 +69,7 @@ func InitTestEnv() uint64 {
 
 	envRegister.Store(id, *env)
 
+	// return 1
 	return id
 }
 
@@ -119,6 +123,7 @@ func EndBlock(envId uint64) {
 
 //export Execute
 func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
+	fmt.Println("Execute")
 	env := loadEnv(envId)
 	// Temp fix for concurrency issue
 	mu.Lock()

@@ -193,7 +193,8 @@ replace (
 	cosmossdk.io/math => github.com/InjectiveLabs/cosmos-sdk/math v0.47.0-inj-3
 
 	github.com/CosmWasm/wasmd => github.com/InjectiveLabs/wasmd v0.40.0-rc.1-inj
-	github.com/InjectiveLabs/injective-core => /Users/achon/go/src/github.com/InjectiveLabs/injective-core
+	github.com/InjectiveLabs/cosmos-sdk => /Users/sandmann/go/src/github.com/InjectiveLabs/cosmos-sdk
+	github.com/InjectiveLabs/injective-core => /Users/sandmann/go/src/github.com/InjectiveLabs/injective-core
 
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 

@@ -21,7 +21,7 @@ hex = "0.4.2"
 # osmosis-std = {git = "https://github.com/osmosis-labs/osmosis-rust.git", branch = "main"}
 # injective-std = { version = "0.1.0", path = "../injective-std"  }
 injective-std = { version = "1.1.0", path = "../injective-std"  }
-prost = "0.11.9"
+prost = "0.11.0"
 serde = "1.0.144"
 serde_json = "1.0.85"
 test-tube = { version = "1.1.0", path = "../test-tube" }

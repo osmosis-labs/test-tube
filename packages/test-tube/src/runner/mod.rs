@@ -20,6 +20,7 @@ pub trait Runner<'a> {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
+        println!("execute");
         self.execute_multiple(&[(msg, type_url)], signer)
     }
 
@@ -52,10 +53,10 @@ pub trait Runner<'a> {
             .iter()
             .map(|msg| match msg {
                 CosmosMsg::Bank(msg) => bank_msg_to_any(msg, signer),
-                // CosmosMsg::Stargate { type_url, value } => Ok(cosmrs::Any {
-                //     type_url: type_url.clone(),
-                //     value: value.0.clone(),
-                // }),
+                CosmosMsg::Stargate { type_url, value } => Ok(cosmrs::Any {
+                    type_url: type_url.clone(),
+                    value: value.0.clone(),
+                }),
                 CosmosMsg::Wasm(msg) => wasm_msg_to_any(msg, signer),
                 _ => todo!("unsupported cosmos msg variant"),
             })

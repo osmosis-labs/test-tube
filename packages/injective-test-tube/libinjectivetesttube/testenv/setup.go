@@ -9,20 +9,30 @@ import (
 	// helpers
 
 	// tendermint
+
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
-	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/server"
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
+
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	// wasmd
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -53,6 +63,8 @@ func (ao DebugAppOptions) Get(o string) interface{} {
 
 func SetupInjectiveApp() *app.InjectiveApp {
 	db := dbm.NewMemDB()
+	encCfg := app.MakeEncodingConfig()
+
 	appInstance := app.NewInjectiveApp(
 		log.NewNopLogger(),
 		db,
@@ -61,12 +73,31 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		map[int64]bool{},
 		app.DefaultNodeHome,
 		5,
-		app.MakeEncodingConfig(),
+		encCfg,
 		app.TestAppOptions{},
+		baseapp.SetChainID("injective-777"),
 	)
 
-	encCfg := app.MakeEncodingConfig()
+	// set up the validator
+	privVal := mock.NewPV()
+	pubKey, err := privVal.GetPubKey()
+	requireNoErr(err)
+
+	// create validator set with single validator
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+
+	// generate genesis account
+	senderPrivKey := secp256k1.GenPrivKey()
+	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
+	}
+
 	genesisState := app.NewDefaultGenesisState()
+	genesisState, err = simtestutil.GenesisStateWithValSet(appInstance.AppCodec(), genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
+	requireNoErr(err)
 
 	// Set up Wasm genesis state
 	wasmGen := wasm.GenesisState{
@@ -92,15 +123,6 @@ func SetupInjectiveApp() *app.InjectiveApp {
 
 	genesisState[govtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&govGen)
 
-	// Set up staking genesis state
-	stakingParams := stakingtypes.DefaultParams()
-	stakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
-	stakingGen := stakingtypes.GenesisState{
-		Params: stakingParams,
-	}
-
-	genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
-
 	// Set up exchange genesis state
 	exchangeParams := exchangetypes.DefaultParams()
 	exchangeParams.IsInstantDerivativeMarketLaunchEnabled = true
@@ -120,6 +142,7 @@ func SetupInjectiveApp() *app.InjectiveApp {
 
 	appInstance.InitChain(
 		abci.RequestInitChain{
+			ChainId:         "injective-777",
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: consensusParams,
 			AppStateBytes:   stateBytes,
@@ -130,13 +153,16 @@ func SetupInjectiveApp() *app.InjectiveApp {
 }
 
 func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uint64) {
+	fmt.Println("BeginNewBlock")
 	var valAddr []byte
 
 	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
+
 	if len(validators) >= 1 {
 		valAddrFancy, err := validators[0].GetConsAddr()
 		requireNoErr(err)
 		valAddr = valAddrFancy.Bytes()
+
 	} else {
 		valAddrFancy := env.setupValidator(stakingtypes.Bonded)
 		validator, _ := env.App.StakingKeeper.GetValidator(env.Ctx, valAddrFancy)
@@ -170,13 +196,14 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 	}
 
 	valConsAddr, err := validator.GetConsAddr()
+
 	requireNoErr(err)
 
 	valAddr := valConsAddr.Bytes()
 
 	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
 
-	header := tmtypes.Header{ChainID: "injective-777", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
+	header := tmproto.Header{ChainID: "injective-777", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
 	newCtx := env.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(env.Ctx.BlockHeight() + 1)
 	env.Ctx = newCtx
 	lastCommitInfo := abci.CommitInfo{
@@ -189,6 +216,18 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 
 	env.App.BeginBlock(reqBeginBlock)
 	env.Ctx = env.App.NewContext(false, reqBeginBlock.Header)
+}
+
+func (env *TestEnv) SetDefaultValidator(consAddr sdk.ConsAddress) {
+	signingInfo := slashingtypes.NewValidatorSigningInfo(
+		consAddr,
+		env.Ctx.BlockHeight(),
+		0,
+		time.Unix(0, 0),
+		false,
+		0,
+	)
+	env.App.SlashingKeeper.SetValidatorSigningInfo(env.Ctx, consAddr, signingInfo)
 }
 
 func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
@@ -206,7 +245,8 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 
 	stakingHandler := stakingkeeper.NewMsgServerImpl(env.App.StakingKeeper)
 	stakingCoin := sdk.NewCoin(bondDenom, selfBond[0].Amount)
-	Commission := stakingtypes.NewCommissionRates(sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2), sdk.NewDecWithPrec(2, 2))
+
+	Commission := stakingtypes.NewCommissionRates(sdk.MustNewDecFromStr("0.05"), sdk.MustNewDecFromStr("0.05"), sdk.MustNewDecFromStr("0.05"))
 	msg, err := stakingtypes.NewMsgCreateValidator(valAddr, valPub, stakingCoin, stakingtypes.Description{}, Commission, sdk.OneInt())
 	requireNoErr(err)
 

@@ -187,19 +187,13 @@ require (
 )
 
 replace (
-	// cosmossdk.io/simapp => github.com/InjectiveLabs/cosmos-sdk/simapp v0.47.2-inj-1
 	cosmossdk.io/math => github.com/InjectiveLabs/cosmos-sdk/math v0.47.0-inj-3
 	github.com/CosmWasm/wasmd => github.com/InjectiveLabs/wasmd v0.40.0-rc.1-inj
-	github.com/InjectiveLabs/injective-core => /Users/sandmann/go/src/github.com/InjectiveLabs/injective-core
+	github.com/InjectiveLabs/injective-core => ../injective-core
 	github.com/cometbft/cometbft => github.com/InjectiveLabs/cometbft v0.37.0-inj
-
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-
 	github.com/cosmos/cosmos-sdk => github.com/InjectiveLabs/cosmos-sdk v0.47.2-inj-1
-	// github.com/cosmos/cosmos-sdk => /Users/sandmann/go/src/github.com/InjectiveLabs/cosmos-sdk
 	github.com/cosmos/ibc-go/v7 => github.com/InjectiveLabs/ibc-go/v7 v7.0.0-inj
-
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
 	google.golang.org/grpc => google.golang.org/grpc v1.54.0
 )

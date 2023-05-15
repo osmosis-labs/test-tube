@@ -18,9 +18,7 @@ cosmrs = {version = "0.14.0", features = ["cosmwasm"]}
 cosmwasm-std = "1.1.2"
 injective-cosmwasm = { version = "0.1.95" }
 hex = "0.4.2"
-# osmosis-std = {git = "https://github.com/osmosis-labs/osmosis-rust.git", branch = "main"}
-# injective-std = { version = "0.1.0", path = "../injective-std"  }
-injective-std = { version = "1.1.0", path = "../injective-std"  }
+injective-std = { git = "https://github.com/maxrobot/injective-std.git", branch = "master"}
 prost = "0.11.0"
 serde = "1.0.144"
 serde_json = "1.0.85"

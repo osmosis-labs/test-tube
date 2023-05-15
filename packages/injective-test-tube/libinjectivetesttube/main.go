@@ -37,8 +37,9 @@ func InitTestEnv() uint64 {
 	mu.Lock()
 	defer mu.Unlock()
 
+	// set up the validator
 	env := new(testenv.TestEnv)
-	env.App = testenv.SetupInjectiveApp()
+	env.App, env.Validator = testenv.SetupInjectiveApp()
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
 
 	env.SetupParamTypes()
@@ -69,7 +70,6 @@ func InitTestEnv() uint64 {
 
 	envRegister.Store(id, *env)
 
-	// return 1
 	return id
 }
 
@@ -123,7 +123,6 @@ func EndBlock(envId uint64) {
 
 //export Execute
 func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
-	fmt.Println("Execute")
 	env := loadEnv(envId)
 	// Temp fix for concurrency issue
 	mu.Lock()
@@ -142,7 +141,6 @@ func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
 
 	resDeliverTx := env.App.DeliverTx(reqDeliverTx)
 	bz, err := proto.Marshal(&resDeliverTx)
-
 	if err != nil {
 		panic(err)
 	}

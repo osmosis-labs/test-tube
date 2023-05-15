@@ -113,123 +113,123 @@ mod tests {
             .unwrap()
             .data;
 
-        // exchange
-        //     .instant_spot_market_launch(
-        //         MsgInstantSpotMarketLaunch {
-        //             sender: signer.address(),
-        //             ticker: "INJ/USDT".to_owned(),
-        //             base_denom: "inj".to_owned(),
-        //             quote_denom: "usdt".to_owned(),
-        //             min_price_tick_size: "10000".to_owned(),
-        //             min_quantity_tick_size: "100000".to_owned(),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap_err();
+        exchange
+            .instant_spot_market_launch(
+                MsgInstantSpotMarketLaunch {
+                    sender: signer.address(),
+                    ticker: "INJ/USDT".to_owned(),
+                    base_denom: "inj".to_owned(),
+                    quote_denom: "usdt".to_owned(),
+                    min_price_tick_size: "10000".to_owned(),
+                    min_quantity_tick_size: "100000".to_owned(),
+                },
+                &signer,
+            )
+            .unwrap_err();
 
-        // app.increase_time(1u64);
+        app.increase_time(1u64);
 
-        // let spot_markets = exchange
-        //     .query_spot_markets(&QuerySpotMarketsRequest {
-        //         status: "Active".to_owned(),
-        //     })
-        //     .unwrap();
+        let spot_markets = exchange
+            .query_spot_markets(&QuerySpotMarketsRequest {
+                status: "Active".to_owned(),
+            })
+            .unwrap();
 
-        // let expected_response = QuerySpotMarketsResponse {
-        //     markets: vec![SpotMarket {
-        //         ticker: "INJ/USDT".to_string(),
-        //         base_denom: "inj".to_string(),
-        //         quote_denom: "usdt".to_string(),
-        //         maker_fee_rate: "-100000000000000".to_string(),
-        //         taker_fee_rate: "1000000000000000".to_string(),
-        //         relayer_fee_share_rate: "400000000000000000".to_string(),
-        //         market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
-        //             .to_string(),
-        //         status: MarketStatus::Active.into(),
-        //         min_price_tick_size: "10000".to_string(),
-        //         min_quantity_tick_size: "100000".to_string(),
-        //     }],
-        // };
-        // assert_eq!(spot_markets, expected_response);
+        let expected_response = QuerySpotMarketsResponse {
+            markets: vec![SpotMarket {
+                ticker: "INJ/USDT".to_string(),
+                base_denom: "inj".to_string(),
+                quote_denom: "usdt".to_string(),
+                maker_fee_rate: "-100000000000000".to_string(),
+                taker_fee_rate: "1000000000000000".to_string(),
+                relayer_fee_share_rate: "400000000000000000".to_string(),
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+                status: MarketStatus::Active.into(),
+                min_price_tick_size: "10000".to_string(),
+                min_quantity_tick_size: "100000".to_string(),
+            }],
+        };
+        assert_eq!(spot_markets, expected_response);
 
-        // let spot_mid_price_and_tob = exchange
-        //     .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
-        //         market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
-        //             .to_string(),
-        //     })
-        //     .unwrap();
+        let spot_mid_price_and_tob = exchange
+            .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+            })
+            .unwrap();
 
-        // let expected_response = QuerySpotMidPriceAndTobResponse {
-        //     mid_price: "".to_string(),
-        //     best_buy_price: "".to_string(),
-        //     best_sell_price: "".to_string(),
-        // };
-        // assert_eq!(spot_mid_price_and_tob, expected_response);
+        let expected_response = QuerySpotMidPriceAndTobResponse {
+            mid_price: "".to_string(),
+            best_buy_price: "".to_string(),
+            best_sell_price: "".to_string(),
+        };
+        assert_eq!(spot_mid_price_and_tob, expected_response);
 
-        // exchange
-        //     .create_spot_limit_order(
-        //         MsgCreateSpotLimitOrder {
-        //             sender: signer.address(),
-        //             order: Some(SpotOrder {
-        //                 market_id:
-        //                     "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
-        //                         .to_string(),
-        //                 order_info: Some(OrderInfo {
-        //                     subaccount_id: get_default_subaccount_id_for_checked_address(
-        //                         &Addr::unchecked(signer.address()),
-        //                     )
-        //                     .as_str()
-        //                     .to_string(),
-        //                     fee_recipient: signer.address(),
-        //                     price: "1000000000000000000".to_string(),
-        //                     quantity: "10000000000000000000".to_string(),
-        //                 }),
-        //                 order_type: 1i32,
-        //                 trigger_price: "".to_string(),
-        //             }),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap();
+        exchange
+            .create_spot_limit_order(
+                MsgCreateSpotLimitOrder {
+                    sender: signer.address(),
+                    order: Some(SpotOrder {
+                        market_id:
+                            "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                                .to_string(),
+                        order_info: Some(OrderInfo {
+                            subaccount_id: get_default_subaccount_id_for_checked_address(
+                                &Addr::unchecked(signer.address()),
+                            )
+                            .as_str()
+                            .to_string(),
+                            fee_recipient: signer.address(),
+                            price: "1000000000000000000".to_string(),
+                            quantity: "10000000000000000000".to_string(),
+                        }),
+                        order_type: 1i32,
+                        trigger_price: "".to_string(),
+                    }),
+                },
+                &signer,
+            )
+            .unwrap();
 
-        // exchange
-        //     .create_spot_limit_order(
-        //         MsgCreateSpotLimitOrder {
-        //             sender: trader.address(),
-        //             order: Some(SpotOrder {
-        //                 market_id:
-        //                     "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
-        //                         .to_string(),
-        //                 order_info: Some(OrderInfo {
-        //                     subaccount_id: get_default_subaccount_id_for_checked_address(
-        //                         &Addr::unchecked(trader.address()),
-        //                     )
-        //                     .as_str()
-        //                     .to_string(),
-        //                     fee_recipient: trader.address(),
-        //                     price: "2000000000000000000".to_string(),
-        //                     quantity: "10000000000000000000".to_string(),
-        //                 }),
-        //                 order_type: 2i32,
-        //                 trigger_price: "".to_string(),
-        //             }),
-        //         },
-        //         &trader,
-        //     )
-        //     .unwrap();
+        exchange
+            .create_spot_limit_order(
+                MsgCreateSpotLimitOrder {
+                    sender: trader.address(),
+                    order: Some(SpotOrder {
+                        market_id:
+                            "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                                .to_string(),
+                        order_info: Some(OrderInfo {
+                            subaccount_id: get_default_subaccount_id_for_checked_address(
+                                &Addr::unchecked(trader.address()),
+                            )
+                            .as_str()
+                            .to_string(),
+                            fee_recipient: trader.address(),
+                            price: "2000000000000000000".to_string(),
+                            quantity: "10000000000000000000".to_string(),
+                        }),
+                        order_type: 2i32,
+                        trigger_price: "".to_string(),
+                    }),
+                },
+                &trader,
+            )
+            .unwrap();
 
-        // let spot_mid_price_and_tob = exchange
-        //     .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
-        //         market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
-        //             .to_string(),
-        //     })
-        //     .unwrap();
+        let spot_mid_price_and_tob = exchange
+            .query_spot_mid_price_and_tob(&QuerySpotMidPriceAndTobRequest {
+                market_id: "0xd5a22be807011d5e42d5b77da3f417e22676efae494109cd01c242ad46630115"
+                    .to_string(),
+            })
+            .unwrap();
 
-        // let expected_response = QuerySpotMidPriceAndTobResponse {
-        //     mid_price: "1500000000000000000".to_string(),
-        //     best_buy_price: "1000000000000000000".to_string(),
-        //     best_sell_price: "2000000000000000000".to_string(),
-        // };
-        // assert_eq!(spot_mid_price_and_tob, expected_response);
+        let expected_response = QuerySpotMidPriceAndTobResponse {
+            mid_price: "1500000000000000000".to_string(),
+            best_buy_price: "1000000000000000000".to_string(),
+            best_sell_price: "2000000000000000000".to_string(),
+        };
+        assert_eq!(spot_mid_price_and_tob, expected_response);
     }
 }

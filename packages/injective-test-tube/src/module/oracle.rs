@@ -42,7 +42,7 @@ mod tests {
             cosmos::{
                 bank::v1beta1::MsgSend,
                 base::v1beta1::Coin as TubeCoin,
-                gov::v1beta1::{MsgSubmitProposal, MsgVote},
+                gov::v1beta1::{MsgSubmitProposal, MsgVote, QueryProposalRequest},
             },
             injective::oracle,
             injective::oracle::v1beta1::{
@@ -114,7 +114,6 @@ mod tests {
                         denom: "inj".to_string(),
                     }],
                     proposer: validator.address().to_string(),
-                    is_expedited: false,
                 },
                 &validator,
             )
@@ -129,6 +128,14 @@ mod tests {
             .value
             .clone();
 
+        let proposal = gov
+            .query_proposal(&QueryProposalRequest {
+                proposal_id: u64::from_str(&proposal_id).unwrap(),
+            })
+            .unwrap()
+            .proposal
+            .unwrap();
+
         gov.vote(
             MsgVote {
                 proposal_id: u64::from_str(&proposal_id).unwrap(),
@@ -142,6 +149,13 @@ mod tests {
         // NOTE: increase the block time in order to move past the voting period
         app.increase_time(10u64);
 
+        let proposal = gov
+            .query_proposal(&QueryProposalRequest {
+                proposal_id: u64::from_str(&proposal_id).unwrap(),
+            })
+            .unwrap()
+            .proposal
+            .unwrap();
         let expected_price = "120000".to_string();
 
         oracle

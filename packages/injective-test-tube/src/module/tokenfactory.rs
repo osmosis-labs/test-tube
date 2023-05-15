@@ -74,21 +74,15 @@ mod tests {
     fn tokenfactory_integration() {
         let app = InjectiveTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(
-                100_000_000_000_000_000_000_000_000_000_000u128,
-                "inj",
-            )])
+            .init_account(&[Coin::new(100_000_000_000_000_000_000u128, "inj")])
             .unwrap();
         let tokenfactory = TokenFactory::new(&app);
         let bank = Bank::new(&app);
 
-        let height = app.get_block_height();
-        println!("height: {}", height);
-        // let denom = "inj".to_string();
-        // assert_eq!(1, 2);
         // create denom
         let subdenom = "udenom";
 
+        // assert_eq!(1, 2);
         let denom = tokenfactory
             .create_denom(
                 MsgCreateDenom {
@@ -97,80 +91,68 @@ mod tests {
                 },
                 &signer,
             )
-            .unwrap_err();
-        // println!("denom: {:?}", denom);
-        assert_eq!(1, 2);
-        // let denom = tokenfactory
-        //     .create_denom(
-        //         MsgCreateDenom {
-        //             sender: signer.address(),
-        //             subdenom: subdenom.to_owned(),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap()
-        //     .data
-        //     .new_token_denom;
+            .unwrap()
+            .data
+            .new_token_denom;
 
-        // assert_eq!(format!("factory/{}/{}", signer.address(), subdenom), denom);
+        assert_eq!(format!("factory/{}/{}", signer.address(), subdenom), denom);
 
-        // // denom from creator
-        // let denoms = tokenfactory
-        //     .query_denoms_from_creator(&QueryDenomsFromCreatorRequest {
-        //         creator: signer.address(),
-        //     })
-        //     .unwrap()
-        //     .denoms;
+        // denom from creator
+        let denoms = tokenfactory
+            .query_denoms_from_creator(&QueryDenomsFromCreatorRequest {
+                creator: signer.address(),
+            })
+            .unwrap()
+            .denoms;
 
-        // assert_eq!(denoms, [denom.clone()]);
+        assert_eq!(denoms, [denom.clone()]);
 
         // TODO mint new denom
-        // mint
-        // let coin: injective_std::types::cosmos::base::v1beta1::Coin =
-        //     Coin::new(1000000000, denom.clone()).into();
-        // tokenfactory
-        //     .mint(
-        //         MsgMint {
-        //             sender: signer.address(),
-        //             amount: Some(coin.clone()),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap();
+        let coin: injective_std::types::cosmos::base::v1beta1::Coin =
+            Coin::new(1000000000, denom.clone()).into();
+        tokenfactory
+            .mint(
+                MsgMint {
+                    sender: signer.address(),
+                    amount: Some(coin.clone()),
+                },
+                &signer,
+            )
+            .unwrap();
 
-        // let balance = bank
-        //     .query_balance(&QueryBalanceRequest {
-        //         address: signer.address(),
-        //         denom: denom.clone(),
-        //     })
-        //     .unwrap()
-        //     .balance
-        //     .unwrap();
+        let balance = bank
+            .query_balance(&QueryBalanceRequest {
+                address: signer.address(),
+                denom: denom.clone(),
+            })
+            .unwrap()
+            .balance
+            .unwrap();
 
-        // assert_eq!(coin.amount, balance.amount);
-        // assert_eq!(coin.denom, balance.denom);
+        assert_eq!(coin.amount, balance.amount);
+        assert_eq!(coin.denom, balance.denom);
 
-        // // burn
-        // tokenfactory
-        //     .burn(
-        //         MsgBurn {
-        //             sender: signer.address(),
-        //             amount: Some(coin.clone()),
-        //         },
-        //         &signer,
-        //     )
-        //     .unwrap();
+        // burn
+        tokenfactory
+            .burn(
+                MsgBurn {
+                    sender: signer.address(),
+                    amount: Some(coin.clone()),
+                },
+                &signer,
+            )
+            .unwrap();
 
-        // let balance = bank
-        //     .query_balance(&QueryBalanceRequest {
-        //         address: signer.address(),
-        //         denom: denom.clone(),
-        //     })
-        //     .unwrap()
-        //     .balance
-        //     .unwrap();
+        let balance = bank
+            .query_balance(&QueryBalanceRequest {
+                address: signer.address(),
+                denom: denom.clone(),
+            })
+            .unwrap()
+            .balance
+            .unwrap();
 
-        // assert_eq!("0", balance.amount);
-        // assert_eq!(coin.denom, balance.denom);
+        assert_eq!("0", balance.amount);
+        assert_eq!(coin.denom, balance.denom);
     }
 }

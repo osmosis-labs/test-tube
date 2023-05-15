@@ -18,10 +18,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/testutil/mock"
 
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -61,7 +62,7 @@ func (ao DebugAppOptions) Get(o string) interface{} {
 	return nil
 }
 
-func SetupInjectiveApp() *app.InjectiveApp {
+func SetupInjectiveApp() (*app.InjectiveApp, []byte) {
 	db := dbm.NewMemDB()
 	encCfg := app.MakeEncodingConfig()
 
@@ -78,17 +79,22 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		baseapp.SetChainID("injective-777"),
 	)
 
-	// set up the validator
-	privVal := mock.NewPV()
-	pubKey, err := privVal.GetPubKey()
+	// validator keys
+	validatorKey := secp256k1.GenPrivKey()
+	pval := mock.PV{PrivKey: validatorKey}
+	conval := mock.PV{PrivKey: ed25519.GenPrivKey()}
+	pubKey, err := pval.GetPubKey()
 	requireNoErr(err)
 
 	// create validator set with single validator
 	validator := tmtypes.NewValidator(pubKey, 1)
+	conPubKey, err := conval.GetPubKey()
+	validator.PubKey = conPubKey
+
 	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
 
 	// generate genesis account
-	senderPrivKey := secp256k1.GenPrivKey()
+	senderPrivKey := ed25519.GenPrivKey()
 	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
 	balance := banktypes.Balance{
 		Address: acc.GetAddress().String(),
@@ -149,11 +155,10 @@ func SetupInjectiveApp() *app.InjectiveApp {
 		},
 	)
 
-	return appInstance
+	return appInstance, validatorKey.Bytes()
 }
 
 func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uint64) {
-	fmt.Println("BeginNewBlock")
 	var valAddr []byte
 
 	validators := env.App.StakingKeeper.GetAllValidators(env.Ctx)
@@ -188,8 +193,9 @@ func (env *TestEnv) GetValidatorPrivateKey() []byte {
 }
 
 // beginNewBlockWithProposer begins a new block with a proposer.
-func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ValAddress, timeIncreaseSeconds uint64) {
-	validator, found := env.App.StakingKeeper.GetValidator(env.Ctx, proposer)
+func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sdk.ConsAddress, timeIncreaseSeconds uint64) {
+	// validator, found := env.App.StakingKeeper.GetValidator(env.Ctx, proposer)
+	validator, found := env.App.StakingKeeper.GetValidatorByConsAddr(env.Ctx, proposer)
 
 	if !found {
 		panic("validator not found")
@@ -231,11 +237,14 @@ func (env *TestEnv) SetDefaultValidator(consAddr sdk.ConsAddress) {
 }
 
 func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
-	valPk := secp256k1.GenPrivKey()
+	// valPk := secp256k1.GenPrivKey()
+	// set up the validator
+	valPk := ed25519.GenPrivKey()
 
-	env.Validator = valPk.Key
+	// env.Validator = valPk.Bytes()
 
 	valPub := valPk.PubKey()
+
 	valAddr := sdk.ValAddress(valPub.Address())
 	bondDenom := env.App.StakingKeeper.GetParams(env.Ctx).BondDenom
 	selfBond := sdk.NewCoins(sdk.Coin{Amount: sdk.NewInt(100), Denom: bondDenom})

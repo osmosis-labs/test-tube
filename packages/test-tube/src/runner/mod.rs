@@ -20,7 +20,6 @@ pub trait Runner<'a> {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
-        println!("execute");
         self.execute_multiple(&[(msg, type_url)], signer)
     }
 

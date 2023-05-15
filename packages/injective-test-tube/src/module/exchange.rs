@@ -36,7 +36,7 @@ where
     }
 
     fn_execute! {
-        pub create_deriviative_limit_order: MsgCreateDerivativeLimitOrder => MsgCreateDerivativeLimitOrderResponse
+        pub create_derivative_limit_order: MsgCreateDerivativeLimitOrder => MsgCreateDerivativeLimitOrderResponse
     }
 
     fn_execute! {

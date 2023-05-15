@@ -4431,6 +4431,28 @@ pub struct FeeDiscountProposal {
     #[prost(message, optional, tag = "3")]
     pub schedule: ::core::option::Option<FeeDiscountSchedule>,
 }
+// #[allow(clippy::derive_partial_eq_without_eq)]
+// #[derive(
+//     Clone,
+//     PartialEq,
+//     Eq,
+//     ::prost::Message,
+//     ::serde::Serialize,
+//     ::serde::Deserialize,
+//     ::schemars::JsonSchema,
+//     CosmwasmExt,
+// )]
+// #[proto_message(type_url = "/injective.exchange.v1beta1.BatchCommunityPoolSpendProposal")]
+// pub struct BatchCommunityPoolSpendProposal {
+//     #[prost(string, tag = "1")]
+//     pub title: ::prost::alloc::string::String,
+//     #[prost(string, tag = "2")]
+//     pub description: ::prost::alloc::string::String,
+//     #[prost(message, repeated, tag = "3")]
+//     pub proposals: ::prost::alloc::vec::Vec<
+//         super::super::super::cosmos::distribution::v1beta1::CommunityPoolSpendProposal,
+//     >,
+// }
 /// A Cosmos-SDK MsgRewardsOptOut
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
@@ -5219,8 +5241,7 @@ pub struct QuerySubaccountDepositsRequest {
 #[proto_message(type_url = "/injective.exchange.v1beta1.QuerySubaccountDepositsResponse")]
 pub struct QuerySubaccountDepositsResponse {
     #[prost(map = "string, message", tag = "1")]
-    pub deposits: ::std::collections::HashMap<String, Deposit>,
-    // pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
+    pub deposits: ::std::collections::HashMap<::prost::alloc::string::String, Deposit>,
 }
 /// QueryExchangeBalancesRequest is the request type for the Query/ExchangeBalances RPC method.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -6215,6 +6236,7 @@ pub struct FullDerivativeMarket {
 }
 /// Nested message and enum types in `FullDerivativeMarket`.
 pub mod full_derivative_market {
+    // use osmosis_std_derive::CosmwasmExt;
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(
         Clone,

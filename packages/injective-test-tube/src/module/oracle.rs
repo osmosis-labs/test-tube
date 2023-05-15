@@ -114,7 +114,6 @@ mod tests {
                         denom: "inj".to_string(),
                     }],
                     proposer: validator.address().to_string(),
-                    is_expedited: false,
                 },
                 &validator,
             )

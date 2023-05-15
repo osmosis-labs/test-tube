@@ -96,7 +96,7 @@ impl BaseApp {
 
         let secp256k1_priv = base64::decode(pkey).unwrap();
 
-        let signing_key = SigningKey::from_bytes(&secp256k1_priv).unwrap();
+        let signing_key = SigningKey::from_slice(&secp256k1_priv).unwrap();
 
         let validator = SigningAccount::new(
             "inj".to_string(),
@@ -142,7 +142,7 @@ impl BaseApp {
 
         let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
 
-        let signing_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+        let signing_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
         })?;
@@ -174,7 +174,6 @@ impl BaseApp {
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
-        println!("create_signed_tx");
         let tx_body = tx::Body::new(msgs, "", 0u32);
         let addr = signer.address();
         redefine_as_go_string!(addr);
@@ -247,7 +246,6 @@ impl BaseApp {
                 gas_price,
                 gas_adjustment,
             } => {
-                println!("estimate fee");
                 let gas_info = self.simulate_tx(msgs, signer)?;
                 let gas_limit = ((gas_info.gas_used as f64) * (gas_adjustment)).ceil() as u64;
 
@@ -256,7 +254,6 @@ impl BaseApp {
                     amount: (((gas_limit as f64) * (gas_price.amount.u128() as f64)).ceil() as u64)
                         .into(),
                 };
-                println!("gas_info: {:?}", gas_info);
                 Ok(Fee::from_amount_and_gas(amount, gas_limit))
             }
             FeeSetting::Custom { .. } => {
@@ -326,7 +323,6 @@ impl<'a> Runner<'a> for BaseApp {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
-        println!("execute multiple");
         let msgs = msgs
             .iter()
             .map(|(msg, type_url)| {
@@ -353,7 +349,6 @@ impl<'a> Runner<'a> for BaseApp {
     {
         unsafe {
             self.run_block(|| {
-                println!("running block");
                 let fee = match &signer.fee_setting() {
                     FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
                     FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
@@ -367,28 +362,18 @@ impl<'a> Runner<'a> for BaseApp {
 
                 let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
                 let mut buf = Vec::new();
-                RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)
+                RequestDeliverTx::encode(&RequestDeliverTx { tx: tx.into() }, &mut buf)
                     .map_err(EncodeError::ProtoEncodeError)?;
 
                 let base64_req = base64::encode(buf);
                 redefine_as_go_string!(base64_req);
 
-                println!("Execute");
                 let res = Execute(self.id, base64_req);
                 let res = RawResult::from_non_null_ptr(res).into_result()?;
 
-                let result = ResponseDeliverTx::decode(res.as_slice())
+                ResponseDeliverTx::decode(res.as_slice())
                     .unwrap()
-                    .try_into();
-                // println!("result: {:?}", rezult);
-
-                // let result = ResponseDeliverTx::decode(res.as_slice())
-                //     .map_err(DecodeError::ProtoDecodeError)?
-                //     .try_into();
-
-                println!("result: {:?}", result);
-
-                result
+                    .try_into()
             })
         }
     }

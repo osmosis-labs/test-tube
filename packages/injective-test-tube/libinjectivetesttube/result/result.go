@@ -4,7 +4,6 @@ import (
 	"C"
 	"encoding/base64"
 )
-import "fmt"
 
 var (
 	Ok           byte = 0
@@ -21,14 +20,11 @@ func markOk(data []byte) []byte {
 }
 
 func EncodeResultFromError(code byte, err error) string {
-	fmt.Println("EncodeResultFromError")
 	marked := markError(code, []byte(err.Error()))
 	return base64.StdEncoding.EncodeToString(marked)
 }
 
 func EncodeResultFromOk(data []byte) string {
-	fmt.Println("EncodeResultFromOk")
-
 	marked := markOk(data)
 	return base64.StdEncoding.EncodeToString(marked)
 }

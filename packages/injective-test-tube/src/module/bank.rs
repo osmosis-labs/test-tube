@@ -56,9 +56,6 @@ mod tests {
         let receiver = app.init_account(&[Coin::new(1u128, "inj")]).unwrap();
         let bank = Bank::new(&app);
 
-        let height = app.get_block_height();
-        println!("height: {}", height);
-
         let response = bank
             .query_balance(&QueryBalanceRequest {
                 address: receiver.address(),

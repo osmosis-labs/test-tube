@@ -52,11 +52,11 @@ where
     }
 
     fn_query! {
-        pub query_spot_mid_price_and_tob ["/injective.exchange.v1beta1.Query/SpotMidPriceAndTOB"]: QuerySpotMidPriceAndTobRequest => QuerySpotMidPriceAndTobResponse
+        pub query_spot_market ["/injective.exchange.v1beta1.Query/SpotMarket"]: QuerySpotMarketRequest => QuerySpotMarketResponse
     }
 
     fn_query! {
-        pub query_derivative_mid_price_and_tob ["/injective.exchange.v1beta1.Query/DerivativeMidPriceAndTOB"]: QueryDerivativeMidPriceAndTobRequest => QueryDerivativeMidPriceAndTobResponse
+        pub query_spot_mid_price_and_tob ["/injective.exchange.v1beta1.Query/SpotMidPriceAndTOB"]: QuerySpotMidPriceAndTobRequest => QuerySpotMidPriceAndTobResponse
     }
 
     fn_query! {
@@ -64,7 +64,35 @@ where
     }
 
     fn_query! {
+        pub query_derivative_market ["/injective.exchange.v1beta1.Query/DerivativeMarket"]: QueryDerivativeMarketRequest => QueryDerivativeMarketResponse
+    }
+
+    fn_query! {
+        pub query_derivative_mid_price_and_tob ["/injective.exchange.v1beta1.Query/DerivativeMidPriceAndTOB"]: QueryDerivativeMidPriceAndTobRequest => QueryDerivativeMidPriceAndTobResponse
+    }
+
+    fn_query! {
         pub query_subaccount_deposits ["/injective.exchange.v1beta1.Query/SubaccountDeposits"]: QuerySubaccountDepositsRequest => QuerySubaccountDepositsResponse
+    }
+
+    fn_query! {
+        pub query_spot_market_orderbook ["/injective.exchange.v1beta1.Query/SpotOrderbook"]: QuerySpotOrderbookRequest => QuerySpotOrderbookResponse
+    }
+
+    fn_query! {
+        pub query_derivative_market_orderbook ["/injective.exchange.v1beta1.Query/DerivativeOrderbook"]: QueryDerivativeOrderbookRequest => QueryDerivativeOrderbookResponse
+    }
+
+    fn_query! {
+        pub query_trader_spot_orders ["/injective.exchange.v1beta1.Query/TraderSpotOrders"]: QueryTraderSpotOrdersRequest => QueryTraderSpotOrdersResponse
+    }
+
+    fn_query! {
+        pub query_trader_derivative_orders ["/injective.exchange.v1beta1.Query/TraderDerivativeOrders"]: QueryTraderDerivativeOrdersRequest => QueryTraderDerivativeOrdersResponse
+    }
+
+    fn_query! {
+        pub query_exchange_module_state ["/injective.exchange.v1beta1.Query/ModuleStateRequest"]: QueryModuleStateRequest => QueryModuleStateResponse
     }
 }
 

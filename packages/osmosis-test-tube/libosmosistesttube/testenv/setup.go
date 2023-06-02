@@ -72,7 +72,6 @@ func SetupOsmosisApp() *app.OsmosisApp {
 		app.DefaultNodeHome,
 		5,
 		DebugAppOptions{},
-		app.GetWasmEnabledProposals(),
 		app.EmptyWasmOpts,
 	)
 

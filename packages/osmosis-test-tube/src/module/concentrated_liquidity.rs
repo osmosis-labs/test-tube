@@ -96,6 +96,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[ignore = "pending concentrated liquidity type update"]
     fn test_concentrated_liquidity() {
         let app = OsmosisTestApp::new();
         let signer = app

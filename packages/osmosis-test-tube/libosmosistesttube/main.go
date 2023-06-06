@@ -33,7 +33,7 @@ import (
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/result"
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/testenv"
 	// osmosis
-	// lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
+	// lockuptypes "github.com/osmosis-labs/osmosis/v16/x/lockup/types"
 )
 
 var (

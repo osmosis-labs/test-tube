@@ -5,7 +5,7 @@ set -euxo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 OSMOSIS_REV=${1:-main}
 
-LATEST_OSMOSIS_VERSION="v15"
+LATEST_OSMOSIS_VERSION="v16"
 
 # if "$OSMOIS_REV" is /v\d+/ then extract it as var
 if [[ "$OSMOSIS_REV" =~ ^v[0-9]+ ]]; then
@@ -36,7 +36,7 @@ PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
-go get "github.com/osmosis-labs/osmosis/v15@${PARSED_REV}"
+go get "github.com/osmosis-labs/osmosis/v16@${PARSED_REV}"
 
 # tidy up updated go.mod
 go mod tidy
@@ -48,20 +48,20 @@ go mod tidy
 ########################################
 
 # if dirty or untracked file exists
-if [[ $(git diff --stat) != '' ||  $(git ls-files  --exclude-standard  --others) ]]; then
-  # add, commit and push
-  git add "$SCRIPT_DIR/.."
-  git commit -m "rebuild with $(git rev-parse --short HEAD:dependencies/osmosis)"
+# if [[ $(git diff --stat) != '' ||  $(git ls-files  --exclude-standard  --others) ]]; then
+#   # add, commit and push
+#   git add "$SCRIPT_DIR/.."
+#   git commit -m "rebuild with $(git rev-parse --short HEAD:dependencies/osmosis)"
 
-  # remove "origin/"
-  OSMOSIS_REV=$(echo "$OSMOSIS_REV" | sed "s/^origin\///")
-  BRANCH="autobuild-$OSMOSIS_REV"
+#   # remove "origin/"
+#   OSMOSIS_REV=$(echo "$OSMOSIS_REV" | sed "s/^origin\///")
+#   BRANCH="autobuild-$OSMOSIS_REV"
 
-  # force delete local "$BRANCH" if exists
-  git branch -D "$BRANCH" || true
+#   # force delete local "$BRANCH" if exists
+#   git branch -D "$BRANCH" || true
 
-  git checkout -b "$BRANCH"
-  git push -uf origin "$BRANCH"
-else
-  echo '[CLEAN] No update needed for this build'
-fi
+#   git checkout -b "$BRANCH"
+#   git push -uf origin "$BRANCH"
+# else
+#   echo '[CLEAN] No update needed for this build'
+# fi

@@ -123,7 +123,7 @@ mod tests {
     fn test_execute_cosmos_msgs() {
         let app = OsmosisTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(10000000000, "uosmo")])
+            .init_account(&[Coin::new(1000000000000, "uosmo")])
             .unwrap();
 
         let bank = Bank::new(&app);

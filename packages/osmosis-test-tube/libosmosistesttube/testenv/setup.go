@@ -29,19 +29,19 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// osmosis
-	"github.com/osmosis-labs/osmosis/v15/app"
-	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v15/x/concentrated-liquidity/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/types"
-	ibcratelimittypes "github.com/osmosis-labs/osmosis/v15/x/ibc-rate-limit/types"
-	incentivetypes "github.com/osmosis-labs/osmosis/v15/x/incentives/types"
-	lockuptypes "github.com/osmosis-labs/osmosis/v15/x/lockup/types"
-	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
-	poolincentivetypes "github.com/osmosis-labs/osmosis/v15/x/pool-incentives/types"
-	poolmanagertypes "github.com/osmosis-labs/osmosis/v15/x/poolmanager/types"
-	protorevtypes "github.com/osmosis-labs/osmosis/v15/x/protorev/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-	twaptypes "github.com/osmosis-labs/osmosis/v15/x/twap/types"
+	"github.com/osmosis-labs/osmosis/v16/app"
+	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v16/x/concentrated-liquidity/types"
+	gammtypes "github.com/osmosis-labs/osmosis/v16/x/gamm/types"
+	ibcratelimittypes "github.com/osmosis-labs/osmosis/v16/x/ibc-rate-limit/types"
+	incentivetypes "github.com/osmosis-labs/osmosis/v16/x/incentives/types"
+	lockuptypes "github.com/osmosis-labs/osmosis/v16/x/lockup/types"
+	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
+	poolincentivetypes "github.com/osmosis-labs/osmosis/v16/x/pool-incentives/types"
+	poolmanagertypes "github.com/osmosis-labs/osmosis/v16/x/poolmanager/types"
+	protorevtypes "github.com/osmosis-labs/osmosis/v16/x/protorev/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
+	tokenfactorytypes "github.com/osmosis-labs/osmosis/v16/x/tokenfactory/types"
+	twaptypes "github.com/osmosis-labs/osmosis/v16/x/twap/types"
 )
 
 type TestEnv struct {

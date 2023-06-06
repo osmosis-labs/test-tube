@@ -204,7 +204,9 @@ mod tests {
     fn test_execute() {
         let app = OsmosisTestApp::default();
 
-        let acc = app.init_account(&coins(100_000_000_000, "uosmo")).unwrap();
+        let acc = app
+            .init_account(&coins(100_000_000_000_000, "uosmo"))
+            .unwrap();
         let addr = acc.address();
 
         let msg = MsgCreateDenom {
@@ -276,7 +278,8 @@ mod tests {
             .unwrap()
             .denom_creation_fee;
 
-        assert_eq!(denom_creation_fee, [Coin::new(10000000, "uosmo").into()])
+        // fee is no longer set
+        assert_eq!(denom_creation_fee, [])
     }
 
     #[test]

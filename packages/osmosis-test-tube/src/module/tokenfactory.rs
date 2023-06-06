@@ -73,7 +73,7 @@ mod tests {
     fn tokenfactory_integration() {
         let app = OsmosisTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(2_000_000_000, "uosmo")])
+            .init_account(&[Coin::new(2_000_000_000_000, "uosmo")])
             .unwrap();
         let tokenfactory = TokenFactory::new(&app);
         let bank = Bank::new(&app);

@@ -48,20 +48,20 @@ go mod tidy
 ########################################
 
 # if dirty or untracked file exists
-# if [[ $(git diff --stat) != '' ||  $(git ls-files  --exclude-standard  --others) ]]; then
-#   # add, commit and push
-#   git add "$SCRIPT_DIR/.."
-#   git commit -m "rebuild with $(git rev-parse --short HEAD:dependencies/osmosis)"
+if [[ $(git diff --stat) != '' ||  $(git ls-files  --exclude-standard  --others) ]]; then
+  # add, commit and push
+  git add "$SCRIPT_DIR/.."
+  git commit -m "rebuild with $(git rev-parse --short HEAD:dependencies/osmosis)"
 
-#   # remove "origin/"
-#   OSMOSIS_REV=$(echo "$OSMOSIS_REV" | sed "s/^origin\///")
-#   BRANCH="autobuild-$OSMOSIS_REV"
+  # remove "origin/"
+  OSMOSIS_REV=$(echo "$OSMOSIS_REV" | sed "s/^origin\///")
+  BRANCH="autobuild-$OSMOSIS_REV"
 
-#   # force delete local "$BRANCH" if exists
-#   git branch -D "$BRANCH" || true
+  # force delete local "$BRANCH" if exists
+  git branch -D "$BRANCH" || true
 
-#   git checkout -b "$BRANCH"
-#   git push -uf origin "$BRANCH"
-# else
-#   echo '[CLEAN] No update needed for this build'
-# fi
+  git checkout -b "$BRANCH"
+  git push -uf origin "$BRANCH"
+else
+  echo '[CLEAN] No update needed for this build'
+fi

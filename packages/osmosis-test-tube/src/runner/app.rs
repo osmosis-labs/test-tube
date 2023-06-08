@@ -57,6 +57,11 @@ impl OsmosisTestApp {
         self.inner.get_first_validator_address()
     }
 
+    /// Get the first validator signing account
+    pub fn get_first_validator_signing_account(&self) -> RunnerResult<SigningAccount> {
+        self.inner.get_first_validator_signing_account()
+    }
+
     /// Increase the time of the blockchain by the given number of seconds.
     pub fn increase_time(&self, seconds: u64) {
         self.inner.increase_time(seconds)

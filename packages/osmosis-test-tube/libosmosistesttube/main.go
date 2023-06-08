@@ -321,6 +321,15 @@ func GetValidatorAddress(envId uint64, n int32) *C.char {
 	return C.CString(env.GetValidatorAddresses()[n])
 }
 
+//export GetValidatorPrivateKey
+func GetValidatorPrivateKey(envId uint64, n int32) *C.char {
+	env := loadEnv(envId)
+
+	priv := env.ValPrivs[n].Key
+	base64Priv := base64.StdEncoding.EncodeToString(priv)
+	return C.CString(base64Priv)
+}
+
 // ========= utils =========
 
 func loadEnv(envId uint64) testenv.TestEnv {

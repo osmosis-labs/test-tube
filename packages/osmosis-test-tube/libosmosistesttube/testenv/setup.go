@@ -9,6 +9,7 @@ import (
 	// helpers
 
 	// tendermint
+	"cosmossdk.io/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -48,6 +49,7 @@ type TestEnv struct {
 	App                *app.OsmosisApp
 	Ctx                sdk.Context
 	ParamTypesRegistry ParamTypeRegistry
+	ValPrivs           []*secp256k1.PrivKey
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -152,10 +154,16 @@ func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uin
 		requireNoErr(err)
 		valAddr = valAddrFancy.Bytes()
 	} else {
-		valAddrFancy := env.setupValidator(stakingtypes.Bonded)
+		valPriv, valAddrFancy := env.setupValidator(stakingtypes.Bonded)
 		validator, _ := env.App.StakingKeeper.GetValidator(env.Ctx, valAddrFancy)
 		valAddr2, _ := validator.GetConsAddr()
 		valAddr = valAddr2.Bytes()
+
+		env.ValPrivs = append(env.ValPrivs, valPriv)
+		err := simapp.FundAccount(env.App.BankKeeper, env.Ctx, valAddrFancy.Bytes(), sdk.NewCoins(sdk.NewInt64Coin("uosmo", 9223372036854775807)))
+		if err != nil {
+			panic(errors.Wrapf(err, "Failed to fund account"))
+		}
 	}
 
 	env.beginNewBlockWithProposer(executeNextEpoch, valAddr, timeIncreaseSeconds)
@@ -206,8 +214,9 @@ func (env *TestEnv) beginNewBlockWithProposer(executeNextEpoch bool, proposer sd
 	env.Ctx = env.App.NewContext(false, reqBeginBlock.Header)
 }
 
-func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
-	valPub := secp256k1.GenPrivKey().PubKey()
+func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) (*secp256k1.PrivKey, sdk.ValAddress) {
+	valPriv := secp256k1.GenPrivKey()
+	valPub := valPriv.PubKey()
 	valAddr := sdk.ValAddress(valPub.Address())
 	bondDenom := env.App.StakingKeeper.GetParams(env.Ctx).BondDenom
 	selfBond := sdk.NewCoins(sdk.Coin{Amount: sdk.NewInt(100), Denom: bondDenom})
@@ -245,7 +254,7 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAd
 	)
 	env.App.SlashingKeeper.SetValidatorSigningInfo(env.Ctx, consAddr, signingInfo)
 
-	return valAddr
+	return valPriv, valAddr
 }
 
 func (env *TestEnv) SetupParamTypes() {

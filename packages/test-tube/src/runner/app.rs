@@ -10,8 +10,8 @@ use prost::Message;
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
     AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockHeight, GetBlockTime,
-    GetParamSet, GetValidatorAddress, IncreaseTime, InitAccount, InitTestEnv, Query, SetParamSet,
-    Simulate,
+    GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime, InitAccount,
+    InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -65,6 +65,32 @@ impl BaseApp {
         .to_string();
 
         Ok(addr)
+    }
+
+    /// Get the first validator signing account
+    pub fn get_first_validator_signing_account(&self) -> RunnerResult<SigningAccount> {
+        let base64_priv = unsafe {
+            let val_priv = GetValidatorPrivateKey(self.id, 0);
+            CString::from_raw(val_priv)
+        }
+        .to_str()
+        .map_err(DecodeError::Utf8Error)?
+        .to_string();
+
+        let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
+        let signging_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+            let msg = e.to_string();
+            DecodeError::SigningKeyDecodeError { msg }
+        })?;
+
+        Ok(SigningAccount::new(
+            self.address_prefix.clone(),
+            signging_key,
+            FeeSetting::Auto {
+                gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),
+                gas_adjustment: self.default_gas_adjustment,
+            },
+        ))
     }
 
     /// Get the current block time

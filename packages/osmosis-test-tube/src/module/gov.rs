@@ -159,8 +159,9 @@ impl<'a> GovWithAppAccess<'a> {
 
 #[cfg(test)]
 mod tests {
-    use osmosis_std::types::cosmwasm::wasm::v1::{
-        QueryCodeRequest, QueryCodeResponse, StoreCodeProposal,
+    use osmosis_std::types::{
+        cosmwasm::wasm::v1::{QueryCodeRequest, QueryCodeResponse, StoreCodeProposal},
+        osmosis::cosmwasmpool::v1beta1::UploadCosmWasmPoolCodeAndWhiteListProposal,
     };
     use test_tube::Account;
 
@@ -224,5 +225,33 @@ mod tests {
 
         assert_eq!(code_info.unwrap().creator, proposer.address());
         assert_eq!(data, wasm_byte_code);
+    }
+
+    #[test]
+    fn test_cosmwasmpool_proposal() {
+        let app = OsmosisTestApp::default();
+        let gov = GovWithAppAccess::new(&app);
+
+        let proposer = app
+            .init_account(&[cosmwasm_std::Coin::new(1000000000000000000, "uosmo")])
+            .unwrap();
+
+        // upload cosmwasm pool code and whitelist through proposal
+        let wasm_byte_code = std::fs::read("./test_artifacts/transmuter.wasm").unwrap();
+        let res = gov
+            .propose_and_execute(
+                UploadCosmWasmPoolCodeAndWhiteListProposal::TYPE_URL.to_string(),
+                UploadCosmWasmPoolCodeAndWhiteListProposal {
+                    title: String::from("test"),
+                    description: String::from("test"),
+                    wasm_byte_code,
+                },
+                proposer.address(),
+                &proposer,
+            )
+            .unwrap();
+        // >>> fail with: unable to resolve type URL /osmosis.cosmwasmpool.v1beta1.UploadCosmWasmPoolCodeAndWhiteListProposal: tx parse error
+
+        dbg!(res);
     }
 }

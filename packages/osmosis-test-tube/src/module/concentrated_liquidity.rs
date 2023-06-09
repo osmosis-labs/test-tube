@@ -1,12 +1,11 @@
 use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::{
-    MsgCollectFees, MsgCollectFeesResponse, MsgCollectIncentives, MsgCollectIncentivesResponse,
-    MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse, MsgCreateIncentive,
-    MsgCreateIncentiveResponse, MsgCreatePosition, MsgCreatePositionResponse, MsgWithdrawPosition,
-    MsgWithdrawPositionResponse, QueryClaimableFeesRequest, QueryClaimableFeesResponse,
-    QueryLiquidityNetInDirectionRequest, QueryLiquidityNetInDirectionResponse, QueryParamsRequest,
-    QueryParamsResponse, QueryPoolsRequest, QueryPoolsResponse, QueryPositionByIdRequest,
-    QueryPositionByIdResponse, QueryTotalLiquidityForRangeRequest,
-    QueryTotalLiquidityForRangeResponse, QueryUserPositionsRequest, QueryUserPositionsResponse,
+    ClaimableSpreadRewardsRequest, ClaimableSpreadRewardsResponse, LiquidityNetInDirectionRequest,
+    LiquidityNetInDirectionResponse, LiquidityPerTickRangeRequest, LiquidityPerTickRangeResponse,
+    MsgCollectIncentives, MsgCollectIncentivesResponse, MsgCollectSpreadRewards,
+    MsgCollectSpreadRewardsResponse, MsgCreateConcentratedPool, MsgCreateConcentratedPoolResponse,
+    MsgCreatePosition, MsgCreatePositionResponse, MsgWithdrawPosition, MsgWithdrawPositionResponse,
+    ParamsRequest, ParamsResponse, PoolsRequest, PoolsResponse, PositionByIdRequest,
+    PositionByIdResponse, UserPositionsRequest, UserPositionsResponse,
 };
 use test_tube::{fn_execute, fn_query, Module};
 
@@ -37,50 +36,52 @@ where
     // withdraw position
     fn_execute! { pub withdraw_position: MsgWithdrawPosition => MsgWithdrawPositionResponse }
 
-    // collect fees
-    fn_execute! { pub collected_fees: MsgCollectFees => MsgCollectFeesResponse }
+    // collect spread rewards
+    fn_execute! { pub collected_spread_rewards: MsgCollectSpreadRewards => MsgCollectSpreadRewardsResponse }
 
     // collect incentives
     fn_execute! { pub collect_incentives: MsgCollectIncentives => MsgCollectIncentivesResponse }
-
-    // create incentive
-    fn_execute! { pub create_incentive: MsgCreateIncentive => MsgCreateIncentiveResponse }
 
     // ========== Queries ==========
 
     // query pools
     fn_query! {
-        pub query_pools ["/osmosis.concentratedliquidity.v1beta1.Query/Pools"]: QueryPoolsRequest => QueryPoolsResponse
+        pub query_pools ["/osmosis.concentratedliquidity.v1beta1.Query/Pools"]: PoolsRequest => PoolsResponse
     }
 
     // query params
     fn_query! {
-        pub query_params ["/osmosis.concentratedliquidity.v1beta1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
+        pub query_params ["/osmosis.concentratedliquidity.v1beta1.Query/Params"]: ParamsRequest => ParamsResponse
     }
 
     // query liquidity_net_in_direction
     fn_query! {
-        pub query_liquidity_depths_for_range ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityNetInDirection"]: QueryLiquidityNetInDirectionRequest => QueryLiquidityNetInDirectionResponse
+        pub query_liquidity_depths_for_range ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityNetInDirection"]: LiquidityNetInDirectionRequest => LiquidityNetInDirectionResponse
     }
 
     // query user_positions
     fn_query! {
-        pub query_user_positions ["/osmosis.concentratedliquidity.v1beta1.Query/UserPositions"]: QueryUserPositionsRequest => QueryUserPositionsResponse
+        pub query_user_positions ["/osmosis.concentratedliquidity.v1beta1.Query/UserPositions"]: UserPositionsRequest => UserPositionsResponse
     }
 
-    // query total_liquidity_for_range
+    // query liquidity_net_in_direction
     fn_query! {
-        pub query_total_liquidity_for_range ["/osmosis.concentratedliquidity.v1beta1.Query/TotalLiquidityForRange"]: QueryTotalLiquidityForRangeRequest => QueryTotalLiquidityForRangeResponse
+        pub query_liquidity_net_in_direction ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityNetInDirection"]: LiquidityNetInDirectionRequest => LiquidityNetInDirectionResponse
+    }
+
+    // query liquidity_per_tick_range
+    fn_query! {
+        pub query_liquidity_per_tick_range ["/osmosis.concentratedliquidity.v1beta1.Query/LiquidityPerTickRange"]: LiquidityPerTickRangeRequest => LiquidityPerTickRangeResponse
     }
 
     // query claimable_fees
     fn_query! {
-        pub query_claimable_fees ["/osmosis.concentratedliquidity.v1beta1.Query/ClaimableFees"]: QueryClaimableFeesRequest => QueryClaimableFeesResponse
+        pub query_claimable_fees ["/osmosis.concentratedliquidity.v1beta1.Query/ClaimableSpreadRewards"]: ClaimableSpreadRewardsRequest => ClaimableSpreadRewardsResponse
     }
 
     // query position_by_id
     fn_query! {
-        pub query_position_by_id ["/osmosis.concentratedliquidity.v1beta1.Query/PositionById"]: QueryPositionByIdRequest => QueryPositionByIdResponse
+        pub query_position_by_id ["/osmosis.concentratedliquidity.v1beta1.Query/PositionById"]: PositionByIdRequest => PositionByIdResponse
     }
 }
 
@@ -96,7 +97,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "pending concentrated liquidity type update"]
+    #[ignore = "TODO: permissionless pool creation is disabled for the concentrated liquidity module, will fix by using gov in this test instead"]
     fn test_concentrated_liquidity() {
         let app = OsmosisTestApp::new();
         let signer = app
@@ -166,8 +167,7 @@ mod tests {
                     denom0: denom0.clone(),
                     denom1: denom1.clone(),
                     tick_spacing: 1,
-                    swap_fee: "0".to_string(),
-                    exponent_at_price_one: "-10".to_string(),
+                    spread_factor: "10".to_string(),
                 },
                 &signer,
             )
@@ -184,14 +184,16 @@ mod tests {
                     sender: signer.address(),
                     lower_tick: 0,
                     upper_tick: 100,
-                    token_desired0: Some(v1beta1::Coin {
-                        denom: denom0,
-                        amount: "10000000000".to_string(),
-                    }),
-                    token_desired1: Some(v1beta1::Coin {
-                        denom: denom1,
-                        amount: "10000000000".to_string(),
-                    }),
+                    tokens_provided: vec![
+                        v1beta1::Coin {
+                            denom: denom0,
+                            amount: "10000000000".to_string(),
+                        },
+                        v1beta1::Coin {
+                            denom: denom1,
+                            amount: "10000000000".to_string(),
+                        },
+                    ],
                     token_min_amount0: "0".to_string(),
                     token_min_amount1: "0".to_string(),
                 },

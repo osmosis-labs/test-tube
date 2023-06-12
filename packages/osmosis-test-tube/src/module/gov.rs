@@ -250,8 +250,7 @@ mod tests {
                 &proposer,
             )
             .unwrap();
-        // >>> fail with: unable to resolve type URL /osmosis.cosmwasmpool.v1beta1.UploadCosmWasmPoolCodeAndWhiteListProposal: tx parse error
 
-        dbg!(res);
+        assert_eq!(res.data.proposal_id, 1);
     }
 }

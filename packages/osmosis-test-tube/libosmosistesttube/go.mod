@@ -5,9 +5,9 @@ go 1.19
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	github.com/CosmWasm/wasmd v1.0.0
-	github.com/cosmos/cosmos-sdk v0.47.2
+	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v16 v16.0.0-20230609141057-99aa86273e5b
+	github.com/osmosis-labs/osmosis/v16 v16.0.0-20230611133038-2baacf530a27
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b

@@ -7,7 +7,7 @@ require (
 	github.com/CosmWasm/wasmd v1.0.0
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v16 v16.0.0-20230611133038-2baacf530a27
+	github.com/osmosis-labs/osmosis/v16 v16.0.0-20230614053312-247e36241cf4
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -164,6 +164,6 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.3-dev.0.20230516205127-c213fddde069
 
-replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230606194542-47ea1e2c85ca
+replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.0-20230608190634-3395abe098ce
 
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.0-20230602130523-f9a94d8bbd10

@@ -89,15 +89,18 @@ where
 mod tests {
     use cosmwasm_std::Coin;
     use osmosis_std::types::cosmos::base::v1beta1;
+    use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::{
+        CreateConcentratedLiquidityPoolsProposal, Pool, PoolRecord,
+    };
     use osmosis_std::types::osmosis::tokenfactory::v1beta1::{MsgCreateDenom, MsgMint};
+    use prost::Message;
     use test_tube::Account;
 
-    use crate::{OsmosisTestApp, TokenFactory};
+    use crate::{GovWithAppAccess, OsmosisTestApp, TokenFactory};
 
     use super::*;
 
     #[test]
-    #[ignore = "TODO: permissionless pool creation is disabled for the concentrated liquidity module, will fix by using gov in this test instead"]
     fn test_concentrated_liquidity() {
         let app = OsmosisTestApp::new();
         let signer = app
@@ -110,6 +113,7 @@ mod tests {
 
         let tokenfactory = TokenFactory::new(&app);
         let concentrated_liquidity = ConcentratedLiquidity::new(&app);
+        let gov = GovWithAppAccess::new(&app);
 
         // create denom
         let denom0 = tokenfactory
@@ -117,18 +121,6 @@ mod tests {
                 MsgCreateDenom {
                     sender: signer.address(),
                     subdenom: "denomzero".to_string(),
-                },
-                &signer,
-            )
-            .unwrap()
-            .data
-            .new_token_denom;
-
-        let denom1 = tokenfactory
-            .create_denom(
-                MsgCreateDenom {
-                    sender: signer.address(),
-                    subdenom: "denomone".to_string(),
                 },
                 &signer,
             )
@@ -148,34 +140,34 @@ mod tests {
             )
             .unwrap();
 
-        tokenfactory
-            .mint(
-                MsgMint {
-                    sender: signer.address(),
-                    amount: Some(Coin::new(100_000_000_000, &denom1).into()),
-                    mint_to_address: signer.address(),
-                },
-                &signer,
-            )
+        gov.propose_and_execute(
+            CreateConcentratedLiquidityPoolsProposal::TYPE_URL.to_string(),
+            CreateConcentratedLiquidityPoolsProposal {
+                title: "Create concentrated uosmo:usdc pool".to_string(),
+                description: "Create concentrated uosmo:usdc pool, so that we can trade it"
+                    .to_string(),
+                pool_records: vec![PoolRecord {
+                    denom0: denom0.clone(),
+                    denom1: "uosmo".to_string(),
+                    tick_spacing: 1,
+                    exponent_at_price_one: "-6".to_string(),
+                    spread_factor: "0".to_string(),
+                }],
+            },
+            signer.address(),
+            &signer,
+        )
+        .unwrap();
+
+        let pools = concentrated_liquidity
+            .query_pools(&PoolsRequest { pagination: None })
             .unwrap();
 
-        // create pool
-        let pool_id = concentrated_liquidity
-            .create_concentrated_pool(
-                MsgCreateConcentratedPool {
-                    sender: signer.address(),
-                    denom0: denom0.clone(),
-                    denom1: denom1.clone(),
-                    tick_spacing: 1,
-                    spread_factor: "10".to_string(),
-                },
-                &signer,
-            )
-            .unwrap()
-            .data
-            .pool_id;
+        let pool = Pool::decode(pools.pools[0].value.as_slice()).unwrap();
 
-        assert_eq!(pool_id, 1);
+        assert_eq!(pool.id, 1);
+
+        let pool_id = pool.id;
 
         let position_id = concentrated_liquidity
             .create_position(
@@ -190,7 +182,7 @@ mod tests {
                             amount: "10000000000".to_string(),
                         },
                         v1beta1::Coin {
-                            denom: denom1,
+                            denom: "uosmo".to_string(),
                             amount: "10000000000".to_string(),
                         },
                     ],

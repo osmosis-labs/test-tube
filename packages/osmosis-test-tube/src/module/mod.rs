@@ -2,6 +2,7 @@ mod bank;
 mod concentrated_liquidity;
 mod gamm;
 mod gov;
+mod pool_manager;
 mod tokenfactory;
 mod wasm;
 
@@ -13,5 +14,6 @@ pub use concentrated_liquidity::ConcentratedLiquidity;
 pub use gamm::Gamm;
 pub use gov::Gov;
 pub use gov::GovWithAppAccess;
+pub use pool_manager::PoolManager;
 pub use tokenfactory::TokenFactory;
 pub use wasm::Wasm;

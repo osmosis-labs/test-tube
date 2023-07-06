@@ -162,25 +162,62 @@ mod tests {
             .unwrap();
         assert_eq!(res.spot_price, "0.502512560000000000");
 
+        let timestamp = app.get_block_timestamp();
+
         app.increase_time(10u64);
-
-        let now = Timestamp {
-            seconds: app.get_block_time_seconds() - 10i64,
-            nanos: 0,
-        };
-
-        println!("now: {:?}", now);
-        println!("now: {:?}", app.get_block_time_seconds());
 
         let res = twap
             .query_arithmetic_twap(&v1beta1::ArithmeticTwapRequest {
                 pool_id: 1,
-                base_asset: denom0,
-                quote_asset: denom1,
-                start_time: Some(now),
+                base_asset: denom0.clone(),
+                quote_asset: denom1.clone(),
+                start_time: Some(Timestamp {
+                    seconds: timestamp.seconds() as i64,
+                    nanos: timestamp.subsec_nanos() as i32,
+                }),
                 end_time: None,
             })
             .unwrap();
-        assert_eq!(res.arithmetic_twap, "618299095774128067");
+        assert_eq!(res.arithmetic_twap, "502512560000000000");
+
+        let res = twap
+            .query_arithmetic_twap_to_now(&v1beta1::ArithmeticTwapToNowRequest {
+                pool_id: 1,
+                base_asset: denom0.clone(),
+                quote_asset: denom1.clone(),
+                start_time: Some(Timestamp {
+                    seconds: timestamp.seconds() as i64,
+                    nanos: timestamp.subsec_nanos() as i32,
+                }),
+            })
+            .unwrap();
+        assert_eq!(res.arithmetic_twap, "502512560000000000");
+
+        let res = twap
+            .query_geometric_twap(&v1beta1::GeometricTwapRequest {
+                pool_id: 1,
+                base_asset: denom0.clone(),
+                quote_asset: denom1.clone(),
+                start_time: Some(Timestamp {
+                    seconds: timestamp.seconds() as i64,
+                    nanos: timestamp.subsec_nanos() as i32,
+                }),
+                end_time: None,
+            })
+            .unwrap();
+        assert_eq!(res.geometric_twap, "502512560000000000");
+
+        let res = twap
+            .query_geometric_twap_to_now(&v1beta1::GeometricTwapToNowRequest {
+                pool_id: 1,
+                base_asset: denom0,
+                quote_asset: denom1,
+                start_time: Some(Timestamp {
+                    seconds: timestamp.seconds() as i64,
+                    nanos: timestamp.subsec_nanos() as i32,
+                }),
+            })
+            .unwrap();
+        assert_eq!(res.geometric_twap, "502512560000000000");
     }
 }

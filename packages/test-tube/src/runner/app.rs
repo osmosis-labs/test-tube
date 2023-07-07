@@ -4,7 +4,7 @@ use cosmrs::crypto::secp256k1::SigningKey;
 use cosmrs::proto::tendermint::abci::{RequestDeliverTx, ResponseDeliverTx};
 use cosmrs::tx::{Fee, SignerInfo};
 use cosmrs::{tx, Any};
-use cosmwasm_std::Coin;
+use cosmwasm_std::{Coin, Timestamp};
 use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
@@ -91,6 +91,13 @@ impl BaseApp {
                 gas_adjustment: self.default_gas_adjustment,
             },
         ))
+    }
+
+    /// Get the current block time
+    pub fn get_block_timestamp(&self) -> Timestamp {
+        let result = unsafe { GetBlockTime(self.id) };
+
+        Timestamp::from_nanos(result as u64)
     }
 
     /// Get the current block time

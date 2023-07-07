@@ -4,6 +4,7 @@ mod gamm;
 mod gov;
 mod pool_manager;
 mod tokenfactory;
+mod twap;
 mod wasm;
 
 pub use test_tube::macros;
@@ -16,4 +17,5 @@ pub use gov::Gov;
 pub use gov::GovWithAppAccess;
 pub use pool_manager::PoolManager;
 pub use tokenfactory::TokenFactory;
+pub use twap::Twap;
 pub use wasm::Wasm;

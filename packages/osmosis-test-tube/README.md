@@ -4,6 +4,8 @@
 
 CosmWasm x Osmosis integration testing library that, unlike `cw-multi-test`, it allows you to test your cosmwasm contract against real chain's logic instead of mocks.
 
+> `osmosis-test-tube` does not work on ARM architectures since it is backed by [`osmosisd`](https://docs.osmosis.zone/osmosis-core/osmosisd/).
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)

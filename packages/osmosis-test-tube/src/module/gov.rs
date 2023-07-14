@@ -1,10 +1,10 @@
-use cosmrs::proto::cosmos::base::v1beta1::Coin;
-use cosmrs::proto::cosmos::gov::v1beta1::{
+use cosmrs::tx::MessageExt;
+use osmosis_std::shim::Any;
+use osmosis_std::types::cosmos::base::v1beta1::Coin;
+use osmosis_std::types::cosmos::gov::v1beta1::{
     MsgSubmitProposal, MsgSubmitProposalResponse, MsgVote, MsgVoteResponse, QueryParamsRequest,
     QueryParamsResponse, QueryProposalRequest, QueryProposalResponse, VoteOption,
 };
-use cosmrs::tx::MessageExt;
-use cosmrs::Any;
 use test_tube::{fn_execute, fn_query, Account, RunnerError, RunnerExecuteResult, SigningAccount};
 
 use test_tube::module::Module;
@@ -48,6 +48,7 @@ where
         msg: M,
         initial_deposit: Vec<cosmwasm_std::Coin>,
         proposer: String,
+        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         self.submit_proposal(
@@ -66,6 +67,7 @@ where
                     })
                     .collect(),
                 proposer,
+                is_expedited,
             },
             signer,
         )
@@ -96,6 +98,7 @@ impl<'a> GovWithAppAccess<'a> {
         msg_type_url: String,
         msg: M,
         proposer: String,
+        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         // query deposit params
@@ -119,6 +122,7 @@ impl<'a> GovWithAppAccess<'a> {
                 }),
                 initial_deposit: min_deposit,
                 proposer,
+                is_expedited,
             },
             signer,
         )?;
@@ -209,6 +213,7 @@ mod tests {
                     code_hash: Vec::new(),
                 },
                 proposer.address(),
+                false,
                 &proposer,
             )
             .unwrap();
@@ -247,6 +252,7 @@ mod tests {
                     wasm_byte_code,
                 },
                 proposer.address(),
+                false,
                 &proposer,
             )
             .unwrap();

@@ -1,11 +1,11 @@
+use crate::{fn_execute, fn_query};
 use osmosis_std::types::cosmos::bank::v1beta1::{
     MsgSend, MsgSendResponse, QueryAllBalancesRequest, QueryAllBalancesResponse,
     QueryBalanceRequest, QueryBalanceResponse, QueryTotalSupplyRequest, QueryTotalSupplyResponse,
 };
-use test_tube::{fn_execute, fn_query};
 
-use test_tube::module::Module;
-use test_tube::runner::Runner;
+use crate::module::Module;
+use crate::runner::Runner;
 
 pub struct Bank<'a, R: Runner<'a>> {
     runner: &'a R,

@@ -103,8 +103,8 @@ func replaceModFileReplaceDirectives(from, to *modfile.File) {
 
 	// Add all replace directives from `from` go.mod
 	for _, rep := range from.Replace {
-		fmt.Printf("  - %s %s => %s %s\n", rep.Old.Path, rep.Old.Version, rep.New.Path, rep.New.Version)
-		to.AddReplace(rep.Old.Path, rep.Old.Version, rep.New.Path, rep.New.Version)
+		fmt.Printf("  - %s %s => %s %s\n", rep.Old.Path, "", rep.New.Path, rep.New.Version)
+		to.AddReplace(rep.Old.Path, "", rep.New.Path, rep.New.Version)
 	}
 
 	// Sort the blocks

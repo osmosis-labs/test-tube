@@ -47,6 +47,11 @@ go mod tidy
 ## any change                         ##
 ########################################
 
+if [[ -n "${SKIP_GIT_UPDATE:-}" ]]; then
+  echo '[SKIP] SKIP_GIT_UPDATE is set, skipping git update'
+  exit 0
+fi
+
 # if dirty or untracked file exists
 if [[ $(git diff --stat) != '' ||  $(git ls-files  --exclude-standard  --others) ]]; then
   # add, commit and push

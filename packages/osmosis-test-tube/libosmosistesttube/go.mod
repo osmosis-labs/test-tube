@@ -5,9 +5,9 @@ go 1.19
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	github.com/CosmWasm/wasmd v1.0.0
-	github.com/cosmos/cosmos-sdk v0.47.3
+	github.com/cosmos/cosmos-sdk v0.47.4
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v16 v16.0.0
+	github.com/osmosis-labs/osmosis/v16 v16.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -55,7 +55,7 @@ require (
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
-	github.com/go-playground/universal-translator v0.18.0 // indirect
+	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/gateway v1.1.0 // indirect
 	github.com/golang/glog v1.1.1 // indirect
@@ -84,7 +84,6 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
-	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -97,7 +96,7 @@ require (
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/osmosis-labs/osmosis/osmomath v0.0.5 // indirect
-	github.com/osmosis-labs/osmosis/osmoutils v0.0.5 // indirect
+	github.com/osmosis-labs/osmosis/osmoutils v0.0.6-0.20230709040235-cbf530ed88cc // indirect
 	github.com/osmosis-labs/osmosis/x/epochs v0.0.1 // indirect
 	github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.7 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
@@ -164,8 +163,8 @@ replace github.com/tendermint/tendermint => github.com/informalsystems/tendermin
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
-replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.5
-
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.7
 
 replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.5
+
+replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.6-0.20230709040235-cbf530ed88cc

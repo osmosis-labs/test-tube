@@ -9,9 +9,9 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, EndBlock, Execute, GetBlockHeight, GetBlockTime,
-    GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime, InitAccount,
-    InitTestEnv, Query, SetParamSet, Simulate,
+    AccountNumber, AccountSequence, BeginBlock, CleanUp, EndBlock, Execute, GetBlockHeight,
+    GetBlockTime, GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime,
+    InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -296,6 +296,15 @@ impl BaseApp {
             let pset = RawResult::from_non_null_ptr(pset).into_result()?;
             let pset = P::decode(pset.as_slice()).map_err(DecodeError::ProtoDecodeError)?;
             Ok(pset)
+        }
+    }
+}
+
+/// Cleanup the test environment when the app is dropped.
+impl Drop for BaseApp {
+    fn drop(&mut self) {
+        unsafe {
+            CleanUp(self.id);
         }
     }
 }

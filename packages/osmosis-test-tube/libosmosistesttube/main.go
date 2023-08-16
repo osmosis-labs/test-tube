@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -49,8 +50,17 @@ func InitTestEnv() uint64 {
 	mu.Lock()
 	defer mu.Unlock()
 
+	envCounter += 1
+	id := envCounter
+
+	nodeHome, err := os.MkdirTemp("", ".osmosis-test-tube-temp-")
+	if err != nil {
+		panic(err)
+	}
+
 	env := new(testenv.TestEnv)
-	env.App = testenv.SetupOsmosisApp()
+	env.App = testenv.SetupOsmosisApp(nodeHome)
+	env.NodeHome = nodeHome
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
 
 	env.SetupParamTypes()
@@ -66,12 +76,19 @@ func InitTestEnv() uint64 {
 	env.App.EndBlock(reqEndBlock)
 	env.App.Commit()
 
-	envCounter += 1
-	id := envCounter
-
 	envRegister.Store(id, *env)
 
 	return id
+}
+
+//export CleanUp
+func CleanUp(envId uint64) {
+	env := loadEnv(envId)
+	err := os.RemoveAll(env.NodeHome)
+	if err != nil {
+		panic(err)
+	}
+	envRegister.Delete(envId)
 }
 
 //export InitAccount

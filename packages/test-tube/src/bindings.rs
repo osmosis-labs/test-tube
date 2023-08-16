@@ -268,3 +268,7 @@ extern "C" {
 extern "C" {
     pub fn GetBlockHeight(envId: GoUint64) -> GoInt64;
 }
+
+extern "C" {
+    pub fn CleanUp(envId: GoUint64);
+}

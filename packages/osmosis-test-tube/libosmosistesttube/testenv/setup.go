@@ -30,19 +30,19 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// osmosis
-	"github.com/osmosis-labs/osmosis/v16/app"
-	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v16/x/concentrated-liquidity/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v16/x/gamm/types"
-	ibcratelimittypes "github.com/osmosis-labs/osmosis/v16/x/ibc-rate-limit/types"
-	incentivetypes "github.com/osmosis-labs/osmosis/v16/x/incentives/types"
-	lockuptypes "github.com/osmosis-labs/osmosis/v16/x/lockup/types"
-	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
-	poolincentivetypes "github.com/osmosis-labs/osmosis/v16/x/pool-incentives/types"
-	poolmanagertypes "github.com/osmosis-labs/osmosis/v16/x/poolmanager/types"
-	protorevtypes "github.com/osmosis-labs/osmosis/v16/x/protorev/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v16/x/tokenfactory/types"
-	twaptypes "github.com/osmosis-labs/osmosis/v16/x/twap/types"
+	"github.com/osmosis-labs/osmosis/v17/app"
+	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v17/x/concentrated-liquidity/types"
+	gammtypes "github.com/osmosis-labs/osmosis/v17/x/gamm/types"
+	ibcratelimittypes "github.com/osmosis-labs/osmosis/v17/x/ibc-rate-limit/types"
+	incentivetypes "github.com/osmosis-labs/osmosis/v17/x/incentives/types"
+	lockuptypes "github.com/osmosis-labs/osmosis/v17/x/lockup/types"
+	minttypes "github.com/osmosis-labs/osmosis/v17/x/mint/types"
+	poolincentivetypes "github.com/osmosis-labs/osmosis/v17/x/pool-incentives/types"
+	poolmanagertypes "github.com/osmosis-labs/osmosis/v17/x/poolmanager/types"
+	protorevtypes "github.com/osmosis-labs/osmosis/v17/x/protorev/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v17/x/superfluid/types"
+	tokenfactorytypes "github.com/osmosis-labs/osmosis/v17/x/tokenfactory/types"
+	twaptypes "github.com/osmosis-labs/osmosis/v17/x/twap/types"
 )
 
 type TestEnv struct {
@@ -50,6 +50,7 @@ type TestEnv struct {
 	Ctx                sdk.Context
 	ParamTypesRegistry ParamTypeRegistry
 	ValPrivs           []*secp256k1.PrivKey
+	NodeHome           string
 }
 
 // DebugAppOptions is a stub implementing AppOptions
@@ -63,15 +64,16 @@ func (ao DebugAppOptions) Get(o string) interface{} {
 	return nil
 }
 
-func SetupOsmosisApp() *app.OsmosisApp {
+func SetupOsmosisApp(nodeHome string) *app.OsmosisApp {
 	db := dbm.NewMemDB()
+
 	appInstance := app.NewOsmosisApp(
 		log.NewNopLogger(),
 		db,
 		nil,
 		true,
 		map[int64]bool{},
-		app.DefaultNodeHome,
+		nodeHome,
 		5,
 		DebugAppOptions{},
 		app.EmptyWasmOpts,

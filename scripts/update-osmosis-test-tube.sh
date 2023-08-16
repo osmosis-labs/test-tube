@@ -20,12 +20,15 @@ fi
 
 # update all submodules
 git submodule update --init --recursive
+cd "$SCRIPT_DIR/../packages/osmosis-test-tube/osmosis"
+
+OSMOSIS_REV_NO_ORIGIN="$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
+
+git checkout "$OSMOSIS_REV_NO_ORIGIN"
 
 
 # build and run update-osmosis-test-tube
 cd "$SCRIPT_DIR/update-osmosis-test-tube-deps" && go build
-
-OSMOSIS_REV_NO_ORIGIN="$(echo "$OSMOSIS_REV" | sed "s/^origin\///")"
 
 # run update-osmosis-test-tube-deps which will replace the `replace directives` in osmosis-test-tube
 # with osmosis' replaces
@@ -36,7 +39,7 @@ PARSED_REV=$(git rev-parse --short "$OSMOSIS_REV")
 
 cd "$SCRIPT_DIR/../packages/osmosis-test-tube/libosmosistesttube"
 
-go get "github.com/osmosis-labs/osmosis/v16@${PARSED_REV}"
+go get "github.com/osmosis-labs/osmosis/${OSMOSIS_VERSION}@${PARSED_REV}"
 
 # tidy up updated go.mod
 go mod tidy

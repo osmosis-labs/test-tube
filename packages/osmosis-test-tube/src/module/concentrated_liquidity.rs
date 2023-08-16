@@ -153,7 +153,6 @@ mod tests {
                     denom0: denom0.clone(),
                     denom1: "uosmo".to_string(),
                     tick_spacing: 1,
-                    exponent_at_price_one: "-6".to_string(),
                     spread_factor: "0".to_string(),
                 }],
             },

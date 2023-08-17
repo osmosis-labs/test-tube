@@ -165,8 +165,8 @@ replace github.com/tendermint/tendermint => github.com/informalsystems/tendermin
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
-replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.6
-
 replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.6
 
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.8
+
+replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.6

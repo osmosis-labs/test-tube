@@ -1,3 +1,5 @@
+#![cfg(feature = "bank")]
+
 use crate::{fn_execute, fn_query};
 use osmosis_std::types::cosmos::bank::v1beta1::{
     MsgSend, MsgSendResponse, QueryAllBalancesRequest, QueryAllBalancesResponse,

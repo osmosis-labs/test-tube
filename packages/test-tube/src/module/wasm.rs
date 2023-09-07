@@ -1,3 +1,5 @@
+#![cfg(feature = "wasm")]
+
 use cosmwasm_std::Coin;
 use osmosis_std::types::cosmwasm::wasm::v1::{
     AccessConfig, MsgExecuteContract, MsgExecuteContractResponse, MsgInstantiateContract,

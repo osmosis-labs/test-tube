@@ -17,7 +17,7 @@ osmosis-std = "0.19.1"
 prost = "0.11.0"
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = {version = "0.1.6", path = "../test-tube", features = ["all-wrappers"]}
+test-tube = {version = "0.1.7", path = "../test-tube", features = ["all-wrappers"]}
 thiserror = "1.0.34"
 
 [build-dependencies]

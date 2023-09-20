@@ -1,5 +1,4 @@
-[submodule "packages/osmosis-test-tube/osmosis"]
-	path = packages/osmosis-test-tube/osmosis
-	url = https://github.com/osmosis-labs/osmosis.git
-	branch = main
-
+[submodule "packages/coreum-test-tube/coreum"]
+	path = packages/coreum-test-tube/coreum
+	url = https://github.com/CoreumFoundation/coreum
+	branch = master

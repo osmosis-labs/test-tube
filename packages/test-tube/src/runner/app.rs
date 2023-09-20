@@ -19,7 +19,7 @@ use crate::runner::result::RawResult;
 use crate::runner::result::{RunnerExecuteResult, RunnerResult};
 use crate::runner::Runner;
 
-pub const OSMOSIS_MIN_GAS_PRICE: u128 = 2_500;
+pub const MIN_GAS_PRICE: u128 = 2_500;
 
 #[derive(Debug, PartialEq)]
 pub struct BaseApp {
@@ -78,16 +78,16 @@ impl BaseApp {
         .to_string();
 
         let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
-        let signging_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+        let signing_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
         })?;
 
         Ok(SigningAccount::new(
             self.address_prefix.clone(),
-            signging_key,
+            signing_key,
             FeeSetting::Auto {
-                gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),
+                gas_price: Coin::new(MIN_GAS_PRICE, self.fee_denom.clone()),
                 gas_adjustment: self.default_gas_adjustment,
             },
         ))
@@ -131,16 +131,16 @@ impl BaseApp {
         .to_string();
 
         let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
-        let signging_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+        let signing_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
         })?;
 
         Ok(SigningAccount::new(
             self.address_prefix.clone(),
-            signging_key,
+            signing_key,
             FeeSetting::Auto {
-                gas_price: Coin::new(OSMOSIS_MIN_GAS_PRICE, self.fee_denom.clone()),
+                gas_price: Coin::new(MIN_GAS_PRICE, self.fee_denom.clone()),
                 gas_adjustment: self.default_gas_adjustment,
             },
         ))
@@ -205,7 +205,7 @@ impl BaseApp {
         let zero_fee = Fee::from_amount_and_gas(
             cosmrs::Coin {
                 denom: self.fee_denom.parse().unwrap(),
-                amount: OSMOSIS_MIN_GAS_PRICE,
+                amount: MIN_GAS_PRICE,
             },
             0u64,
         );
@@ -359,7 +359,7 @@ impl<'a> Runner<'a> for BaseApp {
                 let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
 
                 let mut buf = Vec::new();
-                RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)
+                RequestDeliverTx::encode(&RequestDeliverTx { tx: tx.into() }, &mut buf)
                     .map_err(EncodeError::ProtoEncodeError)?;
 
                 let base64_req = base64::encode(buf);

@@ -7,7 +7,7 @@ require (
 	github.com/CosmWasm/wasmd v1.0.0
 	github.com/cosmos/cosmos-sdk v0.47.4
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v19 v19.0.0
+	github.com/osmosis-labs/osmosis/v19 v19.0.0-rc0
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b

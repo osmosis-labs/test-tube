@@ -102,6 +102,8 @@ fn build_libosmosistesttube(out: PathBuf) {
         .current_dir(manifest_dir.join("libosmosistesttube"))
         .arg("build")
         .arg("-buildmode=c-shared")
+        .arg("-ldflags")
+        .arg("-w")
         .arg("-o")
         .arg(out)
         .arg("main.go")

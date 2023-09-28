@@ -396,4 +396,17 @@ impl<'a> Runner<'a> for BaseApp {
                 .map_err(RunnerError::DecodeError)
         }
     }
+
+    fn raw_query(&self, path: &str, value: Vec<u8>) -> RunnerResult<Vec<u8>> {
+        let base64_query_msg_bytes = base64::encode(value);
+        redefine_as_go_string!(path);
+        redefine_as_go_string!(base64_query_msg_bytes);
+
+        unsafe {
+            let res = Query(self.id, path, base64_query_msg_bytes);
+            let res = RawResult::from_non_null_ptr(res).into_result()?;
+
+            Ok(res)
+        }
+    }
 }

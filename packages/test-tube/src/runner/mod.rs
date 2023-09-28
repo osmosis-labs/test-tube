@@ -69,4 +69,6 @@ pub trait Runner<'a> {
     where
         Q: ::prost::Message,
         R: ::prost::Message + DeserializeOwned + Default;
+
+    fn raw_query(&self, path: &str, value: Vec<u8>) -> RunnerResult<Vec<u8>>;
 }

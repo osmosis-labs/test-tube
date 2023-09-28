@@ -132,6 +132,10 @@ impl<'a> Runner<'a> for OsmosisTestApp {
         self.inner.query(path, q)
     }
 
+    fn raw_query(&self, path: &str, value: Vec<u8>) -> RunnerResult<Vec<u8>> {
+        self.inner.raw_query(path, value)
+    }
+
     fn execute_multiple_raw<R>(
         &self,
         msgs: Vec<cosmrs::Any>,

@@ -19,6 +19,21 @@ You might want to just use `cw-multi-test` if your contract does not interact wi
 
 So if your contract just interact with common modules like Bank, Staking, and Distribution, `cw-multi-test` is enough. But if it's interacting with custom modules, you should use `test-tube`.
 
+## Known Issues
+### linking with `cc` failed on Mac M1/M2 (`arm64`) https://github.com/osmosis-labs/test-tube/issues/28
+Check your `go version` if it's `darwin/arm64`, it might be `darwin/amd64` and your local build has been working
+but it confuses the linker.
+
+If you don't want to reinstall, go you opt for cross-compile.
+```sh
+cargo clean
+export GOOS="darwin"
+export GOARCH="arm64"
+export CGO_ENABLED=1
+```
+
+But we would installing go version that match your architecture makes more sense.
+
 ## Contributing
 
 We welcome contributions to `test-tube`! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request.

@@ -40,7 +40,7 @@ require (
 	github.com/cosmos/iavl v0.21.1 // indirect
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0 // indirect
 	github.com/cosmos/ibc-apps/modules/async-icq/v4 v4.1.0 // indirect
-	github.com/cosmos/ibc-go/v4 v4.5.0 // indirect
+	github.com/cosmos/ibc-go/v4 v4.5.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.0 // indirect
 	github.com/creachadair/taskgroup v0.6.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
@@ -169,8 +169,8 @@ replace github.com/tendermint/tendermint => github.com/informalsystems/tendermin
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
-replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.9-0.20231014001935-1946419d44eb
-
 replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.7-0.20231014001935-1946419d44eb
 
 replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.7-0.20231011004221-fd24b80f8366
+
+replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.9-0.20231014001935-1946419d44eb

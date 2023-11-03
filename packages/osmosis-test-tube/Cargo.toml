@@ -4,7 +4,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 name = "osmosis-test-tube"
 repository = "https://github.com/osmosis-labs/test-tube"
-version = "20.1.1"
+version = "20.1.2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 exclude = ["osmosis", "test_artifacts"]

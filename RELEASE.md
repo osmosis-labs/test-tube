@@ -25,3 +25,5 @@ Releasing `osmosis-test-tube` is a bit more complicated as it depends on `test-t
 - Bump `osmosis-test-tube` version in `packages/osmosis-test-tube/Cargo.toml`
 - Release new version of `osmosis-test-tube` by running `cargo publish -p osmosis-test-tube`
 - Create github release with `osmosis-test-tube-v<major>.<minor>.<patch>` as tag and title
+
+> Note: if doc test fail, try `cargo clean` and run test again.

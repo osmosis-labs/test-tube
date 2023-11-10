@@ -7,7 +7,7 @@ require (
 	github.com/CosmWasm/wasmd v1.0.0
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v20 v20.1.0
+	github.com/osmosis-labs/osmosis/v20 v20.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -39,7 +39,7 @@ require (
 	github.com/cosmos/iavl v0.21.1 // indirect
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0 // indirect
 	github.com/cosmos/ibc-apps/modules/async-icq/v4 v4.1.0 // indirect
-	github.com/cosmos/ibc-go/v4 v4.5.0 // indirect
+	github.com/cosmos/ibc-go/v4 v4.5.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.0 // indirect
 	github.com/creachadair/taskgroup v0.6.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect

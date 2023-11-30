@@ -5,9 +5,9 @@ go 1.19
 require (
 	cosmossdk.io/errors v1.0.0
 	github.com/CosmWasm/wasmd v1.0.0
-	github.com/cosmos/cosmos-sdk v0.47.5
+	github.com/cosmos/cosmos-sdk v0.50.1
 	github.com/gogo/protobuf v1.3.3
-	github.com/osmosis-labs/osmosis/v20 v20.1.0
+	github.com/osmosis-labs/osmosis/v20 v20.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/tendermint/tendermint v0.38.0-dev
 	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
@@ -39,7 +39,7 @@ require (
 	github.com/cosmos/iavl v0.21.1 // indirect
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0 // indirect
 	github.com/cosmos/ibc-apps/modules/async-icq/v4 v4.1.0 // indirect
-	github.com/cosmos/ibc-go/v4 v4.5.0 // indirect
+	github.com/cosmos/ibc-go/v4 v4.5.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.0 // indirect
 	github.com/creachadair/taskgroup v0.6.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
@@ -153,7 +153,7 @@ replace github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.31.0-osmo-
 
 replace github.com/CosmWasm/wasmvm => github.com/CosmWasm/wasmvm v1.2.3
 
-replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.0-rc1.0.20230922030206-734f99fba785
+replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.0-rc1.0.20230927020814-2854ac001f06
 
 replace github.com/cosmos/iavl => github.com/cosmos/iavl v0.19.7
 
@@ -165,8 +165,8 @@ replace github.com/tendermint/tendermint => github.com/informalsystems/tendermin
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
-replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.7-0.20231014001935-1946419d44eb
-
 replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.7-0.20231011004221-fd24b80f8366
 
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.9-0.20231014001935-1946419d44eb
+
+replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.7-0.20231014001935-1946419d44eb

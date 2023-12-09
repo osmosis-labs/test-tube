@@ -1,6 +1,6 @@
 use cosmrs::tx::MessageExt;
 use osmosis_std::shim::Any;
-use osmosis_std::types::cosmos::gov::v1::{self, MsgExecLegacyContent};
+use osmosis_std::types::cosmos::base::v1beta1::Coin;
 use osmosis_std::types::cosmos::gov::v1beta1::{
     MsgSubmitProposal, MsgSubmitProposalResponse, MsgVote, MsgVoteResponse, QueryParamsRequest,
     QueryParamsResponse, QueryProposalRequest, QueryProposalResponse, VoteOption,
@@ -51,29 +51,23 @@ where
         is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
-        let msg = MsgExecLegacyContent {
-            content: Some(Any {
-                type_url: msg_type_url,
-                value: msg
-                    .to_bytes()
-                    .map_err(|e| RunnerError::EncodeError(e.into()))?,
-            }),
-            authority: signer.address(),
-        };
-        self.runner.execute(
-            v1::MsgSubmitProposal {
-                messages: vec![Any {
-                    type_url: "/cosmos.gov.v1.MsgExecLegacyContent".to_string(),
-                    value: msg.to_bytes().unwrap(),
-                }],
-                initial_deposit: initial_deposit.into_iter().map(|c| c.into()).collect(),
+        self.submit_proposal(
+            MsgSubmitProposal {
+                content: Some(Any {
+                    type_url: msg_type_url,
+                    value: msg
+                        .to_bytes()
+                        .map_err(|e| RunnerError::EncodeError(e.into()))?,
+                }),
+                initial_deposit: initial_deposit
+                    .into_iter()
+                    .map(|coin| Coin {
+                        denom: coin.denom,
+                        amount: coin.amount.to_string(),
+                    })
+                    .collect(),
                 proposer,
-                metadata: String::from("..."),
-                title: String::from("..."),
-                summary: String::from("..."),
-                expedited: is_expedited,
             },
-            "/cosmos.gov.v1.MsgSubmitProposal",
             signer,
         )
     }
@@ -117,15 +111,17 @@ impl<'a> GovWithAppAccess<'a> {
             .min_deposit;
 
         // submit proposal
-        let submit_proposal_res = self.gov.submit_executable_proposal(
-            msg_type_url,
-            msg,
-            min_deposit
-                .into_iter()
-                .map(|c| c.try_into().unwrap())
-                .collect(),
-            proposer,
-            is_expedited,
+        let submit_proposal_res = self.gov.submit_proposal(
+            MsgSubmitProposal {
+                content: Some(Any {
+                    type_url: msg_type_url,
+                    value: msg
+                        .to_bytes()
+                        .map_err(|e| RunnerError::EncodeError(e.into()))?,
+                }),
+                initial_deposit: min_deposit,
+                proposer,
+            },
             signer,
         )?;
 
@@ -133,6 +129,7 @@ impl<'a> GovWithAppAccess<'a> {
 
         // get validator to vote yes for proposal
         let val = self.app.get_first_validator_signing_account()?;
+
         self.gov
             .vote(
                 MsgVote {
@@ -165,6 +162,7 @@ impl<'a> GovWithAppAccess<'a> {
 
 #[cfg(test)]
 mod tests {
+    #[allow(deprecated)]
     use osmosis_std::types::osmosis::cosmwasmpool::v1beta1::UploadCosmWasmPoolCodeAndWhiteListProposal;
     use test_tube::Account;
 

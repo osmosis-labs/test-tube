@@ -63,9 +63,10 @@ func InitTestEnv() uint64 {
 	env.NodeHome = nodeHome
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
 
-	env.Ctx = testenv.InitChain(env.App)
+	ctx, valPriv := testenv.InitChain(env.App)
 
-	env.InitValidator()
+	env.Ctx = ctx
+	env.ValPrivs = []*secp256k1.PrivKey{&valPriv}
 
 	env.SetupParamTypes()
 
@@ -73,7 +74,7 @@ func InitTestEnv() uint64 {
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
 	env.BeginNewBlock(false, 5)
-	env.SetupDefaultValidator()
+	env.FundValidators()
 
 	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
 	env.App.EndBlock(reqEndBlock)

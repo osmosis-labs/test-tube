@@ -44,7 +44,108 @@ import (
 	superfluidtypes "github.com/osmosis-labs/osmosis/v21/x/superfluid/types"
 	tokenfactorytypes "github.com/osmosis-labs/osmosis/v21/x/tokenfactory/types"
 	twaptypes "github.com/osmosis-labs/osmosis/v21/x/twap/types"
+
+	sdkmath "cosmossdk.io/math"
+
+	tmtypes "github.com/cometbft/cometbft/types"
+
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
+
+func GenesisStateWithValSet(appInstance *app.OsmosisApp) (app.GenesisState, secp256k1.PrivKey) {
+	privVal := NewPV()
+	pubKey, _ := privVal.GetPubKey()
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+
+	// generate genesis account
+	senderPrivKey := secp256k1.GenPrivKey()
+	senderPrivKey.PubKey().Address()
+	acc := authtypes.NewBaseAccountWithAddress(senderPrivKey.PubKey().Address().Bytes())
+
+	//////////////////////
+	balances := []banktypes.Balance{}
+	genesisState := app.NewDefaultGenesisState()
+	genAccs := []authtypes.GenesisAccount{acc}
+	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
+	genesisState[authtypes.ModuleName] = appInstance.AppCodec().MustMarshalJSON(authGenesis)
+
+	validators := make([]stakingtypes.Validator, 0, len(valSet.Validators))
+	delegations := make([]stakingtypes.Delegation, 0, len(valSet.Validators))
+
+	bondAmt := sdk.DefaultPowerReduction
+	initValPowers := []abci.ValidatorUpdate{}
+
+	for _, val := range valSet.Validators {
+		pk, _ := cryptocodec.FromTmPubKeyInterface(val.PubKey)
+		pkAny, _ := codectypes.NewAnyWithValue(pk)
+		validator := stakingtypes.Validator{
+			OperatorAddress:   sdk.ValAddress(val.Address).String(),
+			ConsensusPubkey:   pkAny,
+			Jailed:            false,
+			Status:            stakingtypes.Bonded,
+			Tokens:            bondAmt,
+			DelegatorShares:   sdk.OneDec(),
+			Description:       stakingtypes.Description{},
+			UnbondingHeight:   int64(0),
+			UnbondingTime:     time.Unix(0, 0).UTC(),
+			Commission:        stakingtypes.NewCommission(sdk.ZeroDec(), sdk.ZeroDec(), sdk.ZeroDec()),
+			MinSelfDelegation: sdkmath.ZeroInt(),
+		}
+		validators = append(validators, validator)
+		delegations = append(delegations, stakingtypes.NewDelegation(genAccs[0].GetAddress(), val.Address.Bytes(), sdk.OneDec()))
+
+		// add initial validator powers so consumer InitGenesis runs correctly
+		pub, _ := val.ToProto()
+		initValPowers = append(initValPowers, abci.ValidatorUpdate{
+			Power:  val.VotingPower,
+			PubKey: pub.PubKey,
+		})
+	}
+	// set validators and delegations
+	stakingGenesis := stakingtypes.NewGenesisState(stakingtypes.DefaultParams(), validators, delegations)
+	genesisState[stakingtypes.ModuleName] = appInstance.AppCodec().MustMarshalJSON(stakingGenesis)
+
+	totalSupply := sdk.NewCoins()
+	for _, b := range balances {
+		// add genesis acc tokens to total supply
+		totalSupply = totalSupply.Add(b.Coins...)
+	}
+
+	for range delegations {
+		// add delegated tokens to total supply
+		totalSupply = totalSupply.Add(sdk.NewCoin(sdk.DefaultBondDenom, bondAmt))
+	}
+
+	// add bonded amount to bonded pool module account
+	balances = append(balances, banktypes.Balance{
+		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
+		Coins:   sdk.Coins{sdk.NewCoin(sdk.DefaultBondDenom, bondAmt)},
+	})
+
+	// update total supply
+	bankGenesis := banktypes.NewGenesisState(
+		banktypes.DefaultGenesisState().Params,
+		balances,
+		totalSupply,
+		[]banktypes.Metadata{},
+		[]banktypes.SendEnabled{},
+	)
+	genesisState[banktypes.ModuleName] = appInstance.AppCodec().MustMarshalJSON(bankGenesis)
+
+	_, err := tmtypes.PB2TM.ValidatorUpdates(initValPowers)
+	if err != nil {
+		panic("failed to get vals")
+	}
+
+	return genesisState, secp256k1.PrivKey{Key: privVal.PrivKey.Bytes()}
+}
 
 type TestEnv struct {
 	App                *app.OsmosisApp
@@ -83,9 +184,9 @@ func NewOsmosisApp(nodeHome string) *app.OsmosisApp {
 
 }
 
-func InitChain(appInstance *app.OsmosisApp) sdk.Context {
+func InitChain(appInstance *app.OsmosisApp) (sdk.Context, secp256k1.PrivKey) {
 	sdk.DefaultBondDenom = "uosmo"
-	genesisState := app.GenesisStateWithValSet(appInstance)
+	genesisState, valPriv := GenesisStateWithValSet(appInstance)
 
 	encCfg := app.MakeEncodingConfig()
 
@@ -142,7 +243,7 @@ func InitChain(appInstance *app.OsmosisApp) sdk.Context {
 		appInstance.SlashingKeeper.SetValidatorSigningInfo(ctx, consAddr, signingInfo)
 	}
 
-	return ctx
+	return ctx, valPriv
 }
 
 func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uint64) {
@@ -152,6 +253,16 @@ func (env *TestEnv) BeginNewBlock(executeNextEpoch bool, timeIncreaseSeconds uin
 	valAddr := valAddrFancy.Bytes()
 
 	env.beginNewBlockWithProposer(executeNextEpoch, valAddr, timeIncreaseSeconds)
+}
+
+func (env *TestEnv) FundValidators() {
+	for _, valPriv := range env.ValPrivs {
+		valAddr := sdk.AccAddress(valPriv.PubKey().Address())
+		err := banktestutil.FundAccount(env.App.BankKeeper, env.Ctx, valAddr.Bytes(), sdk.NewCoins(sdk.NewInt64Coin("uosmo", 9223372036854775807)))
+		if err != nil {
+			panic(errors.Wrapf(err, "Failed to fund account"))
+		}
+	}
 }
 
 func (env *TestEnv) InitValidator() []byte {

@@ -11,8 +11,8 @@ import (
 	"sync"
 
 	// helpers
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/cosmos/gogoproto/proto"
+	proto "github.com/cosmos/gogoproto/proto"
 	"github.com/pkg/errors"
 
 	// tendermint

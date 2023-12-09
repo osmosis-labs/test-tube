@@ -1,7 +1,7 @@
 use cosmrs::tx::MessageExt;
 use osmosis_std::shim::Any;
-use osmosis_std::types::cosmos::base::v1beta1::Coin;
-use osmosis_std::types::cosmos::gov::v1::{
+use osmosis_std::types::cosmos::gov::v1::{self, MsgExecLegacyContent};
+use osmosis_std::types::cosmos::gov::v1beta1::{
     MsgSubmitProposal, MsgSubmitProposalResponse, MsgVote, MsgVoteResponse, QueryParamsRequest,
     QueryParamsResponse, QueryProposalRequest, QueryProposalResponse, VoteOption,
 };
@@ -27,19 +27,19 @@ where
     R: Runner<'a>,
 {
     fn_execute! {
-        pub submit_proposal: MsgSubmitProposal["/cosmos.gov.v1.MsgSubmitProposal"] => MsgSubmitProposalResponse
+        pub submit_proposal: MsgSubmitProposal["/cosmos.gov.v1beta1.MsgSubmitProposal"] => MsgSubmitProposalResponse
     }
 
     fn_execute! {
-        pub vote: MsgVote["/cosmos.gov.v1.MsgVote"] => MsgVoteResponse
+        pub vote: MsgVote["/cosmos.gov.v1beta1.MsgVote"] => MsgVoteResponse
     }
 
     fn_query! {
-        pub query_proposal ["/cosmos.gov.v1.Query/Proposal"]: QueryProposalRequest => QueryProposalResponse
+        pub query_proposal ["/cosmos.gov.v1beta1.Query/Proposal"]: QueryProposalRequest => QueryProposalResponse
     }
 
     fn_query! {
-        pub query_params ["/cosmos.gov.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
+        pub query_params ["/cosmos.gov.v1beta1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
 
     pub fn submit_executable_proposal<M: prost::Message>(
@@ -51,27 +51,29 @@ where
         is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
-        self.submit_proposal(
-            MsgSubmitProposal {
+        let msg = MsgExecLegacyContent {
+            content: Some(Any {
+                type_url: msg_type_url,
+                value: msg
+                    .to_bytes()
+                    .map_err(|e| RunnerError::EncodeError(e.into()))?,
+            }),
+            authority: signer.address(),
+        };
+        self.runner.execute(
+            v1::MsgSubmitProposal {
                 messages: vec![Any {
-                    type_url: msg_type_url,
-                    value: msg
-                        .to_bytes()
-                        .map_err(|e| RunnerError::EncodeError(e.into()))?,
+                    type_url: "/cosmos.gov.v1.MsgExecLegacyContent".to_string(),
+                    value: msg.to_bytes().unwrap(),
                 }],
-                initial_deposit: initial_deposit
-                    .into_iter()
-                    .map(|coin| Coin {
-                        denom: coin.denom,
-                        amount: coin.amount.to_string(),
-                    })
-                    .collect(),
+                initial_deposit: initial_deposit.into_iter().map(|c| c.into()).collect(),
                 proposer,
-                metadata: String::new(),
-                title: String::new(),
-                summary: String::new(),
+                metadata: String::from("..."),
+                title: String::from("..."),
+                summary: String::from("..."),
                 expedited: is_expedited,
             },
+            "/cosmos.gov.v1.MsgSubmitProposal",
             signer,
         )
     }
@@ -105,32 +107,25 @@ impl<'a> GovWithAppAccess<'a> {
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         // query deposit params
-        let params = self
-            .gov
-            .query_params(&QueryParamsRequest {
-                params_type: "deposit".to_string(),
-            })?
-            .params
-            .expect("deposit params must exist");
+        let params = self.gov.query_params(&QueryParamsRequest {
+            params_type: "deposit".to_string(),
+        })?;
 
-        let min_deposit = params.min_deposit;
+        let min_deposit = params
+            .deposit_params
+            .expect("deposit params must exist")
+            .min_deposit;
 
         // submit proposal
-        let submit_proposal_res = self.gov.submit_proposal(
-            MsgSubmitProposal {
-                messages: vec![Any {
-                    type_url: msg_type_url,
-                    value: msg
-                        .to_bytes()
-                        .map_err(|e| RunnerError::EncodeError(e.into()))?,
-                }],
-                initial_deposit: min_deposit,
-                proposer,
-                metadata: String::new(),
-                title: String::from("proposal"),
-                summary: String::from("proposal"),
-                expedited: is_expedited,
-            },
+        let submit_proposal_res = self.gov.submit_executable_proposal(
+            msg_type_url,
+            msg,
+            min_deposit
+                .into_iter()
+                .map(|c| c.try_into().unwrap())
+                .collect(),
+            proposer,
+            is_expedited,
             signer,
         )?;
 
@@ -144,7 +139,6 @@ impl<'a> GovWithAppAccess<'a> {
                     proposal_id,
                     voter: val.address(),
                     option: VoteOption::Yes.into(),
-                    metadata: String::new(),
                 },
                 &val,
             )
@@ -157,7 +151,7 @@ impl<'a> GovWithAppAccess<'a> {
 
         // get voting period
         let voting_period = params
-            .params
+            .voting_params
             .expect("voting params must exist")
             .voting_period
             .expect("voting period must exist");
@@ -178,7 +172,6 @@ mod tests {
     use crate::OsmosisTestApp;
 
     #[test]
-    #[ignore] // Ignore these tests for now, it needs fixes from osmosis codebase
     fn test_cosmwasmpool_proposal() {
         let app = OsmosisTestApp::default();
         let gov = GovWithAppAccess::new(&app);

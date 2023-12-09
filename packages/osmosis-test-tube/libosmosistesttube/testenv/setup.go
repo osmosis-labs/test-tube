@@ -103,40 +103,6 @@ func InitChain(appInstance *app.OsmosisApp) sdk.Context {
 	stakingGenesisState := stakingtypes.GenesisState{}
 	appInstance.AppCodec().UnmarshalJSON(genesisState[stakingtypes.ModuleName], &stakingGenesisState)
 
-	// setup validator signing info
-	// get all validators
-
-	// Set up staking genesis state
-	// stakingParams := stakingtypes.DefaultParams()
-	// stakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
-	// stakingGen := stakingtypes.GenesisState{
-	// 	Params: stakingParams,
-	// }
-	// genesisState[stakingtypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&stakingGen)
-
-	// Set up incentive genesis state
-	// lockableDurations := []time.Duration{
-	// 	time.Hour * 24,      // 1 day
-	// 	time.Hour * 24 * 7,  // 7 day
-	// 	time.Hour * 24 * 14, // 14 days
-	// }
-	// incentivesParams := incentivetypes.DefaultParams()
-	// incentivesParams.DistrEpochIdentifier = "day"
-	// incentivesGen := incentivetypes.GenesisState{
-	// 	Params:            incentivesParams,
-	// 	LockableDurations: lockableDurations,
-	// }
-	// genesisState[incentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&incentivesGen)
-
-	// Set up pool incentives genesis state
-	// poolIncentivesParams := poolincentivetypes.DefaultParams()
-	// poolIncentivesParams.MintedDenom = "uosmo"
-	// poolIncentivesGen := poolincentivetypes.GenesisState{
-	// 	Params:            poolIncentivesParams,
-	// 	LockableDurations: lockableDurations,
-	// }
-	// genesisState[poolincentivetypes.ModuleName] = encCfg.Marshaler.MustMarshalJSON(&poolIncentivesGen)
-
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 
 	requireNoErr(err)

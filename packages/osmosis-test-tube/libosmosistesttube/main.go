@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	// helpers
-	_ "github.com/cosmos/gogoproto/proto"
 	proto "github.com/cosmos/gogoproto/proto"
 	"github.com/pkg/errors"
 
@@ -48,6 +47,9 @@ func InitTestEnv() uint64 {
 	mu.Lock()
 	defer mu.Unlock()
 
+	// temp: suppress noise from stdout
+	os.Stdout = nil
+
 	envCounter += 1
 	id := envCounter
 
@@ -62,6 +64,8 @@ func InitTestEnv() uint64 {
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
 
 	env.Ctx = testenv.InitChain(env.App)
+
+	env.InitValidator()
 
 	env.SetupParamTypes()
 

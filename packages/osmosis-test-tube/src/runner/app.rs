@@ -372,7 +372,7 @@ mod tests {
                     mutable: true,
                 },
                 Some(&admin.address()),
-                None,
+                Some("cw1_whitelist"),
                 &[],
                 admin,
             )

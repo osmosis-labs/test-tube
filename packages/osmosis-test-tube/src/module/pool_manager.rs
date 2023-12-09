@@ -285,6 +285,7 @@ mod tests {
             ])
             .unwrap();
 
+        #[allow(deprecated)] // pool_id is deprecated
         let res = pool_manager
             .query_swap_exact_amount_in(&EstimateSwapExactAmountInRequest {
                 pool_id: 2,

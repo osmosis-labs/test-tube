@@ -1,7 +1,7 @@
 use std::ffi::CString;
 
 use cosmrs::crypto::secp256k1::SigningKey;
-use cosmrs::proto::tendermint::abci::{RequestDeliverTx, ResponseDeliverTx};
+use cosmrs::proto::tendermint::v0_37::abci::{RequestDeliverTx, ResponseDeliverTx};
 use cosmrs::tx::{Fee, SignerInfo};
 use cosmrs::{tx, Any};
 use cosmwasm_std::{Coin, Timestamp};
@@ -78,7 +78,7 @@ impl BaseApp {
         .to_string();
 
         let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
-        let signging_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+        let signging_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
         })?;
@@ -131,7 +131,7 @@ impl BaseApp {
         .to_string();
 
         let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
-        let signging_key = SigningKey::from_bytes(&secp256k1_priv).map_err(|e| {
+        let signging_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
         })?;
@@ -356,7 +356,7 @@ impl<'a> Runner<'a> for BaseApp {
                     ),
                 };
 
-                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
+                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?.into();
 
                 let mut buf = Vec::new();
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)

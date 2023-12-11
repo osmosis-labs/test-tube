@@ -48,7 +48,6 @@ where
         msg: M,
         initial_deposit: Vec<cosmwasm_std::Coin>,
         proposer: String,
-        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         self.submit_proposal(
@@ -97,7 +96,6 @@ impl<'a> GovWithAppAccess<'a> {
         msg_type_url: String,
         msg: M,
         proposer: String,
-        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         // query deposit params
@@ -189,7 +187,6 @@ mod tests {
                     wasm_byte_code,
                 },
                 proposer.address(),
-                false,
                 &proposer,
             )
             .unwrap();

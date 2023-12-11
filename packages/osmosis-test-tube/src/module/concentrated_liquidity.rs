@@ -157,7 +157,6 @@ mod tests {
                 }],
             },
             signer.address(),
-            false,
             &signer,
         )
         .unwrap();

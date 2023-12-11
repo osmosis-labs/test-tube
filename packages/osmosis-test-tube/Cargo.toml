@@ -4,7 +4,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 name = "osmosis-test-tube"
 repository = "https://github.com/osmosis-labs/test-tube"
-version = "20.1.2"
+version = "21.0.0-beta.1"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 exclude = ["osmosis", "test_artifacts"]
@@ -17,11 +17,11 @@ osmosis-std = "0.21.0-beta"
 prost = "0.12.3"
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = {version = "0.2.0", path = "../test-tube", features = ["module-wrappers"]}
+test-tube = {version = "0.3.0-beta.1", path = "../test-tube", features = ["module-wrappers"]}
 thiserror = "1.0.34"
 
 [build-dependencies]
-bindgen = "0.68.1"
+bindgen = "0.69.1"
 
 [dev-dependencies]
 cw1-whitelist = "1.1.1"

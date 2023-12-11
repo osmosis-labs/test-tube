@@ -1,5 +1,6 @@
 use std::ffi::CString;
 
+use base64::Engine as _;
 use cosmrs::crypto::secp256k1::SigningKey;
 use cosmrs::proto::tendermint::v0_37::abci::{RequestDeliverTx, ResponseDeliverTx};
 use cosmrs::tx::{Fee, SignerInfo};
@@ -18,6 +19,7 @@ use crate::runner::error::{DecodeError, EncodeError, RunnerError};
 use crate::runner::result::RawResult;
 use crate::runner::result::{RunnerExecuteResult, RunnerResult};
 use crate::runner::Runner;
+use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
 
 pub const OSMOSIS_MIN_GAS_PRICE: u128 = 2_500;
 
@@ -77,7 +79,9 @@ impl BaseApp {
         .map_err(DecodeError::Utf8Error)?
         .to_string();
 
-        let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
+        let secp256k1_priv = BASE64_STANDARD
+            .decode(base64_priv)
+            .map_err(DecodeError::Base64DecodeError)?;
         let signging_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
@@ -130,7 +134,9 @@ impl BaseApp {
         .map_err(DecodeError::Utf8Error)?
         .to_string();
 
-        let secp256k1_priv = base64::decode(base64_priv).map_err(DecodeError::Base64DecodeError)?;
+        let secp256k1_priv = BASE64_STANDARD
+            .decode(base64_priv)
+            .map_err(DecodeError::Base64DecodeError)?;
         let signging_key = SigningKey::from_slice(&secp256k1_priv).map_err(|e| {
             let msg = e.to_string();
             DecodeError::SigningKeyDecodeError { msg }
@@ -211,7 +217,7 @@ impl BaseApp {
         );
 
         let tx = self.create_signed_tx(msgs, signer, zero_fee)?;
-        let base64_tx_bytes = base64::encode(tx);
+        let base64_tx_bytes = BASE64_STANDARD.encode(tx);
         redefine_as_go_string!(base64_tx_bytes);
 
         unsafe {
@@ -270,7 +276,7 @@ impl BaseApp {
         unsafe {
             BeginBlock(self.id);
             let pset = Message::encode_to_vec(&pset.into());
-            let pset = base64::encode(pset);
+            let pset = BASE64_STANDARD.encode(pset);
             redefine_as_go_string!(pset);
             redefine_as_go_string!(subspace);
             let res = SetParamSet(self.id, subspace, pset);
@@ -362,7 +368,7 @@ impl<'a> Runner<'a> for BaseApp {
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)
                     .map_err(EncodeError::ProtoEncodeError)?;
 
-                let base64_req = base64::encode(buf);
+                let base64_req = BASE64_STANDARD.encode(buf);
                 redefine_as_go_string!(base64_req);
 
                 let res = Execute(self.id, base64_req);
@@ -384,7 +390,7 @@ impl<'a> Runner<'a> for BaseApp {
 
         Q::encode(q, &mut buf).map_err(EncodeError::ProtoEncodeError)?;
 
-        let base64_query_msg_bytes = base64::encode(buf);
+        let base64_query_msg_bytes = BASE64_STANDARD.encode(buf);
         redefine_as_go_string!(path);
         redefine_as_go_string!(base64_query_msg_bytes);
 

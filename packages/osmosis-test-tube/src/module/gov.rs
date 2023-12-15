@@ -48,7 +48,6 @@ where
         msg: M,
         initial_deposit: Vec<cosmwasm_std::Coin>,
         proposer: String,
-        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         self.submit_proposal(
@@ -67,7 +66,6 @@ where
                     })
                     .collect(),
                 proposer,
-                is_expedited,
             },
             signer,
         )
@@ -98,7 +96,6 @@ impl<'a> GovWithAppAccess<'a> {
         msg_type_url: String,
         msg: M,
         proposer: String,
-        is_expedited: bool,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgSubmitProposalResponse> {
         // query deposit params
@@ -122,7 +119,6 @@ impl<'a> GovWithAppAccess<'a> {
                 }),
                 initial_deposit: min_deposit,
                 proposer,
-                is_expedited,
             },
             signer,
         )?;
@@ -131,6 +127,7 @@ impl<'a> GovWithAppAccess<'a> {
 
         // get validator to vote yes for proposal
         let val = self.app.get_first_validator_signing_account()?;
+
         self.gov
             .vote(
                 MsgVote {
@@ -163,74 +160,12 @@ impl<'a> GovWithAppAccess<'a> {
 
 #[cfg(test)]
 mod tests {
-    use osmosis_std::types::{
-        cosmwasm::wasm::v1::{QueryCodeRequest, QueryCodeResponse, StoreCodeProposal},
-        osmosis::cosmwasmpool::v1beta1::UploadCosmWasmPoolCodeAndWhiteListProposal,
-    };
+    #[allow(deprecated)]
+    use osmosis_std::types::osmosis::cosmwasmpool::v1beta1::UploadCosmWasmPoolCodeAndWhiteListProposal;
     use test_tube::Account;
 
     use super::*;
     use crate::OsmosisTestApp;
-
-    #[test]
-    fn test_passing_and_execute_proposal() {
-        let app = OsmosisTestApp::default();
-        let gov = GovWithAppAccess::new(&app);
-
-        let proposer = app
-            .init_account(&[cosmwasm_std::Coin::new(1000000000000000000, "uosmo")])
-            .unwrap();
-
-        // query code id 1 should error since it has not been stored
-        let err = app
-            .query::<_, QueryCodeResponse>(
-                "/cosmwasm.wasm.v1.Query/Code",
-                &QueryCodeRequest { code_id: 1 },
-            )
-            .unwrap_err();
-
-        assert_eq!(
-            err,
-            RunnerError::QueryError {
-                msg: "not found".to_string()
-            }
-        );
-
-        // store code through proposal
-        let wasm_byte_code = std::fs::read("./test_artifacts/cw1_whitelist.wasm").unwrap();
-        let res = gov
-            .propose_and_execute(
-                StoreCodeProposal::TYPE_URL.to_string(),
-                StoreCodeProposal {
-                    title: String::from("test"),
-                    description: String::from("test"),
-                    run_as: proposer.address(),
-                    wasm_byte_code: wasm_byte_code.clone(),
-                    instantiate_permission: None,
-                    unpin_code: false,
-                    source: String::new(),
-                    builder: String::new(),
-                    code_hash: Vec::new(),
-                },
-                proposer.address(),
-                false,
-                &proposer,
-            )
-            .unwrap();
-
-        assert_eq!(res.data.proposal_id, 1);
-
-        // query code id 1 should find the code after proposal is executed
-        let QueryCodeResponse { code_info, data } = app
-            .query(
-                "/cosmwasm.wasm.v1.Query/Code",
-                &QueryCodeRequest { code_id: 1 },
-            )
-            .unwrap();
-
-        assert_eq!(code_info.unwrap().creator, proposer.address());
-        assert_eq!(data, wasm_byte_code);
-    }
 
     #[test]
     fn test_cosmwasmpool_proposal() {
@@ -252,7 +187,6 @@ mod tests {
                     wasm_byte_code,
                 },
                 proposer.address(),
-                false,
                 &proposer,
             )
             .unwrap();

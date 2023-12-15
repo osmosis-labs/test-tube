@@ -142,7 +142,7 @@ let contract_addr = wasm
             mutable: true,
         },
         None, // contract admin used for migration, not the same as cw1_whitelist admin
-        None, // contract label
+        Some("cw1_whitelist"), // contract label
         &[], // funds
         admin, // signer
     )
@@ -199,7 +199,7 @@ let contract_addr = wasm
             mutable: true,
         },
         None, // contract admin used for migration, not the same as cw1_whitelist admin
-        None, // contract label
+        Some("cw1_whitelist"), // contract label
         &[], // funds
         admin, // signer
     )

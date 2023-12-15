@@ -9,23 +9,20 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	// helpers
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
+	proto "github.com/cosmos/gogoproto/proto"
 	"github.com/pkg/errors"
 
 	// tendermint
-	abci "github.com/tendermint/tendermint/abci/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	// cosmos sdk
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	// wasmd
@@ -50,6 +47,9 @@ func InitTestEnv() uint64 {
 	mu.Lock()
 	defer mu.Unlock()
 
+	// temp: suppress noise from stdout
+	os.Stdout = nil
+
 	envCounter += 1
 	id := envCounter
 
@@ -59,18 +59,22 @@ func InitTestEnv() uint64 {
 	}
 
 	env := new(testenv.TestEnv)
-	env.App = testenv.SetupOsmosisApp(nodeHome)
+	env.App = testenv.NewOsmosisApp(nodeHome)
 	env.NodeHome = nodeHome
 	env.ParamTypesRegistry = *testenv.NewParamTypeRegistry()
+
+	ctx, valPriv := testenv.InitChain(env.App)
+
+	env.Ctx = ctx
+	env.ValPrivs = []*secp256k1.PrivKey{&valPriv}
 
 	env.SetupParamTypes()
 
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.Ctx = env.App.BaseApp.NewContext(false, tmproto.Header{Height: 0, ChainID: "osmosis-1", Time: time.Now().UTC()})
-
 	env.BeginNewBlock(false, 5)
+	env.FundValidators()
 
 	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
 	env.App.EndBlock(reqEndBlock)
@@ -120,7 +124,7 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 
 	}
 
-	err := simapp.FundAccount(env.App.BankKeeper, env.Ctx, accAddr, coins)
+	err := banktestutil.FundAccount(env.App.BankKeeper, env.Ctx, accAddr, coins)
 	if err != nil {
 		panic(errors.Wrapf(err, "Failed to fund account"))
 	}

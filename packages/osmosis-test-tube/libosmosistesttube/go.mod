@@ -1,6 +1,8 @@
 module github.com/osmosis-labs/test-tube/osmosis-test-tube
 
-go 1.19
+go 1.21
+
+toolchain go1.21.6
 
 require (
 	cosmossdk.io/errors v1.0.0

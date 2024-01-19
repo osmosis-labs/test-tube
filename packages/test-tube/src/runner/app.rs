@@ -7,12 +7,13 @@ use cosmrs::tx::{Fee, SignerInfo};
 use cosmrs::{tx, Any};
 use cosmwasm_std::{Coin, Timestamp};
 use prost::Message;
+use serde::Serialize;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
     AccountNumber, AccountSequence, BeginBlock, CleanUp, EndBlock, Execute, GetBlockHeight,
     GetBlockTime, GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime,
-    InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
+    InitAccount, InitTestEnv, Query, SetParamSet, Simulate, WasmSudo,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -253,6 +254,18 @@ impl BaseApp {
                 panic!("estimate fee is a private function and should never be called when fee_setting is Custom");
             }
         }
+    }
+
+    pub unsafe fn wasm_sudo<M>(&self, contract_address: &str, sudo_msg: M) -> RunnerResult<Vec<u8>>
+    where
+        M: Serialize,
+    {
+        let msg_string = serde_json::to_string(&sudo_msg).map_err(EncodeError::JsonEncodeError)?;
+        redefine_as_go_string!(msg_string);
+        redefine_as_go_string!(contract_address);
+
+        let res = WasmSudo(self.id, contract_address, msg_string);
+        RawResult::from_non_null_ptr(res).into_result()
     }
 
     /// Ensure that all execution that happens in `execution` happens in a block

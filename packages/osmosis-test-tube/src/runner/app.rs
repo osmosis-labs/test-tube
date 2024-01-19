@@ -4,6 +4,7 @@ use cosmwasm_std::{Coin, Timestamp};
 
 use prost::Message;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 use test_tube::account::SigningAccount;
 
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
@@ -108,6 +109,14 @@ impl OsmosisTestApp {
         type_url: &str,
     ) -> RunnerResult<P> {
         self.inner.get_param_set(subspace, type_url)
+    }
+
+    pub unsafe fn wasm_sudo<M: Serialize>(
+        &self,
+        contract_address: &str,
+        sudo_msg: M,
+    ) -> RunnerResult<Vec<u8>> {
+        unsafe { self.inner.wasm_sudo(contract_address, sudo_msg) }
     }
 }
 
@@ -569,5 +578,58 @@ mod tests {
 
         // should succeed
         assert!(res.data.success);
+    }
+
+    #[test]
+    fn test_wasm_sudo() {
+        let app = OsmosisTestApp::default();
+        let wasm = Wasm::new(&app);
+
+        let wasm_byte_code = std::fs::read("./test_artifacts/simple_sudo.wasm").unwrap();
+        let alice = app
+            .init_account(&coins(1_000_000_000_000, "uosmo"))
+            .unwrap();
+
+        let code_id = wasm
+            .store_code(&wasm_byte_code, None, &alice)
+            .unwrap()
+            .data
+            .code_id;
+
+        let contract_addr = wasm
+            .instantiate(
+                code_id,
+                &simple_sudo::msg::InstantiateMsg {},
+                None,
+                Some("simple_sudo"),
+                &[],
+                &alice,
+            )
+            .unwrap()
+            .data
+            .address;
+
+        let res = unsafe {
+            app.wasm_sudo(
+                &contract_addr,
+                simple_sudo::msg::SudoMsg::SetRandomData {
+                    key: "x".to_string(),
+                    value: "1".to_string(),
+                },
+            )
+            .unwrap()
+        };
+
+        assert_eq!(String::from_utf8(res).unwrap(), "x=1");
+
+        let res: simple_sudo::msg::RandomDataResponse = wasm
+            .query(
+                &contract_addr,
+                &simple_sudo::msg::QueryMsg::GetRandomData {
+                    key: "x".to_string(),
+                },
+            )
+            .unwrap();
+        assert_eq!(res.value, "1");
     }
 }

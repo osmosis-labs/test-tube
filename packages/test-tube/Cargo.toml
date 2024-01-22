@@ -24,8 +24,8 @@ rayon = "1.5.3"
 
 [features]
 default = []
-
 module-wrappers = ["bank", "wasm"]
+wasm-sudo = []
 
 bank = ["osmosis-std"]
 wasm = ["osmosis-std"]

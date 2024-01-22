@@ -4,7 +4,6 @@ use cosmwasm_std::{Coin, Timestamp};
 
 use prost::Message;
 use serde::de::DeserializeOwned;
-use serde::Serialize;
 use test_tube::account::SigningAccount;
 
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
@@ -111,12 +110,18 @@ impl OsmosisTestApp {
         self.inner.get_param_set(subspace, type_url)
     }
 
-    pub unsafe fn wasm_sudo<M: Serialize>(
+    /// Call sudo entrypoint on a given contract.
+    ///
+    /// Unless you know what you are doing, you should not call this function directly,
+    /// since other resources may not be properly updated and could resulted in
+    /// unexpected behavior which might cause your test to be invalid.
+    #[cfg(feature = "wasm-sudo")]
+    pub fn wasm_sudo<M: serde::Serialize>(
         &self,
         contract_address: &str,
         sudo_msg: M,
     ) -> RunnerResult<Vec<u8>> {
-        unsafe { self.inner.wasm_sudo(contract_address, sudo_msg) }
+        self.inner.wasm_sudo(contract_address, sudo_msg)
     }
 }
 
@@ -580,6 +585,7 @@ mod tests {
         assert!(res.data.success);
     }
 
+    #[cfg(feature = "wasm-sudo")]
     #[test]
     fn test_wasm_sudo() {
         let app = OsmosisTestApp::default();
@@ -609,16 +615,15 @@ mod tests {
             .data
             .address;
 
-        let res = unsafe {
-            app.wasm_sudo(
+        let res = app
+            .wasm_sudo(
                 &contract_addr,
                 simple_sudo::msg::SudoMsg::SetRandomData {
                     key: "x".to_string(),
                     value: "1".to_string(),
                 },
             )
-            .unwrap()
-        };
+            .unwrap();
 
         assert_eq!(String::from_utf8(res).unwrap(), "x=1");
 

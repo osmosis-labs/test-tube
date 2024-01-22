@@ -20,6 +20,10 @@ serde_json = "1.0.85"
 test-tube = {version = "0.4.0", path = "../test-tube", features = ["module-wrappers"]}
 thiserror = "1.0.34"
 
+[features]
+default = []
+wasm-sudo = ["test-tube/wasm-sudo"]
+
 [build-dependencies]
 bindgen = "0.69.1"
 

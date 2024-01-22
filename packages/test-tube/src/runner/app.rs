@@ -7,13 +7,12 @@ use cosmrs::tx::{Fee, SignerInfo};
 use cosmrs::{tx, Any};
 use cosmwasm_std::{Coin, Timestamp};
 use prost::Message;
-use serde::Serialize;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
     AccountNumber, AccountSequence, BeginBlock, CleanUp, EndBlock, Execute, GetBlockHeight,
     GetBlockTime, GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime,
-    InitAccount, InitTestEnv, Query, SetParamSet, Simulate, WasmSudo,
+    InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -256,16 +255,24 @@ impl BaseApp {
         }
     }
 
-    pub unsafe fn wasm_sudo<M>(&self, contract_address: &str, sudo_msg: M) -> RunnerResult<Vec<u8>>
+    /// Call sudo entrypoint on a given contract.
+    ///
+    /// Unless you know what you are doing, you should not call this function directly,
+    /// since other resources may not be properly updated and could resulted in
+    /// unexpected behavior which might cause your test to be invalid.
+    #[cfg(feature = "wasm-sudo")]
+    pub fn wasm_sudo<M>(&self, contract_address: &str, sudo_msg: M) -> RunnerResult<Vec<u8>>
     where
-        M: Serialize,
+        M: serde::Serialize,
     {
         let msg_string = serde_json::to_string(&sudo_msg).map_err(EncodeError::JsonEncodeError)?;
         redefine_as_go_string!(msg_string);
         redefine_as_go_string!(contract_address);
 
-        let res = WasmSudo(self.id, contract_address, msg_string);
-        RawResult::from_non_null_ptr(res).into_result()
+        unsafe {
+            let res = crate::bindings::WasmSudo(self.id, contract_address, msg_string);
+            RawResult::from_non_null_ptr(res).into_result()
+        }
     }
 
     /// Ensure that all execution that happens in `execution` happens in a block

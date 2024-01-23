@@ -255,11 +255,14 @@ impl BaseApp {
         }
     }
 
-    /// Call sudo entrypoint on a given contract.
+    /// Directly trigger sudo entrypoint on a given contract.
     ///
-    /// Unless you know what you are doing, you should not call this function directly,
-    /// since other resources may not be properly updated and could resulted in
-    /// unexpected behavior which might cause your test to be invalid.
+    /// # Caution
+    ///
+    /// This function bypasses standard state changes and processes within the chain logic that might occur in normal situation,
+    /// It is primarily intended for internal system logic where necessary state adjustments are handled.
+    /// Use only with full understanding of the function's impact on system state and testing validity.
+    /// Improper use may result in misleading test outcomes, including false positives or negatives.
     #[cfg(feature = "wasm-sudo")]
     pub fn wasm_sudo<M>(&self, contract_address: &str, sudo_msg: M) -> RunnerResult<Vec<u8>>
     where

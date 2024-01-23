@@ -221,6 +221,13 @@ extern "C" {
     pub fn EndBlock(envId: GoUint64);
 }
 extern "C" {
+    pub fn WasmSudo(
+        envId: GoUint64,
+        bech32Address: GoString,
+        msgJson: GoString,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
     pub fn IncreaseTime(envId: GoUint64, seconds: GoInt64);
 }
 extern "C" {

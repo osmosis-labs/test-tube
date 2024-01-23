@@ -109,6 +109,23 @@ impl OsmosisTestApp {
     ) -> RunnerResult<P> {
         self.inner.get_param_set(subspace, type_url)
     }
+
+    /// Directly trigger sudo entrypoint on a given contract.
+    ///
+    /// # Caution
+    ///
+    /// This function bypasses standard state changes and processes within the chain logic that might occur in normal situation,
+    /// It is primarily intended for internal system logic where necessary state adjustments are handled.
+    /// Use only with full understanding of the function's impact on system state and testing validity.
+    /// Improper use may result in misleading test outcomes, including false positives or negatives.
+    #[cfg(feature = "wasm-sudo")]
+    pub fn wasm_sudo<M: serde::Serialize>(
+        &self,
+        contract_address: &str,
+        sudo_msg: M,
+    ) -> RunnerResult<Vec<u8>> {
+        self.inner.wasm_sudo(contract_address, sudo_msg)
+    }
 }
 
 impl<'a> Runner<'a> for OsmosisTestApp {
@@ -569,5 +586,58 @@ mod tests {
 
         // should succeed
         assert!(res.data.success);
+    }
+
+    #[cfg(feature = "wasm-sudo")]
+    #[test]
+    fn test_wasm_sudo() {
+        let app = OsmosisTestApp::default();
+        let wasm = Wasm::new(&app);
+
+        let wasm_byte_code = std::fs::read("./test_artifacts/simple_sudo.wasm").unwrap();
+        let alice = app
+            .init_account(&coins(1_000_000_000_000, "uosmo"))
+            .unwrap();
+
+        let code_id = wasm
+            .store_code(&wasm_byte_code, None, &alice)
+            .unwrap()
+            .data
+            .code_id;
+
+        let contract_addr = wasm
+            .instantiate(
+                code_id,
+                &simple_sudo::msg::InstantiateMsg {},
+                None,
+                Some("simple_sudo"),
+                &[],
+                &alice,
+            )
+            .unwrap()
+            .data
+            .address;
+
+        let res = app
+            .wasm_sudo(
+                &contract_addr,
+                simple_sudo::msg::SudoMsg::SetRandomData {
+                    key: "x".to_string(),
+                    value: "1".to_string(),
+                },
+            )
+            .unwrap();
+
+        assert_eq!(String::from_utf8(res).unwrap(), "x=1");
+
+        let res: simple_sudo::msg::RandomDataResponse = wasm
+            .query(
+                &contract_addr,
+                &simple_sudo::msg::QueryMsg::GetRandomData {
+                    key: "x".to_string(),
+                },
+            )
+            .unwrap();
+        assert_eq!(res.value, "1");
     }
 }

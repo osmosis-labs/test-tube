@@ -1,6 +1,8 @@
 module github.com/osmosis-labs/test-tube/osmosis-test-tube
 
-go 1.19
+go 1.21
+
+toolchain go1.21.5
 
 require (
 	cosmossdk.io/errors v1.0.0
@@ -10,7 +12,7 @@ require (
 	github.com/cometbft/cometbft-db v0.8.0
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/gogoproto v1.4.11
-	github.com/osmosis-labs/osmosis/v22 v22.0.0
+	github.com/osmosis-labs/osmosis/v22 v22.0.1
 	github.com/pkg/errors v0.9.1
 )
 
@@ -132,13 +134,13 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
+	github.com/onsi/gomega v1.28.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/osmosis-labs/osmosis/osmomath v0.0.8 // indirect
 	github.com/osmosis-labs/osmosis/osmoutils v0.0.8 // indirect
 	github.com/osmosis-labs/osmosis/x/epochs v0.0.4 // indirect
 	github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.10 // indirect
-	github.com/osmosis-labs/sqs v0.0.0-20240109224414-786ae137f7c4 // indirect
-	github.com/osmosis-labs/sqs/sqsdomain v0.0.0-20240109224414-786ae137f7c4 // indirect
+	github.com/osmosis-labs/sqs/sqsdomain v0.0.0-20240116020611-aadf5f1ce0e8 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/petermattis/goid v0.0.0-20230518223814-80aa455d8761 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -211,9 +213,7 @@ replace github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/osmosis-labs/sqs => github.com/osmosis-labs/sqs v0.0.0-20240109224414-786ae137f7c4
-
-replace github.com/osmosis-labs/sqs/sqsdomain => github.com/osmosis-labs/sqs/sqsdomain v0.0.0-20240109224414-786ae137f7c4
+replace github.com/osmosis-labs/sqs/sqsdomain => github.com/osmosis-labs/sqs/sqsdomain v0.0.0-20240116020611-aadf5f1ce0e8
 
 replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 

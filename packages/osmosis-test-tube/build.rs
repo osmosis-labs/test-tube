@@ -98,6 +98,20 @@ fn build_libosmosistesttube(out: PathBuf) {
         return;
     }
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+
+    let tidy_status = Command::new("go")
+        .current_dir(manifest_dir.join("libosmosistesttube"))
+        .arg("mod")
+        .arg("tidy")
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap();
+
+    if !tidy_status.success() {
+        panic!("failed to run 'go mod tidy'");
+    }
+
     let exit_status = Command::new("go")
         .current_dir(manifest_dir.join("libosmosistesttube"))
         .arg("build")

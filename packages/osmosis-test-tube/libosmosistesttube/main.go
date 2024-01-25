@@ -160,6 +160,30 @@ func EndBlock(envId uint64) {
 	envRegister.Store(envId, env)
 }
 
+//export WasmSudo
+func WasmSudo(envId uint64, bech32Address, msgJson string) *C.char {
+	env := loadEnv(envId)
+	// Temp fix for concurrency issue
+	mu.Lock()
+	defer mu.Unlock()
+
+	accAddr, err := sdk.AccAddressFromBech32(bech32Address)
+	if err != nil {
+		panic(err)
+	}
+
+	msgBytes := []byte(msgJson)
+
+	res, err := env.App.WasmKeeper.Sudo(env.Ctx, accAddr, msgBytes)
+	if err != nil {
+		return encodeErrToResultBytes(result.ExecuteError, err)
+	}
+
+	envRegister.Store(envId, env)
+
+	return encodeBytesResultBytes(res)
+}
+
 //export Execute
 func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
 	env := loadEnv(envId)

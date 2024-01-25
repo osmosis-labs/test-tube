@@ -255,6 +255,29 @@ impl BaseApp {
         }
     }
 
+    /// Directly trigger sudo entrypoint on a given contract.
+    ///
+    /// # Caution
+    ///
+    /// This function bypasses standard state changes and processes within the chain logic that might occur in normal situation,
+    /// It is primarily intended for internal system logic where necessary state adjustments are handled.
+    /// Use only with full understanding of the function's impact on system state and testing validity.
+    /// Improper use may result in misleading test outcomes, including false positives or negatives.
+    #[cfg(feature = "wasm-sudo")]
+    pub fn wasm_sudo<M>(&self, contract_address: &str, sudo_msg: M) -> RunnerResult<Vec<u8>>
+    where
+        M: serde::Serialize,
+    {
+        let msg_string = serde_json::to_string(&sudo_msg).map_err(EncodeError::JsonEncodeError)?;
+        redefine_as_go_string!(msg_string);
+        redefine_as_go_string!(contract_address);
+
+        unsafe {
+            let res = crate::bindings::WasmSudo(self.id, contract_address, msg_string);
+            RawResult::from_non_null_ptr(res).into_result()
+        }
+    }
+
     /// Ensure that all execution that happens in `execution` happens in a block
     /// and end block properly, no matter it suceeds or fails.
     unsafe fn run_block<T, E>(&self, execution: impl Fn() -> Result<T, E>) -> Result<T, E> {

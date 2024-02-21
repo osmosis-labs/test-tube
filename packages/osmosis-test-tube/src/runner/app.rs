@@ -13,7 +13,7 @@ use test_tube::BaseApp;
 const FEE_DENOM: &str = "uosmo";
 const OSMO_ADDRESS_PREFIX: &str = "osmo";
 const CHAIN_ID: &str = "osmosis-1";
-const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
+const DEFAULT_GAS_ADJUSTMENT: f64 = 1.5;
 
 #[derive(Debug, PartialEq)]
 pub struct OsmosisTestApp {

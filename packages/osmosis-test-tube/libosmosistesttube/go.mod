@@ -10,7 +10,7 @@ require (
 	github.com/cometbft/cometbft-db v0.11.0
 	github.com/cosmos/cosmos-sdk v0.47.8
 	github.com/cosmos/gogoproto v1.4.11
-	github.com/osmosis-labs/osmosis/v23 v23.0.0-20240220175737-69184d0a050d
+	github.com/osmosis-labs/osmosis/v23 v23.0.0-20240229192519-df382ce554b2
 	github.com/pkg/errors v0.9.1
 )
 
@@ -228,3 +228,6 @@ replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmo
 replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.9-0.20240206013051-b1a74295e6e9
 
 replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.10
+
+// ## local replace
+// replace github.com/osmosis-labs/osmosis/v23 => ../../../../osmosis

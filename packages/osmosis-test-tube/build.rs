@@ -38,8 +38,13 @@ fn main() {
         build_libosmosistesttube(prebuilt_lib_dir.join(lib_filename));
     }
 
+    // We only build if the file doesn't exist OR if the ENV variable is not set
     let out_dir_lib_path = out_dir.join(lib_filename);
-    build_libosmosistesttube(out_dir_lib_path);
+    if std::fs::metadata(&out_dir_lib_path).is_err()
+        || env::var("OSMOSIS_TUBE_DEV") == Ok("1".to_string())
+    {
+        build_libosmosistesttube(out_dir_lib_path);
+    }
 
     // copy built lib to target dir if debug build
     if env::var("PROFILE").unwrap() == "debug" {

@@ -10,7 +10,7 @@ require (
 	github.com/cometbft/cometbft-db v0.11.0
 	github.com/cosmos/cosmos-sdk v0.47.8
 	github.com/cosmos/gogoproto v1.4.11
-	github.com/osmosis-labs/osmosis/v23 v23.0.0-20240229192519-df382ce554b2
+	github.com/osmosis-labs/osmosis/v23 v23.0.0-20240308132334-ad70b404ee28
 	github.com/pkg/errors v0.9.1
 )
 

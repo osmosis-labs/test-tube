@@ -13,7 +13,7 @@ exclude = ["osmosis", "test_artifacts"]
 base64 = "0.21.5"
 cosmrs = {version = "0.15.0", features = ["cosmwasm"]}
 cosmwasm-std = "1.4.0"
-osmosis-std = "0.22.0"
+osmosis-std = {git = "https://github.com/osmosis-labs/osmosis-rust.git", branch = "authenticator"}
 prost = "0.12.3"
 serde = "1.0.144"
 serde_json = "1.0.85"

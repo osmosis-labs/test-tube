@@ -95,6 +95,15 @@ pub enum EncodeError {
     JsonEncodeError(#[from] serde_json::Error),
 }
 
+impl EncodeError {
+    pub fn from_proto_error_report(err: cosmrs::ErrorReport) -> Self {
+        match err.downcast::<prost::EncodeError>() {
+            Ok(encode_err) => EncodeError::ProtoEncodeError(encode_err),
+            Err(e) => panic!("expect `prost::EncodeError` but got {:?}", e),
+        }
+    }
+}
+
 impl PartialEq for EncodeError {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {

@@ -32,6 +32,7 @@ import (
 
 	// osmosis
 	"github.com/osmosis-labs/osmosis/v23/app"
+	authenticatortypes "github.com/osmosis-labs/osmosis/v23/x/authenticator/types"
 	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v23/x/concentrated-liquidity/types"
 	gammtypes "github.com/osmosis-labs/osmosis/v23/x/gamm/types"
 	ibcratelimittypes "github.com/osmosis-labs/osmosis/v23/x/ibc-rate-limit/types"
@@ -381,6 +382,7 @@ func (env *TestEnv) setupDefaultValidatorSigningInfo(consAddr sdk.ConsAddress) {
 func (env *TestEnv) SetupParamTypes() {
 	pReg := env.ParamTypesRegistry
 
+	pReg.RegisterParamSet(&authenticatortypes.Params{})
 	pReg.RegisterParamSet(&lockuptypes.Params{})
 	pReg.RegisterParamSet(&incentivetypes.Params{})
 	pReg.RegisterParamSet(&minttypes.Params{})

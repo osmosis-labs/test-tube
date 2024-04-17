@@ -31,19 +31,20 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// osmosis
-	"github.com/osmosis-labs/osmosis/v22/app"
-	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v22/x/concentrated-liquidity/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v22/x/gamm/types"
-	ibcratelimittypes "github.com/osmosis-labs/osmosis/v22/x/ibc-rate-limit/types"
-	incentivetypes "github.com/osmosis-labs/osmosis/v22/x/incentives/types"
-	lockuptypes "github.com/osmosis-labs/osmosis/v22/x/lockup/types"
-	minttypes "github.com/osmosis-labs/osmosis/v22/x/mint/types"
-	poolincentivetypes "github.com/osmosis-labs/osmosis/v22/x/pool-incentives/types"
-	poolmanagertypes "github.com/osmosis-labs/osmosis/v22/x/poolmanager/types"
-	protorevtypes "github.com/osmosis-labs/osmosis/v22/x/protorev/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v22/x/superfluid/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v22/x/tokenfactory/types"
-	twaptypes "github.com/osmosis-labs/osmosis/v22/x/twap/types"
+	"github.com/osmosis-labs/osmosis/v23/app"
+	authenticatortypes "github.com/osmosis-labs/osmosis/v23/x/authenticator/types"
+	concentrateliquiditytypes "github.com/osmosis-labs/osmosis/v23/x/concentrated-liquidity/types"
+	gammtypes "github.com/osmosis-labs/osmosis/v23/x/gamm/types"
+	ibcratelimittypes "github.com/osmosis-labs/osmosis/v23/x/ibc-rate-limit/types"
+	incentivetypes "github.com/osmosis-labs/osmosis/v23/x/incentives/types"
+	lockuptypes "github.com/osmosis-labs/osmosis/v23/x/lockup/types"
+	minttypes "github.com/osmosis-labs/osmosis/v23/x/mint/types"
+	poolincentivetypes "github.com/osmosis-labs/osmosis/v23/x/pool-incentives/types"
+	poolmanagertypes "github.com/osmosis-labs/osmosis/v23/x/poolmanager/types"
+	protorevtypes "github.com/osmosis-labs/osmosis/v23/x/protorev/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v23/x/superfluid/types"
+	tokenfactorytypes "github.com/osmosis-labs/osmosis/v23/x/tokenfactory/types"
+	twaptypes "github.com/osmosis-labs/osmosis/v23/x/twap/types"
 
 	sdkmath "cosmossdk.io/math"
 
@@ -381,6 +382,7 @@ func (env *TestEnv) setupDefaultValidatorSigningInfo(consAddr sdk.ConsAddress) {
 func (env *TestEnv) SetupParamTypes() {
 	pReg := env.ParamTypesRegistry
 
+	pReg.RegisterParamSet(&authenticatortypes.Params{})
 	pReg.RegisterParamSet(&lockuptypes.Params{})
 	pReg.RegisterParamSet(&incentivetypes.Params{})
 	pReg.RegisterParamSet(&minttypes.Params{})

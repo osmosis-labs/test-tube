@@ -97,6 +97,20 @@ impl BaseApp {
         ))
     }
 
+    pub fn get_chain_id(&self) -> &str {
+        &self.chain_id
+    }
+
+    pub fn get_account_sequence(&self, address: &str) -> u64 {
+        redefine_as_go_string!(address);
+        unsafe { AccountSequence(self.id, address) }
+    }
+
+    pub fn get_account_number(&self, address: &str) -> u64 {
+        redefine_as_go_string!(address);
+        unsafe { AccountNumber(self.id, address) }
+    }
+
     /// Get the current block time
     pub fn get_block_timestamp(&self) -> Timestamp {
         let result = unsafe { GetBlockTime(self.id) };
@@ -168,35 +182,28 @@ impl BaseApp {
     {
         let tx_body = tx::Body::new(msgs, "", 0u32);
         let addr = signer.address();
-        redefine_as_go_string!(addr);
 
-        let seq = unsafe { AccountSequence(self.id, addr) };
+        let seq = self.get_account_sequence(&addr);
+        let account_number = self.get_account_number(&addr);
 
-        let account_number = unsafe { AccountNumber(self.id, addr) };
         let signer_info = SignerInfo::single_direct(Some(signer.public_key()), seq);
-        let auth_info = signer_info.auth_info(fee);
-        let sign_doc = tx::SignDoc::new(
-            &tx_body,
-            &auth_info,
-            &(self
-                .chain_id
-                .parse()
-                .expect("parse const str of chain id should never fail")),
-            account_number,
-        )
-        .map_err(|e| match e.downcast::<prost::EncodeError>() {
-            Ok(encode_err) => EncodeError::ProtoEncodeError(encode_err),
-            Err(e) => panic!("expect `prost::EncodeError` but got {:?}", e),
-        })?;
 
-        let tx_raw = sign_doc.sign(signer.signing_key()).unwrap();
+        let chain_id = self
+            .chain_id
+            .parse()
+            .expect("parse const str of chain id should never fail");
+
+        let auth_info = signer_info.auth_info(fee);
+        let sign_doc = tx::SignDoc::new(&tx_body, &auth_info, &chain_id, account_number)
+            .map_err(EncodeError::from_proto_error_report)?;
+
+        let tx_raw = sign_doc
+            .sign(signer.signing_key())
+            .map_err(EncodeError::from_proto_error_report)?;
 
         tx_raw
             .to_bytes()
-            .map_err(|e| match e.downcast::<prost::EncodeError>() {
-                Ok(encode_err) => EncodeError::ProtoEncodeError(encode_err),
-                Err(e) => panic!("expect `prost::EncodeError` but got {:?}", e),
-            })
+            .map_err(EncodeError::from_proto_error_report)
             .map_err(RunnerError::EncodeError)
     }
 
@@ -208,16 +215,28 @@ impl BaseApp {
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
-        let zero_fee = Fee::from_amount_and_gas(
+        self.simulate_tx_bytes(&self.create_signed_tx(
+            msgs,
+            signer,
+            self.default_simulation_fee(),
+        )?)
+    }
+
+    pub fn default_simulation_fee(&self) -> Fee {
+        Fee::from_amount_and_gas(
             cosmrs::Coin {
                 denom: self.fee_denom.parse().unwrap(),
                 amount: OSMOSIS_MIN_GAS_PRICE,
             },
             0u64,
-        );
+        )
+    }
 
-        let tx = self.create_signed_tx(msgs, signer, zero_fee)?;
-        let base64_tx_bytes = BASE64_STANDARD.encode(tx);
+    pub fn simulate_tx_bytes(
+        &self,
+        tx_bytes: &[u8],
+    ) -> RunnerResult<cosmrs::proto::cosmos::base::abci::v1beta1::GasInfo> {
+        let base64_tx_bytes = BASE64_STANDARD.encode(tx_bytes);
         redefine_as_go_string!(base64_tx_bytes);
 
         unsafe {
@@ -229,16 +248,14 @@ impl BaseApp {
                 .map_err(RunnerError::DecodeError)
         }
     }
-    fn estimate_fee<I>(&self, msgs: I, signer: &SigningAccount) -> RunnerResult<Fee>
-    where
-        I: IntoIterator<Item = cosmrs::Any>,
-    {
-        match &signer.fee_setting() {
+
+    pub fn calculate_fee(&self, tx_bytes: &[u8], fee_payer: &SigningAccount) -> RunnerResult<Fee> {
+        match &fee_payer.fee_setting() {
             FeeSetting::Auto {
                 gas_price,
                 gas_adjustment,
             } => {
-                let gas_info = self.simulate_tx(msgs, signer)?;
+                let gas_info = self.simulate_tx_bytes(tx_bytes)?;
                 let gas_limit = ((gas_info.gas_used as f64) * (gas_adjustment)).ceil() as u64;
 
                 let amount = cosmrs::Coin {
@@ -249,9 +266,13 @@ impl BaseApp {
 
                 Ok(Fee::from_amount_and_gas(amount, gas_limit))
             }
-            FeeSetting::Custom { .. } => {
-                panic!("estimate fee is a private function and should never be called when fee_setting is Custom");
-            }
+            FeeSetting::Custom { amount, gas_limit } => Ok(Fee::from_amount_and_gas(
+                cosmrs::Coin {
+                    denom: amount.denom.parse().unwrap(),
+                    amount: amount.amount.to_string().parse().unwrap(),
+                },
+                *gas_limit,
+            )),
         }
     }
 
@@ -374,16 +395,9 @@ impl<'a> Runner<'a> for BaseApp {
     {
         unsafe {
             self.run_block(|| {
-                let fee = match &signer.fee_setting() {
-                    FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
-                    FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
-                        cosmrs::Coin {
-                            denom: amount.denom.parse().unwrap(),
-                            amount: amount.amount.to_string().parse().unwrap(),
-                        },
-                        *gas_limit,
-                    ),
-                };
+                let tx_sim_fee =
+                    self.create_signed_tx(msgs.clone(), signer, self.default_simulation_fee())?;
+                let fee = self.calculate_fee(&tx_sim_fee, signer)?;
 
                 let tx = self.create_signed_tx(msgs.clone(), signer, fee)?.into();
 
@@ -400,6 +414,26 @@ impl<'a> Runner<'a> for BaseApp {
                 ResponseDeliverTx::decode(res.as_slice())
                     .map_err(DecodeError::ProtoDecodeError)?
                     .try_into()
+            })
+        }
+    }
+
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx> {
+        unsafe {
+            self.run_block(|| {
+                let request_devlier_tx = RequestDeliverTx {
+                    tx: tx_bytes.to_vec().into(),
+                };
+
+                let base64_req = BASE64_STANDARD.encode(request_devlier_tx.encode_to_vec());
+                redefine_as_go_string!(base64_req);
+
+                let res = Execute(self.id, base64_req);
+                let res = RawResult::from_non_null_ptr(res).into_result()?;
+
+                ResponseDeliverTx::decode(res.as_slice())
+                    .map_err(DecodeError::ProtoDecodeError)
+                    .map_err(Into::into)
             })
         }
     }

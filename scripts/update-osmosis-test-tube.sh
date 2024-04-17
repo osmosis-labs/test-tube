@@ -5,11 +5,11 @@ set -euxo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 OSMOSIS_REV=${1:-main}
 
-LATEST_OSMOSIS_VERSION="v22"
+LATEST_OSMOSIS_VERSION="v23"
 
 # if "$OSMOIS_REV" is /v\d+/ then extract it as var
 if [[ "$OSMOSIS_REV" =~ ^v[0-9]+ ]]; then
-  OSMOSIS_VERSION=$(echo "$OSMOSIS_REV" | sed "s/\..*$//")
+  OSMOSIS_VERSION="${OSMOSIS_REV//\..*$//}"
 else
   OSMOSIS_VERSION="$LATEST_OSMOSIS_VERSION"
 fi

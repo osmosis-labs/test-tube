@@ -157,29 +157,16 @@ impl BaseApp {
         (0..count).map(|_| self.init_account(coins)).collect()
     }
 
-    fn create_custom_signed_tx<I>(
+    fn create_signed_tx<I>(
         &self,
         msgs: I,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
         fee: Fee,
     ) -> RunnerResult<Vec<u8>>
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
-        let tx_body = tx::Body {
-            messages: msgs.into_iter().map(Into::into).collect(),
-            memo: memo.to_string(),
-            timeout_height: timeout_height.into(),
-            extension_options: extension_options.into_iter().map(Into::into).collect(),
-            non_critical_extension_options: non_critical_extension_options
-                .into_iter()
-                .map(Into::into)
-                .collect(),
-        };
+        let tx_body = tx::Body::new(msgs, "", 0u32);
         let addr = signer.address();
         redefine_as_go_string!(addr);
 
@@ -221,21 +208,6 @@ impl BaseApp {
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
-        self.simulate_custom_tx(msgs, signer, "", 0, Vec::new(), Vec::new())
-    }
-
-    pub fn simulate_custom_tx<I>(
-        &self,
-        msgs: I,
-        signer: &SigningAccount,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
-    ) -> RunnerResult<cosmrs::proto::cosmos::base::abci::v1beta1::GasInfo>
-    where
-        I: IntoIterator<Item = cosmrs::Any>,
-    {
         let zero_fee = Fee::from_amount_and_gas(
             cosmrs::Coin {
                 denom: self.fee_denom.parse().unwrap(),
@@ -244,15 +216,7 @@ impl BaseApp {
             0u64,
         );
 
-        let tx = self.create_custom_signed_tx(
-            msgs,
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-            zero_fee,
-        )?;
+        let tx = self.create_signed_tx(msgs, signer, zero_fee)?;
         let base64_tx_bytes = BASE64_STANDARD.encode(tx);
         redefine_as_go_string!(base64_tx_bytes);
 
@@ -265,16 +229,7 @@ impl BaseApp {
                 .map_err(RunnerError::DecodeError)
         }
     }
-
-    fn estimate_fee<I>(
-        &self,
-        msgs: I,
-        signer: &SigningAccount,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
-    ) -> RunnerResult<Fee>
+    fn estimate_fee<I>(&self, msgs: I, signer: &SigningAccount) -> RunnerResult<Fee>
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
@@ -283,14 +238,7 @@ impl BaseApp {
                 gas_price,
                 gas_adjustment,
             } => {
-                let gas_info = self.simulate_custom_tx(
-                    msgs,
-                    signer,
-                    memo,
-                    timeout_height,
-                    extension_options,
-                    non_critical_extension_options,
-                )?;
+                let gas_info = self.simulate_tx(msgs, signer)?;
                 let gas_limit = ((gas_info.gas_used as f64) * (gas_adjustment)).ceil() as u64;
 
                 let amount = cosmrs::Coin {
@@ -332,7 +280,7 @@ impl BaseApp {
 
     /// Ensure that all execution that happens in `execution` happens in a block
     /// and end block properly, no matter it suceeds or fails.
-    unsafe fn run_block<T, E>(&self, execution: impl FnOnce() -> Result<T, E>) -> Result<T, E> {
+    unsafe fn run_block<T, E>(&self, execution: impl Fn() -> Result<T, E>) -> Result<T, E> {
         unsafe { BeginBlock(self.id) };
         match execution() {
             ok @ Ok(_) => {
@@ -391,18 +339,14 @@ impl Drop for BaseApp {
 }
 
 impl<'a> Runner<'a> for BaseApp {
-    fn execute_multiple_custom_tx<M, R>(
+    fn execute_multiple<M, R>(
         &self,
         msgs: &[(M, &str)],
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<R>
     where
-        M: prost::Message,
-        R: prost::Message + Default,
+        M: ::prost::Message,
+        R: ::prost::Message + Default,
     {
         let msgs = msgs
             .iter()
@@ -417,39 +361,21 @@ impl<'a> Runner<'a> for BaseApp {
             })
             .collect::<Result<Vec<cosmrs::Any>, RunnerError>>()?;
 
-        self.execute_multiple_raw_custom_tx(
-            msgs,
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-        )
+        self.execute_multiple_raw(msgs, signer)
     }
 
-    fn execute_multiple_raw_custom_tx<R>(
+    fn execute_multiple_raw<R>(
         &self,
         msgs: Vec<cosmrs::Any>,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<R>
     where
         R: ::prost::Message + Default,
     {
         unsafe {
-            self.run_block(move || {
+            self.run_block(|| {
                 let fee = match &signer.fee_setting() {
-                    FeeSetting::Auto { .. } => self.estimate_fee(
-                        msgs.clone(),
-                        signer,
-                        memo,
-                        timeout_height,
-                        extension_options.clone(),
-                        non_critical_extension_options.clone(),
-                    )?,
+                    FeeSetting::Auto { .. } => self.estimate_fee(msgs.clone(), signer)?,
                     FeeSetting::Custom { amount, gas_limit } => Fee::from_amount_and_gas(
                         cosmrs::Coin {
                             denom: amount.denom.parse().unwrap(),
@@ -459,17 +385,7 @@ impl<'a> Runner<'a> for BaseApp {
                     ),
                 };
 
-                let tx = self
-                    .create_custom_signed_tx(
-                        msgs,
-                        memo,
-                        timeout_height,
-                        extension_options,
-                        non_critical_extension_options,
-                        signer,
-                        fee,
-                    )?
-                    .into();
+                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?.into();
 
                 let mut buf = Vec::new();
                 RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)

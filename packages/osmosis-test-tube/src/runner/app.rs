@@ -129,6 +129,18 @@ impl OsmosisTestApp {
 }
 
 impl<'a> Runner<'a> for OsmosisTestApp {
+    fn execute_multiple<M, R>(
+        &self,
+        msgs: &[(M, &str)],
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<R>
+    where
+        M: ::prost::Message,
+        R: ::prost::Message + Default,
+    {
+        self.inner.execute_multiple(msgs, signer)
+    }
+
     fn query<Q, R>(&self, path: &str, q: &Q) -> RunnerResult<R>
     where
         Q: ::prost::Message,
@@ -137,49 +149,15 @@ impl<'a> Runner<'a> for OsmosisTestApp {
         self.inner.query(path, q)
     }
 
-    fn execute_multiple_custom_tx<M, R>(
-        &self,
-        msgs: &[(M, &str)],
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
-        signer: &SigningAccount,
-    ) -> RunnerExecuteResult<R>
-    where
-        M: prost::Message,
-        R: prost::Message + Default,
-    {
-        self.inner.execute_multiple_custom_tx(
-            msgs,
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-        )
-    }
-
-    fn execute_multiple_raw_custom_tx<R>(
+    fn execute_multiple_raw<R>(
         &self,
         msgs: Vec<cosmrs::Any>,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<R>
     where
         R: prost::Message + Default,
     {
-        self.inner.execute_multiple_raw_custom_tx(
-            msgs,
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-        )
+        self.inner.execute_multiple_raw(msgs, signer)
     }
 }
 

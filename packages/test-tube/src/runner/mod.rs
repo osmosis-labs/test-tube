@@ -21,7 +21,7 @@ pub trait Runner<'a> {
         M: ::prost::Message,
         R: ::prost::Message + Default,
     {
-        self.execute_custom_tx(msg, type_url, "", 0, vec![], vec![], signer)
+        self.execute_multiple(&[(msg, type_url)], signer)
     }
 
     fn execute_multiple<M, R>(
@@ -31,66 +31,11 @@ pub trait Runner<'a> {
     ) -> RunnerExecuteResult<R>
     where
         M: ::prost::Message,
-        R: ::prost::Message + Default,
-    {
-        self.execute_multiple_custom_tx(msgs, "", 0, vec![], vec![], signer)
-    }
+        R: ::prost::Message + Default;
 
     fn execute_multiple_raw<R>(
         &self,
         msgs: Vec<cosmrs::Any>,
-        signer: &SigningAccount,
-    ) -> RunnerExecuteResult<R>
-    where
-        R: ::prost::Message + Default,
-    {
-        self.execute_multiple_raw_custom_tx(msgs, "", 0, vec![], vec![], signer)
-    }
-
-    fn execute_custom_tx<M, R>(
-        &self,
-        msg: M,
-        type_url: &str,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
-        signer: &SigningAccount,
-    ) -> RunnerExecuteResult<R>
-    where
-        M: ::prost::Message,
-        R: ::prost::Message + Default,
-    {
-        self.execute_multiple_custom_tx(
-            &[(msg, type_url)],
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-        )
-    }
-
-    fn execute_multiple_custom_tx<M, R>(
-        &self,
-        msgs: &[(M, &str)],
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
-        signer: &SigningAccount,
-    ) -> RunnerExecuteResult<R>
-    where
-        M: ::prost::Message,
-        R: ::prost::Message + Default;
-
-    fn execute_multiple_raw_custom_tx<R>(
-        &self,
-        msgs: Vec<cosmrs::Any>,
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<R>
     where
@@ -99,21 +44,6 @@ pub trait Runner<'a> {
     fn execute_cosmos_msgs<S>(
         &self,
         msgs: &[CosmosMsg],
-        signer: &SigningAccount,
-    ) -> RunnerExecuteResult<S>
-    where
-        S: ::prost::Message + Default,
-    {
-        self.execute_cosmos_msgs_custom_tx(msgs, "", 0, vec![], vec![], signer)
-    }
-
-    fn execute_cosmos_msgs_custom_tx<S>(
-        &self,
-        msgs: &[CosmosMsg],
-        memo: &str,
-        timeout_height: u32,
-        extension_options: Vec<cosmrs::Any>,
-        non_critical_extension_options: Vec<cosmrs::Any>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<S>
     where
@@ -132,14 +62,7 @@ pub trait Runner<'a> {
             })
             .collect::<Result<Vec<_>, RunnerError>>()?;
 
-        self.execute_multiple_raw_custom_tx(
-            msgs,
-            memo,
-            timeout_height,
-            extension_options,
-            non_critical_extension_options,
-            signer,
-        )
+        self.execute_multiple_raw(msgs, signer)
     }
 
     fn query<Q, R>(&self, path: &str, query: &Q) -> RunnerResult<R>

@@ -235,7 +235,6 @@ func InitChain(appInstance *app.OsmosisApp) (sdk.Context, secp256k1.PrivKey) {
 		signingInfo := slashingtypes.NewValidatorSigningInfo(
 			consAddr,
 			ctx.BlockHeight(),
-			0,
 			time.Unix(0, 0),
 			false,
 			0,
@@ -370,7 +369,6 @@ func (env *TestEnv) setupDefaultValidatorSigningInfo(consAddr sdk.ConsAddress) {
 	signingInfo := slashingtypes.NewValidatorSigningInfo(
 		consAddr,
 		env.Ctx.BlockHeight(),
-		0,
 		time.Unix(0, 0),
 		false,
 		0,

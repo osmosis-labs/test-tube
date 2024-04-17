@@ -261,7 +261,8 @@ mod tests {
                 attr(
                     "new_token_denom",
                     format!("factory/{}/{}", &addr, "newdenom")
-                )
+                ),
+                attr("msg_index", "0")
             ]
         );
 
@@ -289,7 +290,8 @@ mod tests {
                 attr(
                     "new_token_denom",
                     format!("factory/{}/{}", &addr, "newerdenom")
-                )
+                ),
+                attr("msg_index", "0")
             ]
         );
     }

@@ -1,17 +1,12 @@
 use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
-use cosmrs::tx::{self, Fee, SignerInfo};
 use cosmrs::Any;
-
 use cosmwasm_std::{Coin, Timestamp};
-
-use osmosis_std::types::osmosis::authenticator::TxExtension;
 use prost::Message;
 use serde::de::DeserializeOwned;
 use test_tube::account::SigningAccount;
-
 use test_tube::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube::runner::Runner;
-use test_tube::{Account, BaseApp, EncodeError, RunnerError};
+use test_tube::BaseApp;
 
 const FEE_DENOM: &str = "uosmo";
 const OSMO_ADDRESS_PREFIX: &str = "osmo";
@@ -128,85 +123,6 @@ impl OsmosisTestApp {
         sudo_msg: M,
     ) -> RunnerResult<Vec<u8>> {
         self.inner.wasm_sudo(contract_address, sudo_msg)
-    }
-
-    pub fn execute_with_selected_authenticators<I>(
-        &self,
-        msgs: I,
-        account: &SigningAccount,
-        signer: &SigningAccount,
-        selected_authenticators: &[u64],
-    ) -> RunnerResult<ResponseDeliverTx>
-    where
-        I: IntoIterator<Item = cosmrs::Any> + Clone,
-    {
-        // create authenticator tx with zero fee
-        let sim_tx_bytes = self.create_authenticator_tx(
-            msgs.clone(),
-            account,
-            signer,
-            self.inner.default_simulation_fee(),
-            selected_authenticators,
-        )?;
-        let calculated_fee = self.inner.calculate_fee(&sim_tx_bytes, account)?;
-
-        // create tx with calculated fee
-        let tx_bytes = self.create_authenticator_tx(
-            msgs,
-            account,
-            signer,
-            calculated_fee,
-            selected_authenticators,
-        )?;
-
-        self.execute_tx(&tx_bytes)
-    }
-
-    fn create_authenticator_tx<I>(
-        &self,
-        msgs: I,
-        account: &SigningAccount, // account to execute on behalf of, this must be first msg first required signer
-        signer: &SigningAccount, // used for creating signature, but does not have to be the same as account
-        fee: Fee,
-        selected_authenticators: &[u64],
-    ) -> RunnerResult<Vec<u8>>
-    where
-        I: IntoIterator<Item = cosmrs::Any>,
-    {
-        let tx_body = tx::Body {
-            messages: msgs.into_iter().map(Into::into).collect(),
-            non_critical_extension_options: vec![TxExtension {
-                selected_authenticators: selected_authenticators.to_vec(),
-            }
-            .to_any()
-            .into()],
-            ..Default::default()
-        };
-
-        let account_addr = account.address();
-        let seq = self.inner.get_account_sequence(&account_addr);
-        let account_number = self.inner.get_account_number(&account_addr);
-
-        let signer_info = SignerInfo::single_direct(Some(signer.public_key()), seq);
-        let auth_info = signer_info.auth_info(fee);
-
-        let chain_id = self
-            .inner
-            .get_chain_id()
-            .parse()
-            .expect("parse const str of chain id should never fail");
-
-        let sign_doc = tx::SignDoc::new(&tx_body, &auth_info, &chain_id, account_number)
-            .map_err(EncodeError::from_proto_error_report)?;
-
-        let tx_raw = sign_doc
-            .sign(signer.signing_key())
-            .map_err(EncodeError::from_proto_error_report)?;
-
-        tx_raw
-            .to_bytes()
-            .map_err(EncodeError::from_proto_error_report)
-            .map_err(RunnerError::EncodeError)
     }
 }
 

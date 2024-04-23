@@ -41,6 +41,7 @@ import (
 	poolincentivetypes "github.com/osmosis-labs/osmosis/v24/x/pool-incentives/types"
 	poolmanagertypes "github.com/osmosis-labs/osmosis/v24/x/poolmanager/types"
 	protorevtypes "github.com/osmosis-labs/osmosis/v24/x/protorev/types"
+	smartaccounttypes "github.com/osmosis-labs/osmosis/v24/x/smart-account/types"
 	superfluidtypes "github.com/osmosis-labs/osmosis/v24/x/superfluid/types"
 	tokenfactorytypes "github.com/osmosis-labs/osmosis/v24/x/tokenfactory/types"
 	twaptypes "github.com/osmosis-labs/osmosis/v24/x/twap/types"
@@ -386,6 +387,7 @@ func (env *TestEnv) SetupParamTypes() {
 	pReg.RegisterParamSet(&ibcratelimittypes.Params{})
 	pReg.RegisterParamSet(&tokenfactorytypes.Params{})
 	pReg.RegisterParamSet(&superfluidtypes.Params{})
+	pReg.RegisterParamSet(&smartaccounttypes.Params{})
 	pReg.RegisterParamSet(&poolincentivetypes.Params{})
 	pReg.RegisterParamSet(&protorevtypes.Params{})
 	pReg.RegisterParamSet(&poolmanagertypes.Params{})

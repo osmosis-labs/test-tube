@@ -40,6 +40,8 @@ fn main() {
 
     // We only build if the file doesn't exist OR if the ENV variable is not set
     let out_dir_lib_path = out_dir.join(lib_filename);
+
+    // TODO: more robust check for rebuilding lib, this can cause confusion in dev mode
     if std::fs::metadata(&out_dir_lib_path).is_err()
         || env::var("OSMOSIS_TUBE_DEV") == Ok("1".to_string())
     {

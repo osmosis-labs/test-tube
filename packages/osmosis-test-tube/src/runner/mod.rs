@@ -106,7 +106,7 @@ mod tests {
     #[test]
     fn test_raw_result_ptr_with_0_bytes_in_content_should_not_error() {
         let base64_string =
-            base64::engine::general_purpose::STANDARD.encode(vec![vec![0u8], vec![0u8]].concat());
+            base64::engine::general_purpose::STANDARD.encode([vec![0u8], vec![0u8]].concat());
         let res = unsafe {
             RawResult::from_ptr(
                 CString::new(base64_string.as_bytes().to_vec())
@@ -125,14 +125,14 @@ mod tests {
     fn test_execute_cosmos_msgs() {
         let app = OsmosisTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(1000000000000, "uosmo")])
+            .init_account(&[Coin::new(1000000000000u128, "uosmo")])
             .unwrap();
 
         let bank = Bank::new(&app);
 
         // BankMsg::Send
         let to = app.init_account(&[]).unwrap();
-        let coin = Coin::new(100, "uosmo");
+        let coin = Coin::new(100u128, "uosmo");
         let send_msg = CosmosMsg::Bank(BankMsg::Send {
             to_address: to.address(),
             amount: vec![coin],

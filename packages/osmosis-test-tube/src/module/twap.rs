@@ -56,10 +56,10 @@ mod tests {
     fn test_twap() {
         let app = OsmosisTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(1_000_000_000_000_000, "uosmo")])
+            .init_account(&[Coin::new(1_000_000_000_000_000u128, "uosmo")])
             .unwrap()
             .with_fee_setting(test_tube::account::FeeSetting::Auto {
-                gas_price: Coin::new(25, "uosmo"),
+                gas_price: Coin::new(25u128, "uosmo"),
                 gas_adjustment: 1.2,
             });
 
@@ -98,7 +98,7 @@ mod tests {
             .mint(
                 MsgMint {
                     sender: signer.address(),
-                    amount: Some(Coin::new(10_000_000_000_000, &denom0).into()),
+                    amount: Some(Coin::new(10_000_000_000_000u128, &denom0).into()),
                     mint_to_address: signer.address(),
                 },
                 &signer,
@@ -109,7 +109,7 @@ mod tests {
             .mint(
                 MsgMint {
                     sender: signer.address(),
-                    amount: Some(Coin::new(100_000_000_000, &denom1).into()),
+                    amount: Some(Coin::new(100_000_000_000u128, &denom1).into()),
                     mint_to_address: signer.address(),
                 },
                 &signer,
@@ -119,8 +119,8 @@ mod tests {
         // create pool 1
         gamm.create_basic_pool(
             &[
-                Coin::new(1_000_000_000, denom0.clone()),
-                Coin::new(2_000_000_000, denom1.clone()),
+                Coin::new(1_000_000_000u128, denom0.clone()),
+                Coin::new(2_000_000_000u128, denom1.clone()),
             ],
             &signer,
         )

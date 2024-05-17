@@ -277,7 +277,7 @@ mod tests {
             .init_accounts(&coins(100_000_000_000, "uosmo"), 3)
             .unwrap();
 
-        assert!(accounts.get(0).is_some());
+        assert!(accounts.first().is_some());
         assert!(accounts.get(1).is_some());
         assert!(accounts.get(2).is_some());
         assert!(accounts.get(3).is_none());
@@ -399,14 +399,14 @@ mod tests {
         let app = OsmosisTestApp::default();
         let alice = app
             .init_account(&[
-                Coin::new(1_000_000_000_000, "uatom"),
-                Coin::new(1_000_000_000_000, "uosmo"),
+                Coin::new(1_000_000_000_000u128, "uatom"),
+                Coin::new(1_000_000_000_000u128, "uosmo"),
             ])
             .unwrap();
 
         let gamm = Gamm::new(&app);
 
-        let pool_liquidity = vec![Coin::new(1_000, "uatom"), Coin::new(1_000, "uosmo")];
+        let pool_liquidity = vec![Coin::new(1_000u128, "uatom"), Coin::new(1_000u128, "uosmo")];
         let pool_id = gamm
             .create_basic_pool(&pool_liquidity, &alice)
             .unwrap()
@@ -445,8 +445,8 @@ mod tests {
         let accs = app
             .init_accounts(
                 &[
-                    Coin::new(1_000_000_000_000, "uatom"),
-                    Coin::new(1_000_000_000_000, "uosmo"),
+                    Coin::new(1_000_000_000_000u128, "uatom"),
+                    Coin::new(1_000_000_000_000u128, "uosmo"),
                 ],
                 2,
             )
@@ -513,7 +513,7 @@ mod tests {
         let alice = app.init_account(&coins(initial_balance, "uosmo")).unwrap();
         let bob = app.init_account(&coins(initial_balance, "uosmo")).unwrap();
 
-        let amount = Coin::new(1_000_000, "uosmo");
+        let amount = Coin::new(1_000_000u128, "uosmo");
         let gas_limit = 100_000_000;
 
         // use FeeSetting::Auto by default, so should not equal newly custom fee setting
@@ -584,8 +584,8 @@ mod tests {
         let app = OsmosisTestApp::default();
 
         let balances = vec![
-            Coin::new(1_000_000_000_000, "uosmo"),
-            Coin::new(1_000_000_000_000, "uion"),
+            Coin::new(1_000_000_000_000u128, "uosmo"),
+            Coin::new(1_000_000_000_000u128, "uion"),
         ];
         let whitelisted_user = app.init_account(&balances).unwrap();
 
@@ -593,7 +593,10 @@ mod tests {
         let gamm = Gamm::new(&app);
         let pool_id = gamm
             .create_basic_pool(
-                &[Coin::new(1_000_000, "uosmo"), Coin::new(1_000_000, "uion")],
+                &[
+                    Coin::new(1_000_000u128, "uosmo"),
+                    Coin::new(1_000_000u128, "uion"),
+                ],
                 &whitelisted_user,
             )
             .unwrap()

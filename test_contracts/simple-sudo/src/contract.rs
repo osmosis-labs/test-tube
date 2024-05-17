@@ -13,7 +13,7 @@ pub fn instantiate(
     _info: MessageInfo,
     _msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    return Ok(Response::default());
+    Ok(Response::default())
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]

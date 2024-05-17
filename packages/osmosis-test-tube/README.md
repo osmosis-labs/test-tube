@@ -29,8 +29,8 @@ let app = OsmosisTestApp::new();
 let accs = app
     .init_accounts(
         &[
-            Coin::new(1_000_000_000_000, "uatom"),
-            Coin::new(1_000_000_000_000, "uosmo"),
+            Coin::new(1_000_000_000_000u128, "uatom"),
+            Coin::new(1_000_000_000_000u128, "uosmo"),
         ],
         2,
     )
@@ -53,8 +53,8 @@ use osmosis_test_tube::OsmosisTestApp;
 let app = OsmosisTestApp::new();
 
 let account = app.init_account(&[
-    Coin::new(1_000_000_000_000, "uatom"),
-    Coin::new(1_000_000_000_000, "uosmo"),
+    Coin::new(1_000_000_000_000u128, "uatom"),
+    Coin::new(1_000_000_000_000u128, "uosmo"),
 ]);
 ```
 
@@ -75,8 +75,8 @@ let app = OsmosisTestApp::new();
 let accs = app
     .init_accounts(
         &[
-            Coin::new(1_000_000_000_000, "uatom"),
-            Coin::new(1_000_000_000_000, "uosmo"),
+            Coin::new(1_000_000_000_000u128, "uatom"),
+            Coin::new(1_000_000_000_000u128, "uosmo"),
         ],
         2,
     )
@@ -111,8 +111,8 @@ let app = OsmosisTestApp::new();
 let accs = app
     .init_accounts(
         &[
-            Coin::new(1_000_000_000_000, "uatom"),
-            Coin::new(1_000_000_000_000, "uosmo"),
+            Coin::new(1_000_000_000_000u128, "uatom"),
+            Coin::new(1_000_000_000_000u128, "uosmo"),
         ],
         2,
     )
@@ -170,8 +170,8 @@ let app = OsmosisTestApp::new();
 let accs = app
     .init_accounts(
         &[
-            Coin::new(1_000_000_000_000, "uatom"),
-            Coin::new(1_000_000_000_000, "uosmo"),
+            Coin::new(1_000_000_000_000u128, "uatom"),
+            Coin::new(1_000_000_000_000u128, "uosmo"),
         ],
         2,
     )
@@ -254,8 +254,8 @@ use osmosis_test_tube::{Account, Module, OsmosisTestApp, Gamm};
 let app = OsmosisTestApp::default();
 let alice = app
     .init_account(&[
-        Coin::new(1_000_000_000_000, "uatom"),
-        Coin::new(1_000_000_000_000, "uosmo"),
+        Coin::new(1_000_000_000_000u128, "uatom"),
+        Coin::new(1_000_000_000_000u128, "uosmo"),
     ])
     .unwrap();
 
@@ -263,7 +263,7 @@ let alice = app
 let gamm = Gamm::new(&app);
 
 // create balancer pool with basic configuration
-let pool_liquidity = vec![Coin::new(1_000, "uatom"), Coin::new(1_000, "uosmo")];
+let pool_liquidity = vec![Coin::new(1_000u128, "uatom"), Coin::new(1_000u128, "uosmo")];
 let pool_id = gamm
     .create_basic_pool(&pool_liquidity, &alice)
     .unwrap()

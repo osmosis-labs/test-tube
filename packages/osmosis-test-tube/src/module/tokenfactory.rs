@@ -73,7 +73,7 @@ mod tests {
     fn tokenfactory_integration() {
         let app = OsmosisTestApp::new();
         let signer = app
-            .init_account(&[Coin::new(2_000_000_000_000, "uosmo")])
+            .init_account(&[Coin::new(2_000_000_000_000u128, "uosmo")])
             .unwrap();
         let tokenfactory = TokenFactory::new(&app);
         let bank = Bank::new(&app);
@@ -106,7 +106,7 @@ mod tests {
 
         // mint
         let coin: osmosis_std::types::cosmos::base::v1beta1::Coin =
-            Coin::new(1000000000, denom.clone()).into();
+            Coin::new(1000000000u128, denom.clone()).into();
         tokenfactory
             .mint(
                 MsgMint {

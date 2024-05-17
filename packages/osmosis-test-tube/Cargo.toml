@@ -4,20 +4,22 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 name = "osmosis-test-tube"
 repository = "https://github.com/osmosis-labs/test-tube"
-version = "24.0.1"
+version = "25.0.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 exclude = ["osmosis", "test_artifacts"]
 
 [dependencies]
 base64 = "0.21.5"
-cosmrs = {version = "0.15.0", features = ["cosmwasm"]}
-cosmwasm-std = "1.4.0"
-osmosis-std = {git = " https://github.com/osmosis-labs/osmosis-rust", branch = "main"}
+cosmrs = { version = "0.15.0", features = ["cosmwasm"] }
+cosmwasm-std = "1.5.5"
+osmosis-std = "0.25.0"
 prost = "0.12.3"
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = {version = "0.6.0", path = "../test-tube", features = ["module-wrappers"]}
+test-tube = { version = "0.7.0", path = "../test-tube", features = [
+    "module-wrappers",
+] }
 thiserror = "1.0.34"
 
 [features]
@@ -30,4 +32,4 @@ bindgen = "0.69.1"
 [dev-dependencies]
 cw1-whitelist = "1.1.1"
 rayon = "1.5.3"
-simple-sudo = {path = "../../test_contracts/simple-sudo"}
+simple-sudo = { path = "../../test_contracts/simple-sudo" }

@@ -173,7 +173,7 @@ mod tests {
         let gov = GovWithAppAccess::new(&app);
 
         let proposer = app
-            .init_account(&[cosmwasm_std::Coin::new(1000000000000000000, "uosmo")])
+            .init_account(&[cosmwasm_std::Coin::new(1000000000000000000u128, "uosmo")])
             .unwrap();
 
         // upload cosmwasm pool code and whitelist through proposal

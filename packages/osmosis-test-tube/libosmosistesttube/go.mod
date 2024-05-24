@@ -138,6 +138,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/osmosis-labs/osmosis/osmomath v0.0.13 // indirect
 	github.com/osmosis-labs/osmosis/osmoutils v0.0.13 // indirect
+	github.com/osmosis-labs/osmosis/v24 v24.0.5-0.20240514120856-bb3b111229e7 // indirect
 	github.com/osmosis-labs/osmosis/x/epochs v0.0.9 // indirect
 	github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.15 // indirect
 	github.com/osmosis-labs/sqs/sqsdomain v0.18.1 // indirect
@@ -215,11 +216,11 @@ exclude github.com/cometbft/cometbft v0.38.0
 
 replace github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.45.0-osmo
 
-replace github.com/cometbft/cometbft => github.com/osmosis-labs/cometbft v0.37.4-v25-osmo-2
+replace github.com/cometbft/cometbft => github.com/osmosis-labs/cometbft v0.37.4-v24-osmo-5
 
 replace github.com/cosmos/cosmos-proto => github.com/cosmos/cosmos-proto v1.0.0-beta.2
 
-replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.47.5-v25-osmo-1
+replace github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.47.5-v24-osmo-5
 
 replace github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
 
@@ -227,14 +228,14 @@ replace github.com/cosmos/iavl => github.com/cosmos/iavl v1.1.2-0.20240405172238
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/osmosis-labs/sqs/sqsdomain => github.com/osmosis-labs/sqs/sqsdomain v0.18.1
+replace github.com/osmosis-labs/sqs/sqsdomain => github.com/osmosis-labs/sqs/sqsdomain v0.0.0-20240404053421-41aab009fb04
 
 replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 replace golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 
-replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.13
+replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.13-0.20240417064914-57cce9c39b17
 
-replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.13
+replace github.com/osmosis-labs/osmosis/osmomath => github.com/osmosis-labs/osmosis/osmomath v0.0.11-0.20240417064914-57cce9c39b17
 
-replace github.com/osmosis-labs/osmosis/x/ibc-hooks => github.com/osmosis-labs/osmosis/x/ibc-hooks v0.0.15
+replace github.com/osmosis-labs/osmosis/osmoutils => github.com/osmosis-labs/osmosis/osmoutils v0.0.11-0.20240417064914-57cce9c39b17

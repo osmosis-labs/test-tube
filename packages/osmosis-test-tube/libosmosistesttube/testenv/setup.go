@@ -347,7 +347,7 @@ func (env *TestEnv) setupValidator(bondStatus stakingtypes.BondStatus) (*secp256
 	env.App.BankKeeper.SendCoinsFromModuleToModule(env.Ctx, stakingtypes.NotBondedPoolName, stakingtypes.BondedPoolName, sdk.NewCoins(stakingCoin))
 
 	val, found := env.App.StakingKeeper.GetValidator(env.Ctx, valAddr)
-	requierTrue("validator found", found)
+	requireTrue("validator found", found)
 
 	val = val.UpdateStatus(bondStatus)
 	env.App.StakingKeeper.SetValidator(env.Ctx, val)
@@ -406,7 +406,7 @@ func requireNoNil(name string, nilable any) {
 	}
 }
 
-func requierTrue(name string, b bool) {
+func requireTrue(name string, b bool) {
 	if !b {
 		panic(fmt.Sprintf("%s must be true", name))
 	}

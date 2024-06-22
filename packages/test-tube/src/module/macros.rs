@@ -19,7 +19,7 @@ macro_rules! fn_execute {
         }
     };
     ($name:ident: $req:ty[$type_url:expr] => $res:ty) => {
-        pub fn $name(
+        fn $name(
             &self,
             msg: $req,
             signer: &$crate::SigningAccount,
@@ -28,7 +28,7 @@ macro_rules! fn_execute {
         }
     };
     ($name:ident: $req:ty => $res:ty) => {
-        pub fn $name(
+        fn $name(
             &self,
             msg: $req,
             signer: &$crate::SigningAccount,

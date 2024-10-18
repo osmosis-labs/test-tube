@@ -159,13 +159,17 @@ type TestEnv struct {
 	NodeHome           string
 }
 
-// DebugAppOptions is a stub implementing AppOptions
-type DebugAppOptions struct{}
+// TestAppOptions is a stub implementing AppOptions
+type TestAppOptions struct{}
 
 // Get implements AppOptions
-func (ao DebugAppOptions) Get(o string) interface{} {
+func (ao TestAppOptions) Get(o string) interface{} {
 	if o == server.FlagTrace {
 		return true
+	}
+
+	if o == "wasm.simulation_gas_limit" {
+		return ^uint64(0) // max uint64
 	}
 	return nil
 }
@@ -181,7 +185,7 @@ func NewOsmosisApp(nodeHome string) *app.OsmosisApp {
 		map[int64]bool{},
 		nodeHome,
 		5,
-		DebugAppOptions{},
+		TestAppOptions{},
 		app.EmptyWasmOpts,
 		baseapp.SetChainID("osmosis-1"),
 	)

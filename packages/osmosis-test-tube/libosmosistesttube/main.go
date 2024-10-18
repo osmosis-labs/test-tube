@@ -31,6 +31,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// cosmwasm-testing
+
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/result"
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/testenv"
 	// osmosis
@@ -41,6 +42,7 @@ var (
 	envCounter  uint64 = 0
 	envRegister        = sync.Map{}
 	mu          sync.Mutex
+	blockTime   uint64 = 5
 )
 
 //export InitTestEnv
@@ -50,7 +52,7 @@ func InitTestEnv() uint64 {
 	defer mu.Unlock()
 
 	// temp: suppress noise from stdout
-	// os.Stdout = nil
+	os.Stdout = nil
 
 	envCounter += 1
 	id := envCounter
@@ -75,7 +77,7 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.BeginNewBlock(false, 5)
+	env.BeginNewBlock(false, blockTime)
 
 	env.FundValidators()
 
@@ -132,9 +134,26 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 
 	base64Priv := base64.StdEncoding.EncodeToString(priv.Bytes())
 
+	// make sure block is produced so that updated state is on chain
+	err = produceEmptyBlock(&env)
+	if err != nil {
+		panic(err)
+	}
 	envRegister.Store(envId, env)
 
 	return C.CString(base64Priv)
+}
+
+func produceEmptyBlock(env *testenv.TestEnv) error {
+	_, err := finalizeBlock(env, [][]byte{})
+	if err != nil {
+		return err
+	}
+	_, err = commitWithCustomIncBlockTime(env, blockTime)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //export IncreaseTime
@@ -154,15 +173,15 @@ func IncreaseTime(envId uint64, seconds uint64) int64 {
 }
 
 //export FinalizeBlock
-func FinalizeBlock(envId uint64, txs string) *C.char {
+func FinalizeBlock(envId uint64, tx string) *C.char {
 	env := loadEnv(envId)
 
-	txsBytes, err := base64.StdEncoding.DecodeString(txs)
+	txBytes, err := base64.StdEncoding.DecodeString(tx)
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
 	}
 
-	res, err := finalizeBlock(&env, [][]byte{txsBytes})
+	res, err := finalizeBlock(&env, [][]byte{txBytes})
 
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
@@ -267,11 +286,7 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 		return encodeErrToResultBytes(result.QueryError, err)
 	}
 
-	fmt.Println("ctx height", env.Ctx.BlockHeight())
-
 	res, err := route(env.Ctx, &req)
-
-	fmt.Println("query height", res.Height)
 
 	if err != nil {
 		return encodeErrToResultBytes(result.QueryError, err)
@@ -338,7 +353,6 @@ func Simulate(envId uint64, base64TxBytes string) *C.char { // => base64GasInfo
 	}
 
 	gasInfo, _, err := env.App.Simulate(txBytes)
-
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
 	}
@@ -386,6 +400,14 @@ func SetParamSet(envId uint64, subspaceName, base64ParamSetBytes string) *C.char
 	}
 
 	subspace.SetParamSet(env.Ctx, pset)
+
+	// make sure block is produced so that updated state is on chain
+	err = produceEmptyBlock(&env)
+	if err != nil {
+		panic(err)
+	}
+
+	envRegister.Store(envId, env)
 
 	// return empty bytes if no error
 	return encodeBytesResultBytes([]byte{})
@@ -454,158 +476,4 @@ func encodeBytesResultBytes(bytes []byte) *C.char {
 }
 
 // must define main for ffi build
-func main() {
-	// envId := InitTestEnv()
-	// fmt.Println("envId", envId)
-	// blockTime := GetBlockTime(envId)
-	// fmt.Println("[Block Time] Current block time:", time.Unix(0, blockTime))
-
-	// coinsJson := `[{"denom": "uosmo", "amount": "100000000"}]`
-
-	// // NOTE: there is a but in ctx construction (ie. NewContext variants function)
-	// // Somehow using legacy constructor causes a nil keeper error when querying
-	// // but using non legacy constructor resulted in 0 validators
-
-	// // following what's done here prop make sense: https://github.com/osmosis-labs/osmosis/blob/0711797bf19cce7a1952bee68620376f10c577d9/app/apptesting/test_suite.go#L463
-	// // see how this is used in context
-
-	// account1 := InitAccount(envId, coinsJson)
-	// account2 := InitAccount(envId, coinsJson)
-
-	// base64PrivKey1 := C.GoString(account1)
-	// base64PrivKey2 := C.GoString(account2)
-	// privKeyBytes1, err := base64.StdEncoding.DecodeString(base64PrivKey1)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// privKeyBytes2, err := base64.StdEncoding.DecodeString(base64PrivKey2)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// privKey1 := secp256k1.PrivKey{Key: privKeyBytes1}
-	// privKey2 := secp256k1.PrivKey{Key: privKeyBytes2}
-
-	// acc1 := sdk.AccAddress(privKey1.PubKey().Address())
-	// acc2 := sdk.AccAddress(privKey2.PubKey().Address())
-
-	// fmt.Println("Account 1 Address:", acc1.String())
-	// fmt.Println("Account 2 Address:", acc2.String())
-
-	// queryPath := "/cosmos.bank.v1beta1.Query/Balance"
-	// queryMsg := banktypes.QueryBalanceRequest{Address: acc1.String(), Denom: "uosmo"}
-
-	// queryMsgBytes, err := proto.Marshal(&queryMsg)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// base64QueryMsg := base64.StdEncoding.EncodeToString(queryMsgBytes)
-	// balanceResult := Query(envId, queryPath, base64QueryMsg)
-	// base64BalanceResult := C.GoString(balanceResult)
-	// balanceResultBytes, err := base64.StdEncoding.DecodeString(base64BalanceResult)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// if balanceResultBytes[0] != 0 {
-	// 	panic("Query failed")
-	// }
-
-	// balanceResponseBytes := balanceResultBytes[1:]
-
-	// balanceResponse := banktypes.QueryBalanceResponse{}
-	// err = proto.Unmarshal(balanceResponseBytes, &balanceResponse)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Println("Account 1 OSMO balance:", balanceResponse)
-
-	// // Create a bank send transaction
-	// fromAddr := acc1
-	// toAddr := acc2
-
-	// amount := sdk.NewCoins(sdk.NewCoin("uosmo", sdkmath.NewInt(1000000)))
-	// msg := banktypes.NewMsgSend(fromAddr, toAddr, amount)
-
-	// txBuilder := app.GetEncodingConfig().TxConfig.NewTxBuilder()
-	// err = txBuilder.SetMsgs(msg)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// env := loadEnv(envId)
-
-	// accSeq := AccountSequence(envId, fromAddr.String())
-	// accNum := AccountNumber(envId, fromAddr.String())
-
-	// txBuilder.SetGasLimit(200000)
-	// txBuilder.SetFeeAmount(sdk.NewCoins(sdk.NewCoin("uosmo", sdkmath.NewInt(5000)))) // 0.005 OSMO as fee
-
-	// sigV2 := signing.SignatureV2{
-	// 	PubKey: privKey1.PubKey(),
-	// 	Data: &signing.SingleSignatureData{
-	// 		SignMode: signing.SignMode_SIGN_MODE_DIRECT,
-	// 	},
-	// 	Sequence: accSeq,
-	// }
-	// txBuilder.SetSignatures(sigV2)
-
-	// signerData := authsigning.SignerData{ChainID: "osmosis-1",
-	// 	AccountNumber: accNum,
-	// 	Sequence:      accSeq,
-	// }
-
-	// signBytes, err := authsigning.GetSignBytesAdapter(
-	// 	env.Ctx, app.GetEncodingConfig().TxConfig.SignModeHandler(), signing.SignMode_SIGN_MODE_DIRECT, signerData, txBuilder.GetTx())
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// sig, err := privKey1.Sign(signBytes)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// sigV2.Data.(*signing.SingleSignatureData).Signature = sig
-
-	// txBuilder.SetSignatures(sigV2)
-
-	// txBytes, err := app.GetEncodingConfig().TxConfig.TxEncoder()(txBuilder.GetTx())
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// base64Tx := base64.StdEncoding.EncodeToString(txBytes)
-	// FinalizeBlock(envId, base64Tx)
-	// Commit(envId)
-	// blockTime = GetBlockTime(envId)
-	// fmt.Println("[Block Time] Current block time:", time.Unix(0, blockTime))
-
-	// balance := env.App.BankKeeper.GetBalance(env.Ctx, fromAddr, "uosmo")
-	// fmt.Println("[Keeper] Account 1 OSMO balance:", balance)
-
-	// balanceResult = Query(envId, queryPath, base64QueryMsg)
-	// base64BalanceResult = C.GoString(balanceResult)
-	// balanceResultBytes, err = base64.StdEncoding.DecodeString(base64BalanceResult)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// if balanceResultBytes[0] != 0 {
-	// 	panic("Query failed")
-	// }
-
-	// balanceResponseBytes = balanceResultBytes[1:]
-	// balanceResponse = banktypes.QueryBalanceResponse{}
-	// err = proto.Unmarshal(balanceResponseBytes, &balanceResponse)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// IncreaseTime(envId, 200)
-
-	// blockTime = GetBlockTime(envId)
-	// fmt.Println("[Block Time] Current block time:", time.Unix(0, blockTime))
-
-	// fmt.Println("[Query] Account 1 OSMO balance:", balanceResponse)
-}
+func main() {}

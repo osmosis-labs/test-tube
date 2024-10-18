@@ -5,11 +5,13 @@ go 1.22.4
 toolchain go1.22.7
 
 require (
+	cosmossdk.io/core v0.12.1-0.20240725072823-6a2d039e1212
 	cosmossdk.io/errors v1.0.1
+	cosmossdk.io/log v1.4.1
 	cosmossdk.io/math v1.3.0
 	github.com/CosmWasm/wasmd v0.53.0
 	github.com/cometbft/cometbft v0.38.11
-	github.com/cometbft/cometbft-db v0.12.0
+	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/cosmos-sdk v0.50.9
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/osmosis-labs/osmosis/v26 v26.0.1
@@ -26,9 +28,7 @@ require (
 	cloud.google.com/go/storage v1.41.0 // indirect
 	cosmossdk.io/api v0.7.5 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
-	cosmossdk.io/core v0.12.1-0.20240725072823-6a2d039e1212 // indirect
 	cosmossdk.io/depinject v1.0.0 // indirect
-	cosmossdk.io/log v1.4.1 // indirect
 	cosmossdk.io/store v1.1.0 // indirect
 	cosmossdk.io/x/circuit v0.1.1 // indirect
 	cosmossdk.io/x/evidence v0.1.1 // indirect
@@ -56,8 +56,8 @@ require (
 	github.com/cockroachdb/pebble v1.1.0 // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
+	github.com/cometbft/cometbft-db v0.12.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/cosmos-db v1.0.2 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect

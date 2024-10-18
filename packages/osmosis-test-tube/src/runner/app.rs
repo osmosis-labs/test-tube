@@ -1,4 +1,4 @@
-use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
+use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
 use cosmrs::tx::{self, Fee, SignerInfo};
 use cosmrs::Any;
 use cosmwasm_std::{Coin, Timestamp};
@@ -132,7 +132,7 @@ impl OsmosisTestApp {
         account: &SigningAccount,
         signer: &SigningAccount,
         selected_authenticators: &[u64],
-    ) -> RunnerResult<ResponseDeliverTx>
+    ) -> RunnerResult<ResponseFinalizeBlock>
     where
         I: IntoIterator<Item = cosmrs::Any> + Clone,
     {
@@ -227,7 +227,7 @@ impl<'a> Runner<'a> for OsmosisTestApp {
         self.inner.query(path, q)
     }
 
-    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx> {
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseFinalizeBlock> {
         self.inner.execute_tx(tx_bytes)
     }
 
@@ -528,7 +528,7 @@ mod tests {
             amount: amount.clone(),
             gas_limit,
         });
-        let res = wasm.store_code(&wasm_byte_code, None, &bob).unwrap();
+        wasm.store_code(&wasm_byte_code, None, &bob).unwrap();
 
         let bob_balance = Bank::new(&app)
             .query_all_balances(&QueryAllBalancesRequest {
@@ -544,8 +544,20 @@ mod tests {
             .parse::<u128>()
             .unwrap();
 
-        assert_eq!(res.gas_info.gas_wanted, gas_limit);
         assert_eq!(bob_balance, initial_balance - amount.amount.u128());
+
+        // run with low gas limit should fail
+        let bob = bob.with_fee_setting(FeeSetting::Custom {
+            amount: amount.clone(),
+            gas_limit: 100_000,
+        });
+        let err = wasm.store_code(&wasm_byte_code, None, &bob).unwrap_err();
+        assert_eq!(
+            err,
+            RunnerError::ExecuteError {
+                msg: "out of gas in location: txSize; gasWanted: 100000, gasUsed: 1876896: out of gas".to_string()
+            }
+        );
     }
 
     #[test]

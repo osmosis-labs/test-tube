@@ -2,7 +2,7 @@ use std::ffi::CString;
 
 use base64::Engine as _;
 use cosmrs::crypto::secp256k1::SigningKey;
-use cosmrs::proto::tendermint::v0_37::abci::{RequestDeliverTx, ResponseDeliverTx};
+use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
 use cosmrs::tx::{Fee, SignerInfo};
 use cosmrs::{tx, Any};
 use cosmwasm_std::{Coin, Timestamp};
@@ -10,9 +10,9 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, BeginBlock, CleanUp, EndBlock, Execute, GetBlockHeight,
-    GetBlockTime, GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime,
-    InitAccount, InitTestEnv, Query, SetParamSet, Simulate,
+    AccountNumber, AccountSequence, CleanUp, Commit, FinalizeBlock, GetBlockHeight, GetBlockTime,
+    GetParamSet, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime, InitAccount,
+    InitTestEnv, Query, SetParamSet, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -139,9 +139,7 @@ impl BaseApp {
         redefine_as_go_string!(coins_json);
 
         let base64_priv = unsafe {
-            BeginBlock(self.id);
             let addr = InitAccount(self.id, coins_json);
-            EndBlock(self.id);
             CString::from_raw(addr)
         }
         .to_str()
@@ -299,33 +297,17 @@ impl BaseApp {
         }
     }
 
-    /// Ensure that all execution that happens in `execution` happens in a block
-    /// and end block properly, no matter it suceeds or fails.
-    unsafe fn run_block<T, E>(&self, execution: impl Fn() -> Result<T, E>) -> Result<T, E> {
-        unsafe { BeginBlock(self.id) };
-        match execution() {
-            ok @ Ok(_) => {
-                unsafe { EndBlock(self.id) };
-                ok
-            }
-            err @ Err(_) => {
-                unsafe { EndBlock(self.id) };
-                err
-            }
-        }
-    }
-
     /// Set parameter set for a given subspace.
     pub fn set_param_set(&self, subspace: &str, pset: impl Into<Any>) -> RunnerResult<()> {
         unsafe {
-            BeginBlock(self.id);
+            // BeginBlock(self.id);
             let pset = Message::encode_to_vec(&pset.into());
             let pset = BASE64_STANDARD.encode(pset);
             redefine_as_go_string!(pset);
             redefine_as_go_string!(subspace);
             let res = SetParamSet(self.id, subspace, pset);
 
-            EndBlock(self.id);
+            // EndBlock(self.id);
 
             // returns empty bytes if success
             RawResult::from_non_null_ptr(res).into_result()?;
@@ -393,48 +375,38 @@ impl<'a> Runner<'a> for BaseApp {
     where
         R: ::prost::Message + Default,
     {
-        unsafe {
-            self.run_block(|| {
-                let tx_sim_fee =
-                    self.create_signed_tx(msgs.clone(), signer, self.default_simulation_fee())?;
-                let fee = self.calculate_fee(&tx_sim_fee, signer)?;
+        let tx_sim_fee =
+            self.create_signed_tx(msgs.clone(), signer, self.default_simulation_fee())?;
+        let fee = self.calculate_fee(&tx_sim_fee, signer)?;
 
-                let tx = self.create_signed_tx(msgs.clone(), signer, fee)?.into();
+        let tx = self.create_signed_tx(msgs.clone(), signer, fee)?;
+        let res = self.execute_tx(&tx)?;
 
-                let mut buf = Vec::new();
-                RequestDeliverTx::encode(&RequestDeliverTx { tx }, &mut buf)
-                    .map_err(EncodeError::ProtoEncodeError)?;
-
-                let base64_req = BASE64_STANDARD.encode(buf);
-                redefine_as_go_string!(base64_req);
-
-                let res = Execute(self.id, base64_req);
-                let res = RawResult::from_non_null_ptr(res).into_result()?;
-
-                ResponseDeliverTx::decode(res.as_slice())
-                    .map_err(DecodeError::ProtoDecodeError)?
-                    .try_into()
-            })
-        }
+        res.try_into()
     }
 
-    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx> {
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseFinalizeBlock> {
         unsafe {
-            self.run_block(|| {
-                let request_devlier_tx = RequestDeliverTx {
-                    tx: tx_bytes.to_vec().into(),
-                };
+            let base64_tx = BASE64_STANDARD.encode(tx_bytes);
+            redefine_as_go_string!(base64_tx);
 
-                let base64_req = BASE64_STANDARD.encode(request_devlier_tx.encode_to_vec());
-                redefine_as_go_string!(base64_req);
+            let res = FinalizeBlock(self.id, base64_tx);
+            let res = RawResult::from_non_null_ptr(res).into_result()?;
 
-                let res = Execute(self.id, base64_req);
-                let res = RawResult::from_non_null_ptr(res).into_result()?;
+            RawResult::from_non_null_ptr(Commit(self.id)).into_result()?;
 
-                ResponseDeliverTx::decode(res.as_slice())
-                    .map_err(DecodeError::ProtoDecodeError)
-                    .map_err(Into::into)
-            })
+            let res = ResponseFinalizeBlock::decode(res.as_slice())
+                .map_err(DecodeError::ProtoDecodeError)?;
+
+            let tx_result = res.tx_results.get(0).cloned().expect("tx_result not found");
+
+            if !tx_result.codespace.is_empty() {
+                return Err(RunnerError::ExecuteError {
+                    msg: tx_result.log.clone(),
+                });
+            }
+
+            Ok(res)
         }
     }
 

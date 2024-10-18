@@ -212,13 +212,19 @@ extern "C" {
     pub fn InitTestEnv() -> GoUint64;
 }
 extern "C" {
+    pub fn CleanUp(envId: GoUint64);
+}
+extern "C" {
     pub fn InitAccount(envId: GoUint64, coinsJson: GoString) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn BeginBlock(envId: GoUint64);
+    pub fn IncreaseTime(envId: GoUint64, seconds: GoUint64) -> GoInt64;
 }
 extern "C" {
-    pub fn EndBlock(envId: GoUint64);
+    pub fn FinalizeBlock(envId: GoUint64, txs: GoString) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn Commit(envId: GoUint64) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn WasmSudo(
@@ -228,17 +234,17 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn IncreaseTime(envId: GoUint64, seconds: GoInt64);
-}
-extern "C" {
-    pub fn Execute(envId: GoUint64, base64ReqDeliverTx: GoString) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
     pub fn Query(
         envId: GoUint64,
         path: GoString,
         base64QueryMsgBytes: GoString,
     ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn GetBlockTime(envId: GoUint64) -> GoInt64;
+}
+extern "C" {
+    pub fn GetBlockHeight(envId: GoUint64) -> GoInt64;
 }
 extern "C" {
     pub fn AccountSequence(envId: GoUint64, bech32Address: GoString) -> GoUint64;
@@ -268,14 +274,4 @@ extern "C" {
 }
 extern "C" {
     pub fn GetValidatorPrivateKey(envId: GoUint64, n: GoInt32) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn GetBlockTime(envId: GoUint64) -> GoInt64;
-}
-extern "C" {
-    pub fn GetBlockHeight(envId: GoUint64) -> GoInt64;
-}
-
-extern "C" {
-    pub fn CleanUp(envId: GoUint64);
 }

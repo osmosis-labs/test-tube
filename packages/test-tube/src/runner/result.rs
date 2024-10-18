@@ -2,6 +2,7 @@ use crate::runner::error::{DecodeError, RunnerError};
 use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
 use base64::Engine;
 use cosmrs::proto::cosmos::base::abci::v1beta1::{GasInfo, TxMsgData};
+use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
 use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
 use cosmrs::rpc::endpoint::broadcast::tx_commit::Response as TxCommitResponse;
 use cosmrs::tendermint::abci::types::ExecTxResult;
@@ -172,6 +173,66 @@ where
     }
 }
 
+impl<R> TryFrom<ResponseFinalizeBlock> for ExecuteResponse<R>
+where
+    R: prost::Message + Default,
+{
+    type Error = RunnerError;
+
+    fn try_from(res: ResponseFinalizeBlock) -> Result<Self, Self::Error> {
+        let tx_results = res.tx_results;
+        let first_tx_result = tx_results
+            .first()
+            .expect("tx_results should have at least one element");
+
+        let tx_msg_data = TxMsgData::decode(first_tx_result.data.clone().as_ref())
+            .map_err(DecodeError::ProtoDecodeError)?;
+
+        let msg_data = tx_msg_data
+            .msg_responses
+            // since this tx contains exactly 1 msg
+            // when getting none of them, that means error
+            .first()
+            .ok_or(RunnerError::ExecuteError {
+                msg: first_tx_result.log.clone(),
+            })?;
+
+        let data = R::decode(msg_data.value.as_slice()).map_err(DecodeError::ProtoDecodeError)?;
+
+        let events = first_tx_result
+            .events
+            .clone()
+            .into_iter()
+            .map(|e| -> Result<Event, DecodeError> {
+                Ok(Event::new(e.r#type).add_attributes(
+                    e.attributes
+                        .into_iter()
+                        .map(|a| -> Result<Attribute, Utf8Error> {
+                            Ok(Attribute {
+                                key: a.key.to_string(),
+                                value: a.value.to_string(),
+                            })
+                        })
+                        .collect::<Result<Vec<Attribute>, Utf8Error>>()?,
+                ))
+            })
+            .collect::<Result<Vec<Event>, DecodeError>>()?;
+
+        let gas_wanted = first_tx_result.gas_used as u64;
+        let gas_used = first_tx_result.gas_used as u64;
+
+        Ok(Self {
+            data,
+            raw_data: msg_data.value.to_vec(),
+            events,
+            gas_info: GasInfo {
+                gas_wanted,
+                gas_used,
+            },
+        })
+    }
+}
+
 /// `RawResult` facilitates type conversions between Go and Rust,
 ///
 /// Since Go struct could not be exposed via cgo due to limitations on
@@ -216,11 +277,7 @@ impl RawResult {
         if code == 0 {
             Some(Self(Ok(content.to_vec())))
         } else {
-            let content_string = CString::new(content)
-                .unwrap()
-                .to_str()
-                .expect("Go code must encode valid UTF-8 string")
-                .to_string();
+            let content_string = CString::new(content).unwrap().to_string_lossy().to_string();
 
             let error = match code {
                 1 => RunnerError::QueryError {

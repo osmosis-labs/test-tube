@@ -1,4 +1,4 @@
-use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
+use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
 use cosmwasm_std::CosmosMsg;
 use serde::de::DeserializeOwned;
 
@@ -42,7 +42,7 @@ pub trait Runner<'a> {
     where
         R: ::prost::Message + Default;
 
-    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx>;
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseFinalizeBlock>;
 
     fn execute_cosmos_msgs<S>(
         &self,

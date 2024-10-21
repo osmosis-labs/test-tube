@@ -195,12 +195,16 @@ mod tests {
                 title: "Create concentrated uosmo:usdc pool".to_string(),
                 description: "Create concentrated uosmo:usdc pool, so that we can trade it"
                     .to_string(),
-                pool_records: vec![PoolRecord {
-                    denom0: denom0.clone(),
-                    denom1: "uosmo".to_string(),
-                    tick_spacing: 100,
-                    spread_factor: "0".to_string(),
-                }],
+                pool_records: vec![
+                    #[allow(deprecated)]
+                    PoolRecord {
+                        denom0: denom0.clone(),
+                        denom1: "uosmo".to_string(),
+                        tick_spacing: 100,
+                        spread_factor: "0".to_string(),
+                        exponent_at_price_one: "0".to_string(), // DEPRECATED
+                    },
+                ],
             },
             signer.address(),
             &signer,
@@ -293,6 +297,7 @@ mod tests {
                     token_out_denom: "uosmo".to_string(),
                 }],
                 token_in: format!("{}{}", "1000000", denom0),
+                sender: trader.address(),
             })
             .unwrap();
         let expected_token_out = res.token_out_amount;

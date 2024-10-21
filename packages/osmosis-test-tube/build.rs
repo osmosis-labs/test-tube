@@ -1,5 +1,3 @@
-extern crate core;
-
 use std::{env, path::PathBuf, process::Command};
 
 fn main() {

@@ -169,13 +169,17 @@ impl OsmosisTestApp {
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
+        let ext = TxExtension {
+            selected_authenticators: selected_authenticators.to_vec(),
+        }
+        .to_any();
+        let ext_ops = vec![cosmrs::Any {
+            type_url: ext.type_url,
+            value: ext.value,
+        }];
         let tx_body = tx::Body {
             messages: msgs.into_iter().map(Into::into).collect(),
-            non_critical_extension_options: vec![TxExtension {
-                selected_authenticators: selected_authenticators.to_vec(),
-            }
-            .to_any()
-            .into()],
+            non_critical_extension_options: ext_ops,
             ..Default::default()
         };
 
@@ -534,6 +538,7 @@ mod tests {
             .query_all_balances(&QueryAllBalancesRequest {
                 address: bob.address(),
                 pagination: None,
+                resolve_denom: false,
             })
             .unwrap()
             .balances
@@ -577,7 +582,7 @@ mod tests {
 
         app.set_param_set(
             "lockup",
-            osmosis_std::shim::Any {
+            cosmrs::Any {
                 type_url: lockup::Params::TYPE_URL.to_string(),
                 value: in_pset.encode_to_vec(),
             },

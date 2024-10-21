@@ -53,8 +53,8 @@ where
                         .into_iter()
                         .map(|a| -> Result<Attribute, Utf8Error> {
                             Ok(Attribute {
-                                key: std::str::from_utf8(a.key.as_ref())?.to_string(),
-                                value: std::str::from_utf8(a.value.as_ref())?.to_string(),
+                                key: std::str::from_utf8(a.key_bytes())?.to_string(),
+                                value: std::str::from_utf8(a.value_bytes())?.to_string(),
                             })
                         })
                         .collect::<Result<Vec<Attribute>, Utf8Error>>()?,
@@ -103,8 +103,8 @@ where
                         .into_iter()
                         .map(|a| -> Result<Attribute, Utf8Error> {
                             Ok(Attribute {
-                                key: a.key.to_string(),
-                                value: a.value.to_string(),
+                                key: std::str::from_utf8(a.key_bytes())?.to_string(),
+                                value: std::str::from_utf8(a.value_bytes())?.to_string(),
                             })
                         })
                         .collect::<Result<Vec<Attribute>, Utf8Error>>()?,

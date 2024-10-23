@@ -77,11 +77,12 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
-	env.BeginNewBlock(false, blockTime)
-
 	env.FundValidators()
 
-	env.App.EndBlocker(env.Ctx)
+	err = produceEmptyBlock(env)
+	if err != nil {
+		panic(err)
+	}
 
 	envRegister.Store(id, *env)
 
@@ -145,11 +146,11 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 }
 
 func produceEmptyBlock(env *testenv.TestEnv) error {
-	_, err := finalizeBlock(env, [][]byte{})
+	_, err := finalizeBlock(env, [][]byte{}, blockTime)
 	if err != nil {
 		return err
 	}
-	_, err = commitWithCustomIncBlockTime(env, blockTime)
+	_, err = commitWithCustomIncBlockTime(env)
 	if err != nil {
 		return err
 	}
@@ -159,11 +160,11 @@ func produceEmptyBlock(env *testenv.TestEnv) error {
 //export IncreaseTime
 func IncreaseTime(envId uint64, seconds uint64) int64 {
 	env := loadEnv(envId)
-	_, err := finalizeBlock(&env, [][]byte{})
+	_, err := finalizeBlock(&env, [][]byte{}, seconds)
 	if err != nil {
 		panic(err)
 	}
-	_, err = commitWithCustomIncBlockTime(&env, seconds)
+	_, err = commitWithCustomIncBlockTime(&env)
 	if err != nil {
 		panic(err)
 	}
@@ -181,7 +182,7 @@ func FinalizeBlock(envId uint64, tx string) *C.char {
 		return encodeErrToResultBytes(result.ExecuteError, err)
 	}
 
-	res, err := finalizeBlock(&env, [][]byte{txBytes})
+	res, err := finalizeBlock(&env, [][]byte{txBytes}, blockTime)
 
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
@@ -197,7 +198,18 @@ func FinalizeBlock(envId uint64, tx string) *C.char {
 	return encodeBytesResultBytes(bz)
 }
 
-func finalizeBlock(env *testenv.TestEnv, txs [][]byte) (*abci.ResponseFinalizeBlock, error) {
+func finalizeBlock(env *testenv.TestEnv, txs [][]byte, seconds uint64) (*abci.ResponseFinalizeBlock, error) {
+	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(seconds) * time.Second)
+
+	header := env.Ctx.BlockHeader()
+	header.Time = newBlockTime
+	header.Height++
+
+	env.Ctx = env.App.BaseApp.NewUncachedContext(false, header).WithHeaderInfo(coreheader.Info{
+		Height: header.Height,
+		Time:   header.Time,
+	})
+
 	res, err := env.App.FinalizeBlock(&abci.RequestFinalizeBlock{
 		Txs:    txs,
 		Height: env.Ctx.BlockHeight(),
@@ -210,7 +222,7 @@ func finalizeBlock(env *testenv.TestEnv, txs [][]byte) (*abci.ResponseFinalizeBl
 //export Commit
 func Commit(envId uint64) *C.char {
 	env := loadEnv(envId)
-	res, err := commitWithCustomIncBlockTime(&env, 5)
+	res, err := commitWithCustomIncBlockTime(&env)
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
 	}
@@ -225,22 +237,11 @@ func Commit(envId uint64) *C.char {
 	return encodeBytesResultBytes(bz)
 }
 
-func commitWithCustomIncBlockTime(env *testenv.TestEnv, seconds uint64) (*abci.ResponseCommit, error) {
+func commitWithCustomIncBlockTime(env *testenv.TestEnv) (*abci.ResponseCommit, error) {
 	res, err := env.App.Commit()
 	if err != nil {
 		return nil, err
 	}
-
-	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(seconds) * time.Second)
-
-	header := env.Ctx.BlockHeader()
-	header.Time = newBlockTime
-	header.Height++
-
-	env.Ctx = env.App.BaseApp.NewUncachedContext(false, header).WithHeaderInfo(coreheader.Info{
-		Height: header.Height,
-		Time:   header.Time,
-	})
 
 	return res, nil
 }

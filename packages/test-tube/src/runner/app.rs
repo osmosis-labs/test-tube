@@ -163,7 +163,7 @@ impl BaseApp {
             },
         ))
     }
-    /// Convinience function to create multiple accounts with the same
+    /// Convenience function to create multiple accounts with the same
     /// Initial coins balance
     pub fn init_accounts(&self, coins: &[Coin], count: u64) -> RunnerResult<Vec<SigningAccount>> {
         (0..count).map(|_| self.init_account(coins)).collect()

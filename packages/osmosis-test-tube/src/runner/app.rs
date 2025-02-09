@@ -78,7 +78,7 @@ impl OsmosisTestApp {
     pub fn init_account(&self, coins: &[Coin]) -> RunnerResult<SigningAccount> {
         self.inner.init_account(coins)
     }
-    /// Convinience function to create multiple accounts with the same
+    /// Convenience function to create multiple accounts with the same
     /// Initial coins balance
     pub fn init_accounts(&self, coins: &[Coin], count: u64) -> RunnerResult<Vec<SigningAccount>> {
         self.inner.init_accounts(coins, count)
@@ -350,7 +350,7 @@ mod tests {
             ]
         );
 
-        // execute on more time to excercise account sequence
+        // execute on more time to exercise account sequence
         let msg = MsgCreateDenom {
             sender: acc.address(),
             subdenom: "newerdenom".to_string(),

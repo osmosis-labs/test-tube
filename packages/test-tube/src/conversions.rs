@@ -15,7 +15,7 @@ impl From<&CString> for GoString {
 
 /// This is needed to be implemented as macro since
 /// conversion from &CString to GoString requires
-/// CString to not get dropped before referecing its pointer
+/// CString to not get dropped before referencing its pointer
 #[macro_export]
 macro_rules! redefine_as_go_string {
     ($($ident:ident),*) => {

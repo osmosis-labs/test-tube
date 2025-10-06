@@ -10,11 +10,11 @@ version = "5.0.0"
 exclude = ["coreum", "test_artifacts"]
 
 [dependencies]
-cosmrs = { version = "0.16.0", features = ["cosmwasm"] }
-cosmwasm-std = { version = "2.1.4", features = ["cosmwasm_2_0"] }
-prost = "0.12.6"
-serde = "1.0.203"
-serde_json = "1.0.117"
+cosmrs = { workspace = true, features = ["cosmwasm"] }
+cosmwasm-std = { workspace = true }
+prost = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 test-tube-coreum = { version = "5.0.0", path = "../test-tube" }
 coreum-wasm-sdk = "1.2.1"
 
@@ -22,6 +22,6 @@ coreum-wasm-sdk = "1.2.1"
 bindgen = "0.69.4"
 
 [dev-dependencies]
-cw1-whitelist = "1.1.1"
+cw1-whitelist = { workspace = true }
 bech32 = "0.11.0"
 ring = "0.17.8"

@@ -1,4 +1,4 @@
-[submodule "packages/coreum-test-tube/coreum"]
-	path = packages/coreum-test-tube/coreum
-	url = https://github.com/CoreumFoundation/coreum
+[submodule "packages/tx-test-tube/tx"]
+	path = packages/tx-test-tube/tx
+	url = https://github.com/txFoundation/tx
 	branch = master

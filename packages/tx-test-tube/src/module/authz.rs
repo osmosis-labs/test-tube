@@ -1,12 +1,12 @@
 use crate::{fn_execute, fn_query};
 
-use coreum_wasm_sdk::types::cosmos::authz::v1beta1::{
+use tx_wasm_sdk::types::cosmos::authz::v1beta1::{
     MsgExec, MsgExecResponse, MsgGrant, MsgGrantResponse, MsgRevoke, MsgRevokeResponse,
     QueryGranteeGrantsRequest, QueryGranteeGrantsResponse, QueryGranterGrantsRequest,
     QueryGranterGrantsResponse, QueryGrantsRequest, QueryGrantsResponse,
 };
-use test_tube_coreum::module::Module;
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::module::Module;
+use test_tube_tx::runner::Runner;
 
 pub struct Authz<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -49,22 +49,22 @@ where
 
 #[cfg(test)]
 mod tests {
-    use coreum_wasm_sdk::shim::Any;
-    use coreum_wasm_sdk::types::coreum::asset::nft::v1::{
+    use tx_wasm_sdk::shim::Any;
+    use tx_wasm_sdk::types::coreum::asset::nft::v1::{
         MsgIssueClass, MsgMint, NftIdentifier, SendAuthorization,
     };
-    use coreum_wasm_sdk::types::cosmos::authz::v1beta1::{
+    use tx_wasm_sdk::types::cosmos::authz::v1beta1::{
         Grant, MsgExec, MsgGrant, QueryGrantsRequest,
     };
-    use coreum_wasm_sdk::types::cosmos::nft::v1beta1::{MsgSend, QueryOwnerRequest};
+    use tx_wasm_sdk::types::cosmos::nft::v1beta1::{MsgSend, QueryOwnerRequest};
     use cosmwasm_std::Coin;
 
     use crate::runner::app::FEE_DENOM;
-    use crate::{Account, AssetNFT, Authz, CoreumTestApp, Module, NFT};
+    use crate::{Account, AssetNFT, Authz, TXTestApp, Module, NFT};
 
     #[test]
     fn authz_integration() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
             .unwrap();

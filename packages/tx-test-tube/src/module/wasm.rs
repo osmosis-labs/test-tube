@@ -1,4 +1,4 @@
-use coreum_wasm_sdk::types::cosmwasm::wasm::v1::{
+use tx_wasm_sdk::types::cosmwasm::wasm::v1::{
     AccessConfig, MsgExecuteContract, MsgExecuteContractResponse, MsgInstantiateContract,
     MsgInstantiateContractResponse, MsgStoreCode, MsgStoreCodeResponse,
     QuerySmartContractStateRequest, QuerySmartContractStateResponse,
@@ -6,7 +6,7 @@ use coreum_wasm_sdk::types::cosmwasm::wasm::v1::{
 use cosmwasm_std::Coin;
 use serde::{de::DeserializeOwned, Serialize};
 
-use test_tube_coreum::{
+use test_tube_tx::{
     runner::Runner, Account, DecodeError, EncodeError, RunnerError, RunnerExecuteResult,
     RunnerResult, SigningAccount,
 };
@@ -63,7 +63,7 @@ where
                 msg: serde_json::to_vec(msg).map_err(EncodeError::JsonEncodeError)?,
                 funds: funds
                     .iter()
-                    .map(|c| coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin {
+                    .map(|c| tx_wasm_sdk::types::cosmos::base::v1beta1::Coin {
                         denom: c.denom.parse().unwrap(),
                         amount: format!("{}", c.amount.u128()),
                     })
@@ -90,7 +90,7 @@ where
                 msg: serde_json::to_vec(msg).map_err(EncodeError::JsonEncodeError)?,
                 funds: funds
                     .iter()
-                    .map(|c| coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin {
+                    .map(|c| tx_wasm_sdk::types::cosmos::base::v1beta1::Coin {
                         denom: c.denom.parse().unwrap(),
                         amount: format!("{}", c.amount.u128()),
                     })
@@ -125,14 +125,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{runner::app::FEE_DENOM, CoreumTestApp, Wasm};
+    use crate::{runner::app::FEE_DENOM, TXTestApp, Wasm};
     use crate::{Account, Module};
     use cosmwasm_std::Coin;
     use cw1_whitelist::msg::{AdminListResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
 
     #[test]
     fn wasm_integration() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
             .unwrap();

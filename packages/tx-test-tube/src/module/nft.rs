@@ -1,12 +1,12 @@
-use coreum_wasm_sdk::types::cosmos::nft::v1beta1::{
+use tx_wasm_sdk::types::cosmos::nft::v1beta1::{
     MsgSend, MsgSendResponse, QueryBalanceRequest, QueryBalanceResponse, QueryClassRequest,
     QueryClassResponse, QueryClassesRequest, QueryClassesResponse, QueryNfTsRequest,
     QueryNfTsResponse, QueryNftRequest, QueryNftResponse, QueryOwnerRequest, QueryOwnerResponse,
     QuerySupplyRequest, QuerySupplyResponse,
 };
-use test_tube_coreum::{fn_execute, fn_query, Module};
+use test_tube_tx::{fn_execute, fn_query, Module};
 
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::runner::Runner;
 
 pub struct NFT<'a, R: Runner<'a>> {
     runner: &'a R,

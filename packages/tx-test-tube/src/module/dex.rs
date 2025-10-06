@@ -1,4 +1,4 @@
-use coreum_wasm_sdk::types::coreum::dex::v1::{
+use tx_wasm_sdk::types::coreum::dex::v1::{
     EmptyResponse, MsgCancelOrder, MsgCancelOrdersByDenom, MsgPlaceOrder,
     QueryAccountDenomOrdersCountRequest, QueryAccountDenomOrdersCountResponse,
     QueryOrderBookOrdersRequest, QueryOrderBookOrdersResponse, QueryOrderBookParamsRequest,
@@ -6,9 +6,9 @@ use coreum_wasm_sdk::types::coreum::dex::v1::{
     QueryOrderRequest, QueryOrderResponse, QueryOrdersRequest, QueryOrdersResponse,
     QueryParamsRequest, QueryParamsResponse,
 };
-use test_tube_coreum::{fn_execute, fn_query, Module};
+use test_tube_tx::{fn_execute, fn_query, Module};
 
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::runner::Runner;
 
 pub struct Dex<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -61,23 +61,23 @@ where
 
 #[cfg(test)]
 mod tests {
-    use coreum_wasm_sdk::types::coreum::asset::ft::v1::{DexSettings, Feature, MsgIssue};
-    use coreum_wasm_sdk::types::coreum::dex::v1::{
+    use tx_wasm_sdk::types::coreum::asset::ft::v1::{DexSettings, Feature, MsgIssue};
+    use tx_wasm_sdk::types::coreum::dex::v1::{
         MsgCancelOrder, MsgCancelOrdersByDenom, MsgPlaceOrder, OrderType,
         QueryAccountDenomOrdersCountRequest, QueryOrderBookOrdersRequest,
         QueryOrderBookParamsRequest, QueryOrderBooksRequest, QueryOrderRequest, QueryOrdersRequest,
         QueryParamsRequest, Side, TimeInForce,
     };
-    // use coreum_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    // use tx_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
     use cosmwasm_std::Coin;
 
     use crate::runner::app::FEE_DENOM;
-    use crate::{Account, AssetFT, CoreumTestApp, Dex, Module};
+    use crate::{Account, AssetFT, TXTestApp, Dex, Module};
 
     #[test]
     fn dex_testing() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
 
         let acc1 = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])

@@ -28,23 +28,23 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/pkg/errors"
 
-	coreumapp "github.com/CoreumFoundation/coreum/v5/app"
-	coreumconfig "github.com/CoreumFoundation/coreum/v5/pkg/config"
-	coreumconstant "github.com/CoreumFoundation/coreum/v5/pkg/config/constant"
-	assetfttypes "github.com/CoreumFoundation/coreum/v5/x/asset/ft/types"
-	assetnfttypes "github.com/CoreumFoundation/coreum/v5/x/asset/nft/types"
+	txapp "github.com/tokenize-x/tx-chain/v6/app"
+	txconfig "github.com/tokenize-x/tx-chain/v6/pkg/config"
+	txconstant "github.com/tokenize-x/tx-chain/v6/pkg/config/constant"
+	assetfttypes "github.com/tokenize-x/tx-chain/v6/x/asset/ft/types"
+	assetnfttypes "github.com/tokenize-x/tx-chain/v6/x/asset/nft/types"
 )
 
-var NetworkConfig coreumconfig.NetworkConfig
+var NetworkConfig txconfig.NetworkConfig
 
 func init() {
 	NetworkConfig = newNetworkConfig()
 	NetworkConfig.SetSDKConfig()
-	coreumapp.ChosenNetwork = NetworkConfig
+	txapp.ChosenNetwork = NetworkConfig
 }
 
 type TestEnv struct {
-	App                *coreumapp.App
+	App                *txapp.App
 	Ctx                sdk.Context
 	ParamTypesRegistry ParamTypeRegistry
 	Validator          []byte
@@ -62,9 +62,9 @@ func (ao DebugAppOptions) Get(o string) interface{} {
 	return nil
 }
 
-func SetupApp(nodeHome string) (*coreumapp.App, []byte) {
+func SetupApp(nodeHome string) (*txapp.App, []byte) {
 	db := dbm.NewMemDB()
-	appInstance := coreumapp.New(
+	appInstance := txapp.New(
 		log.NewNopLogger(),
 		db,
 		nil,
@@ -73,7 +73,7 @@ func SetupApp(nodeHome string) (*coreumapp.App, []byte) {
 		baseapp.SetChainID(string(NetworkConfig.ChainID())),
 	)
 
-	networkProvider, ok := NetworkConfig.Provider.(coreumconfig.DynamicConfigProvider)
+	networkProvider, ok := NetworkConfig.Provider.(txconfig.DynamicConfigProvider)
 	if !ok {
 		panic("failed to cast network config provider to DynamicConfigProvider")
 	}
@@ -279,19 +279,19 @@ func requireNoNil(name string, nilable any) {
 	}
 }
 
-func newNetworkConfig() coreumconfig.NetworkConfig {
-	networkConfig := coreumconfig.NetworkConfig{
-		Provider: coreumconfig.DynamicConfigProvider{
-			GenesisInitConfig: coreumconfig.GenesisInitConfig{
-				AddressPrefix: coreumconstant.AddressPrefixMain,
-				ChainID:       coreumconstant.ChainIDMain,
+func newNetworkConfig() txconfig.NetworkConfig {
+	networkConfig := txconfig.NetworkConfig{
+		Provider: txconfig.DynamicConfigProvider{
+			GenesisInitConfig: txconfig.GenesisInitConfig{
+				AddressPrefix: txconstant.AddressPrefixMain,
+				ChainID:       txconstant.ChainIDMain,
 				GenesisTime:   time.Now(),
-				Denom:         coreumconstant.DenomMain,
-				GovConfig: coreumconfig.GenesisInitGovConfig{
-					MinDeposit:   sdk.Coins{sdk.NewCoin(coreumconstant.DenomMain, math.NewInt(1000))},
+				Denom:         txconstant.DenomMain,
+				GovConfig: txconfig.GenesisInitGovConfig{
+					MinDeposit:   sdk.Coins{sdk.NewCoin(txconstant.DenomMain, math.NewInt(1000))},
 					VotingPeriod: time.Second * 10,
 				},
-				CustomParamsConfig: coreumconfig.GenesisInitCustomParamsConfig{
+				CustomParamsConfig: txconfig.GenesisInitCustomParamsConfig{
 					MinSelfDelegation: math.NewInt(10_000_000), // 10 core
 				},
 			},

@@ -21,8 +21,8 @@ import (
 	"github.com/cosmos/gogoproto/proto"
 	"github.com/pkg/errors"
 
-	"github.com/CoreumFoundation/coreum-test-tube/result"
-	"github.com/CoreumFoundation/coreum-test-tube/testenv"
+	"github.com/tokenize-x/tx-test-tube/result"
+	"github.com/tokenize-x/tx-test-tube/testenv"
 )
 
 var (
@@ -37,7 +37,7 @@ func InitTestEnv() uint64 {
 	mu.Lock()
 	defer mu.Unlock()
 
-	nodeHome, err := os.MkdirTemp("", ".coreum-test-tube-temp-")
+	nodeHome, err := os.MkdirTemp("", ".tx-test-tube-temp-")
 	if err != nil {
 		panic(err)
 	}

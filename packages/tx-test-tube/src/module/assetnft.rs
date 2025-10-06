@@ -1,4 +1,4 @@
-use coreum_wasm_sdk::types::coreum::asset::nft::v1::{
+use tx_wasm_sdk::types::coreum::asset::nft::v1::{
     EmptyResponse, MsgAddToClassWhitelist, MsgAddToWhitelist, MsgBurn, MsgClassFreeze,
     MsgClassUnfreeze, MsgFreeze, MsgIssueClass, MsgMint, MsgRemoveFromClassWhitelist,
     MsgRemoveFromWhitelist, MsgUnfreeze, QueryBurntNftRequest, QueryBurntNftResponse,
@@ -9,9 +9,9 @@ use coreum_wasm_sdk::types::coreum::asset::nft::v1::{
     QueryParamsRequest, QueryParamsResponse, QueryWhitelistedAccountsForNftRequest,
     QueryWhitelistedAccountsForNftResponse, QueryWhitelistedRequest, QueryWhitelistedResponse,
 };
-use test_tube_coreum::{fn_execute, fn_query, Module};
+use test_tube_tx::{fn_execute, fn_query, Module};
 
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::runner::Runner;
 
 pub struct AssetNFT<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -96,23 +96,23 @@ where
 
 #[cfg(test)]
 mod tests {
-    use coreum_wasm_sdk::{
+    use tx_wasm_sdk::{
         types::coreum::asset::nft::v1::{
             ClassFeature::Burning, MsgIssueClass, MsgMint, QueryParamsRequest,
         },
         types::cosmos::nft::v1beta1::{MsgSend, QueryOwnerRequest},
     };
 
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
     use cosmwasm_std::Coin;
 
-    use test_tube_coreum::{Account, Module};
+    use test_tube_tx::{Account, Module};
 
-    use crate::{runner::app::FEE_DENOM, AssetNFT, CoreumTestApp, NFT};
+    use crate::{runner::app::FEE_DENOM, AssetNFT, TXTestApp, NFT};
 
     #[test]
     fn asset_nft_testing() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
 
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])

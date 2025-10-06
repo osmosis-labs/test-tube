@@ -1,4 +1,4 @@
-use coreum_wasm_sdk::types::cosmos::staking::v1beta1::{
+use tx_wasm_sdk::types::cosmos::staking::v1beta1::{
     MsgCreateValidator, MsgCreateValidatorResponse, MsgDelegate, MsgDelegateResponse,
     MsgUndelegate, MsgUndelegateResponse, QueryDelegationRequest, QueryDelegationResponse,
     QueryDelegatorDelegationsRequest, QueryDelegatorDelegationsResponse,
@@ -6,9 +6,9 @@ use coreum_wasm_sdk::types::cosmos::staking::v1beta1::{
     QueryParamsRequest, QueryParamsResponse, QueryUnbondingDelegationRequest,
     QueryUnbondingDelegationResponse, QueryValidatorsRequest, QueryValidatorsResponse,
 };
-use test_tube_coreum::module::Module;
-use test_tube_coreum::runner::Runner;
-use test_tube_coreum::{fn_execute, fn_query};
+use test_tube_tx::module::Module;
+use test_tube_tx::runner::Runner;
+use test_tube_tx::{fn_execute, fn_query};
 
 pub struct Staking<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -64,11 +64,11 @@ where
 #[cfg(test)]
 mod tests {
     use crate::runner::app::FEE_DENOM;
-    use crate::{CoreumTestApp, Staking};
+    use crate::{TXTestApp, Staking};
     use bech32::{Bech32, Hrp};
-    use coreum_wasm_sdk::shim::Any;
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
-    use coreum_wasm_sdk::types::cosmos::staking::v1beta1::{
+    use tx_wasm_sdk::shim::Any;
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    use tx_wasm_sdk::types::cosmos::staking::v1beta1::{
         BondStatus, CommissionRates, Description, MsgCreateValidator, QueryValidatorsRequest,
     };
     use cosmrs::proto;
@@ -78,7 +78,7 @@ mod tests {
         rand,
         signature::{self, KeyPair},
     };
-    use test_tube_coreum::{Account, Module};
+    use test_tube_tx::{Account, Module};
 
     fn get_validator_address(address: &str) -> String {
         let (_, data) = bech32::decode(address).expect("failed to decode");
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn staking_integration() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
             .unwrap();

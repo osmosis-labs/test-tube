@@ -1,13 +1,13 @@
 [package]
-description = "CosmWasm integration testing for Coreum"
+description = "CosmWasm integration testing for TX"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/CoreumFoundation/test-tube"
-name = "coreum-test-tube"
+repository = "https://github.com/tokenieze-x/tx-test-tube"
+name = "tx-test-tube"
 version = "5.0.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-exclude = ["coreum", "test_artifacts"]
+exclude = ["tx", "test_artifacts"]
 
 [dependencies]
 cosmrs = { workspace = true, features = ["cosmwasm"] }
@@ -15,8 +15,8 @@ cosmwasm-std = { workspace = true }
 prost = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-test-tube-coreum = { version = "5.0.0", path = "../test-tube" }
-coreum-wasm-sdk = "1.2.1"
+test-tube-tx = { version = "5.0.0", path = "../test-tube" }
+tx-wasm-sdk = { package = "tx-wasm-sdk", git = "https://github.com/CoreumFoundation/coreum-wasm-sdk", branch = "mehdi/rename-tokenize-x"}
 
 [build-dependencies]
 bindgen = "0.69.4"

@@ -2,8 +2,8 @@
 description = "library for building integration testing environments for cosmos-sdk chains in Rust"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-name = "test-tube-coreum"
-repository = "https://github.com/CoreumFoundation/test-tube"
+name = "test-tube-tx"
+repository = "https://github.com/tokenieze-x/tx-test-tube"
 version = "5.0.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

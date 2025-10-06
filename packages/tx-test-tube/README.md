@@ -1,8 +1,8 @@
-# coreum-test-tube
+# tx-test-tube
 
-[![coreum-test-tube on crates.io](https://img.shields.io/crates/v/coreum-test-tube.svg)](https://crates.io/crates/coreum-test-tube) [![Docs](https://docs.rs/coreum-test-tube/badge.svg)](https://docs.rs/coreum-test-tube)
+[![tx-test-tube on crates.io](https://img.shields.io/crates/v/tx-test-tube.svg)](https://crates.io/crates/tx-test-tube) [![Docs](https://docs.rs/tx-test-tube/badge.svg)](https://docs.rs/tx-test-tube)
 
-CosmWasm x Coreum integration testing library that, unlike `cw-multi-test`, it allows you to test your cosmwasm contract against real chain's logic instead of mocks.
+CosmWasm x TX integration testing library that, unlike `cw-multi-test`, it allows you to test your cosmwasm contract against real chain's logic instead of mocks.
 
 ## Table of Contents
 
@@ -13,19 +13,19 @@ CosmWasm x Coreum integration testing library that, unlike `cw-multi-test`, it a
 
 ## Getting Started
 
-To demonstrate how `coreum-test-tube` works, let use simple example contract: [cw-whitelist](https://github.com/CosmWasm/cw-plus/tree/main/contracts/cw1-whitelist) from `cw-plus`.
+To demonstrate how `tx-test-tube` works, let use simple example contract: [cw-whitelist](https://github.com/CosmWasm/cw-plus/tree/main/contracts/cw1-whitelist) from `cw-plus`.
 
 Here is how to setup the test:
 
 ```rust
 use cosmwasm_std::Coin;
-use coreum_test_tube::CoreumTestApp;
+use tx_test_tube::TXTestApp;
 
-// Create new Coreum appchain instance.
-let app = CoreumTestApp::new();
+// Create new TX appchain instance.
+let app = TXTestApp::new();
 
 // Create a new account with initial funds and one without initial funds
-use coreum_test_tube::runner:app::FEE_DENOM;
+use tx_test_tube::runner:app::FEE_DENOM;
 
 let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
@@ -42,9 +42,9 @@ If you want to create just many accounts, you can use `init_accounts` instead. T
 
 ```rust
 use cosmwasm_std::coins;
-use coreum_test_tube::CoreumTestApp;
+use tx_test_tube::TXTestApp;
 
-let app = CoreumTestApp::new();
+let app = TXTestApp::new();
 
 let accounts = app
             .init_accounts(&coins(100_000_000_000, FEE_DENOM), 4)
@@ -66,9 +66,9 @@ Now if we want to test a cosmwasm contract, we need to
 ```rust
 use cosmwasm_std::coins;
 use cw1_whitelist::msg::{InstantiateMsg}; // for instantiating cw1_whitelist contract, which is already in a public crate
-use coreum_test_tube::{Account, Module, CoreumTestApp, Wasm};
+use tx_test_tube::{Account, Module, TXTestApp, Wasm};
 
-let app = CoreumTestApp::new();
+let app = TXTestApp::new();
 let accs = app
         .init_accounts(&coins(100_000_000_000, FEE_DENOM), 2)
         .unwrap();
@@ -133,20 +133,20 @@ assert!(admin_list.mutable);
 
 ## Debugging
 
-In your contract code, if you want to debug, you can use [`deps.api.debug(..)`](https://docs.rs/cosmwasm-std/latest/cosmwasm_std/trait.Api.html#tymethod.debug) which will prints the debug message to stdout. `wasmd` disabled this by default but `CoreumTestApp` allows stdout emission so that you can debug your smart contract while running tests.
+In your contract code, if you want to debug, you can use [`deps.api.debug(..)`](https://docs.rs/cosmwasm-std/latest/cosmwasm_std/trait.Api.html#tymethod.debug) which will prints the debug message to stdout. `wasmd` disabled this by default but `TXTestApp` allows stdout emission so that you can debug your smart contract while running tests.
 
 ## Using Module Wrapper
 
 In some cases, you might want interact directly with appchain logic to setup the environment or query appchain's state, instead of testing smart contracts.
-Module wrappers provide convenient functions to interact with the appchain's module. You can interact with all Coreum native modules using these wrappers.
+Module wrappers provide convenient functions to interact with the appchain's module. You can interact with all TX native modules using these wrappers.
 
 Let's try interact with `AssetFT` module, while, at the same time, interacting with the native `Bank` module.
 
 ```rust
 use cosmwasm_std::Coin;
-use coreum_test_tube::{Account, Module, CoreumTestApp, Bank, AssetFT};
+use tx_test_tube::{Account, Module, TXTestApp, Bank, AssetFT};
 
-let app = CoreumTestApp::new();
+let app = TXTestApp::new();
 
 let signer = app
     .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
@@ -253,17 +253,17 @@ assert_eq!(request_balance.balance, "100".to_string());
 
 ## Versioning
 
-The version of coreum-test-tube is determined by the versions of its dependencies, Coreum and test-tube, as well as its own changes. The version is represented in the format A.B.C, where:
+The version of tx-test-tube is determined by the versions of its dependencies, TX and test-tube, as well as its own changes. The version is represented in the format A.B.C, where:
 
-- A is the major version of Coreum,
-- B is the minor version of coreum-test-tube,
-- C is the patch number of coreum-test-tube itself.
+- A is the major version of TX,
+- B is the minor version of tx-test-tube,
+- C is the patch number of tx-test-tube itself.
 
-When a new version of Coreum is released and contains breaking changes, we will also release breaking changes from test-tube if any and increment the major version of coreum-test-tube. This way, it's clear that the new version of coreum-test-tube is not backwards-compatible with previous versions.
+When a new version of TX is released and contains breaking changes, we will also release breaking changes from test-tube if any and increment the major version of tx-test-tube. This way, it's clear that the new version of tx-test-tube is not backwards-compatible with previous versions.
 
-When adding a new feature to coreum-test-tube that is backward-compatible, the minor version number will be incremented.
+When adding a new feature to tx-test-tube that is backward-compatible, the minor version number will be incremented.
 
-When fixing bugs or making other changes that are `coreum-test-tube` specific and backward-compatible, the patch number will be incremented.
+When fixing bugs or making other changes that are `tx-test-tube` specific and backward-compatible, the patch number will be incremented.
 
 Please review the upgrade guide for upgrading the package, in case of breaking changes.
 

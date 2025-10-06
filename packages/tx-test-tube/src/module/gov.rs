@@ -1,11 +1,11 @@
-use coreum_wasm_sdk::types::cosmos::gov::v1::{
+use tx_wasm_sdk::types::cosmos::gov::v1::{
     MsgSubmitProposal, MsgSubmitProposalResponse, MsgVote, MsgVoteResponse, QueryParamsRequest,
     QueryParamsResponse, QueryProposalRequest, QueryProposalResponse,
 };
 
-use test_tube_coreum::module::Module;
-use test_tube_coreum::runner::Runner;
-use test_tube_coreum::{fn_execute, fn_query};
+use test_tube_tx::module::Module;
+use test_tube_tx::runner::Runner;
+use test_tube_tx::{fn_execute, fn_query};
 
 pub struct Gov<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -40,23 +40,23 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{runner::app::FEE_DENOM, CoreumTestApp};
+    use crate::{runner::app::FEE_DENOM, TXTestApp};
     use crate::{Account, Gov, Module};
-    use coreum_wasm_sdk::shim::Any;
-    use coreum_wasm_sdk::types::cosmos::auth::v1beta1::{
+    use tx_wasm_sdk::shim::Any;
+    use tx_wasm_sdk::types::cosmos::auth::v1beta1::{
         ModuleAccount, QueryModuleAccountByNameRequest, QueryModuleAccountByNameResponse,
     };
-    use coreum_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
-    use coreum_wasm_sdk::types::cosmos::gov::v1::{
+    use tx_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    use tx_wasm_sdk::types::cosmos::gov::v1::{
         MsgSubmitProposal, QueryParamsRequest, QueryProposalRequest,
     };
     use cosmwasm_std::Coin;
-    use test_tube_coreum::Runner;
+    use test_tube_tx::Runner;
 
     #[test]
     fn test_submit_and_query_proposal() {
-        let app = CoreumTestApp::default();
+        let app = TXTestApp::default();
         let gov = Gov::new(&app);
 
         let proposer = app

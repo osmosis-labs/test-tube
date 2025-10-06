@@ -2,16 +2,16 @@
 
 `test-tube` is a generic library for building testing environments for [CosmWasm](https://cosmwasm.com/) smart contracts. It allows you to test your smart contract logic against the actual Cosmos SDK chain's logic, which is written in Go, using Rust. This eliminates the need to write Go code or learn Go in order to test your smart contracts against the Cosmos SDK.
 
-This repo contains [`coreum-test-tube`] which is based on [`osmosis-test-tube`](https://github.com/osmosis-labs/test-tube/tree/main/packages/osmosis-test-tube) but adapted to enable testing against `Coreum`.
+This repo contains [`tx-test-tube`] which is based on [`osmosis-test-tube`](https://github.com/osmosis-labs/test-tube/tree/main/packages/osmosis-test-tube) but adapted to enable testing against `TX`.
 
 ## Features
 
 - Test your CosmWasm smart contracts using Rust without the need to write Go code or learn Go
-- Test against the actual Coreum chain's logic
+- Test against the actual TX chain's logic
 
 ## **HOW CAN I USE THIS?**
 
-Please checkout the documentation in the [`coreum-test-tube`](./packages/coreum-test-tube/README.md) package:
+Please checkout the documentation in the [`tx-test-tube`](./packages/tx-test-tube/README.md) package:
 
 ## Why don't just use `cw-multi-test`?
 

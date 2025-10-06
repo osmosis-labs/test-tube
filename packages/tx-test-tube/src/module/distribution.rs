@@ -1,8 +1,8 @@
-use coreum_wasm_sdk::types::cosmos::distribution::v1beta1::{
+use tx_wasm_sdk::types::cosmos::distribution::v1beta1::{
     QueryDelegationRewardsRequest, QueryDelegationRewardsResponse,
     QueryDelegationTotalRewardsRequest, QueryDelegationTotalRewardsResponse,
 };
-use test_tube_coreum::{fn_query, Module, Runner};
+use test_tube_tx::{fn_query, Module, Runner};
 
 pub struct Distribution<'a, R: Runner<'a>> {
     runner: &'a R,

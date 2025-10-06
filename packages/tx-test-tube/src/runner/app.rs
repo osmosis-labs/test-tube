@@ -4,10 +4,10 @@ use cosmwasm_std::{Coin, Timestamp};
 
 use prost::Message;
 use serde::de::DeserializeOwned;
-use test_tube_coreum::account::SigningAccount;
-use test_tube_coreum::runner::result::{RunnerExecuteResult, RunnerResult};
-use test_tube_coreum::runner::Runner;
-use test_tube_coreum::BaseApp;
+use test_tube_tx::account::SigningAccount;
+use test_tube_tx::runner::result::{RunnerExecuteResult, RunnerResult};
+use test_tube_tx::runner::Runner;
+use test_tube_tx::BaseApp;
 
 pub const FEE_DENOM: &str = "ucore";
 const ADDRESS_PREFIX: &str = "core";
@@ -15,17 +15,17 @@ const CHAIN_ID: &str = "coreum-mainnet-1";
 const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
 
 #[derive(Debug, PartialEq)]
-pub struct CoreumTestApp {
+pub struct TXTestApp {
     inner: BaseApp,
 }
 
-impl Default for CoreumTestApp {
+impl Default for TXTestApp {
     fn default() -> Self {
-        CoreumTestApp::new()
+        TXTestApp::new()
     }
 }
 
-impl CoreumTestApp {
+impl TXTestApp {
     pub fn new() -> Self {
         Self {
             inner: BaseApp::new(FEE_DENOM, CHAIN_ID, ADDRESS_PREFIX, DEFAULT_GAS_ADJUSTMENT),
@@ -105,7 +105,7 @@ impl CoreumTestApp {
     }
 }
 
-impl<'a> Runner<'a> for CoreumTestApp {
+impl<'a> Runner<'a> for TXTestApp {
     fn execute_multiple<M, R>(
         &self,
         msgs: &[(M, &str)],
@@ -142,11 +142,11 @@ impl<'a> Runner<'a> for CoreumTestApp {
 mod tests {
     use cosmwasm_std::coins;
 
-    use crate::runner::app::{CoreumTestApp, FEE_DENOM};
+    use crate::runner::app::{TXTestApp, FEE_DENOM};
 
     #[test]
     fn test_init_accounts() {
-        let app = CoreumTestApp::default();
+        let app = TXTestApp::default();
         let accounts = app
             .init_accounts(&coins(100_000_000_000, FEE_DENOM), 3)
             .unwrap();
@@ -159,7 +159,7 @@ mod tests {
 
     #[test]
     fn test_get_and_set_block_timestamp() {
-        let app = CoreumTestApp::default();
+        let app = TXTestApp::default();
 
         let block_time_nanos = app.get_block_time_nanos();
         let block_time_seconds = app.get_block_time_seconds();
@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn test_get_block_height() {
-        let app = CoreumTestApp::default();
+        let app = TXTestApp::default();
 
         assert_eq!(app.get_block_height(), 1i64);
 

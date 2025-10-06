@@ -9,8 +9,8 @@ mod nft;
 mod staking;
 mod wasm;
 
-pub use test_tube_coreum::macros;
-pub use test_tube_coreum::module::Module;
+pub use test_tube_tx::macros;
+pub use test_tube_tx::module::Module;
 
 pub use assetft::AssetFT;
 pub use assetnft::AssetNFT;

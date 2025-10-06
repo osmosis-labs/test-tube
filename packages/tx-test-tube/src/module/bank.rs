@@ -1,11 +1,11 @@
 use crate::{fn_execute, fn_query};
-use coreum_wasm_sdk::types::cosmos::bank::v1beta1::{
+use tx_wasm_sdk::types::cosmos::bank::v1beta1::{
     MsgSend, MsgSendResponse, QueryAllBalancesRequest, QueryAllBalancesResponse,
     QueryBalanceRequest, QueryBalanceResponse, QueryTotalSupplyRequest, QueryTotalSupplyResponse,
 };
 
-use test_tube_coreum::module::Module;
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::module::Module;
+use test_tube_tx::runner::Runner;
 
 pub struct Bank<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -40,16 +40,16 @@ where
 
 #[cfg(test)]
 mod tests {
-    use coreum_wasm_sdk::types::cosmos::bank::v1beta1::{MsgSend, QueryBalanceRequest};
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    use tx_wasm_sdk::types::cosmos::bank::v1beta1::{MsgSend, QueryBalanceRequest};
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
     use cosmwasm_std::Coin;
 
     use crate::runner::app::FEE_DENOM;
-    use crate::{Account, Bank, CoreumTestApp, Module};
+    use crate::{Account, Bank, TXTestApp, Module};
 
     #[test]
     fn bank_integration() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
             .unwrap();

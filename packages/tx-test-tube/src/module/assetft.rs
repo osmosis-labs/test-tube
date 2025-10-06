@@ -1,4 +1,4 @@
-use coreum_wasm_sdk::types::coreum::asset::ft::v1::{
+use tx_wasm_sdk::types::coreum::asset::ft::v1::{
     EmptyResponse, MsgBurn, MsgClawback, MsgClearAdmin, MsgFreeze, MsgGloballyFreeze,
     MsgGloballyUnfreeze, MsgIssue, MsgMint, MsgSetFrozen, MsgSetWhitelistedLimit, MsgTransferAdmin,
     MsgUnfreeze, MsgUpgradeTokenV1, QueryBalanceRequest, QueryBalanceResponse,
@@ -9,9 +9,9 @@ use coreum_wasm_sdk::types::coreum::asset::ft::v1::{
     QueryWhitelistedBalanceResponse, QueryWhitelistedBalancesRequest,
     QueryWhitelistedBalancesResponse,
 };
-use test_tube_coreum::{fn_execute, fn_query, Module};
+use test_tube_tx::{fn_execute, fn_query, Module};
 
-use test_tube_coreum::runner::Runner;
+use test_tube_tx::runner::Runner;
 
 pub struct AssetFT<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -92,19 +92,19 @@ where
 
 #[cfg(test)]
 mod tests {
-    use coreum_wasm_sdk::types::coreum::asset::ft::v1::{
+    use tx_wasm_sdk::types::coreum::asset::ft::v1::{
         Feature::Minting, MsgIssue, MsgMint, QueryBalanceRequest, QueryParamsRequest,
     };
-    use coreum_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
-    use coreum_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
+    use tx_wasm_sdk::types::cosmos::bank::v1beta1::MsgSend;
+    use tx_wasm_sdk::types::cosmos::base::v1beta1::Coin as BaseCoin;
     use cosmwasm_std::Coin;
 
     use crate::runner::app::FEE_DENOM;
-    use crate::{Account, AssetFT, Bank, CoreumTestApp, Module};
+    use crate::{Account, AssetFT, Bank, TXTestApp, Module};
 
     #[test]
     fn asset_ft_testing() {
-        let app = CoreumTestApp::new();
+        let app = TXTestApp::new();
 
         let signer = app
             .init_account(&[Coin::new(100_000_000_000_000_000_000u128, FEE_DENOM)])
